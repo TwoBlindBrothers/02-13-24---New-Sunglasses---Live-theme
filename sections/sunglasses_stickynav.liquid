@@ -1,0 +1,43 @@
+<nav>
+    <div class="menu_select medium-up--hide">
+        <span class="menu_copy">Jump to section...</span>
+        <span class="chevron">
+            <svg viewBox="0 0 31 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4.48344e-07 16.9616L9.88732 16.9616L9.88733 -9.22864e-07L21.1152 -4.32079e-07L21.1152 16.9616L31 16.9616L15.5 33L4.48344e-07 16.9616Z" fill="#231F20"/>
+            </svg>
+        </span>
+    </div>
+    <ul>
+        {% for block in section.blocks %}
+            <li><a href="{{ block.settings.navlink_link }}">{{ block.settings.navlink_title }}</a></li>
+        {% endfor %}
+        <li class="medium-down--hide"><a href="#main_prod_hero" class="btn">Get Yours</a></li>
+    </ul>
+    <a href="#main_prod_hero" class="btn btn-mobile medium-up--hide">Get Yours</a>
+</nav>
+
+
+{% schema %}
+  {
+    "name": "Sticky nav",
+    "class" : "sunglasses_stickynav",
+      "blocks": [
+            {
+            "type": "navlink",
+            "name": "Link",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "navlink_title",
+                    "label": "Text that appears"
+                },
+                {
+                    "type": "url",
+                    "id": "navlink_link",
+                    "label": "Link"
+                }
+            ]
+           }
+        ]
+  }
+{% endschema %}

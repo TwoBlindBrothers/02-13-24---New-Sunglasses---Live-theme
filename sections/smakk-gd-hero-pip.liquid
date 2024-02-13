@@ -1,0 +1,272 @@
+<div class="gd_hero_pip{% if section.settings.text_size == 'large' %} align-center{% endif %}"{% if section.settings.bg_image %}style="background-image: url({{ section.settings.bg_image | img_url: '1200x' }});"{% endif %}>
+  <div class="gd_hero_pip__text">
+    <div class="container"></div>
+    <style>
+      .gd_hero_pip__text .container {
+        background: {{ section.settings.overlay_color | default: '#231f20' }};
+        opacity: {% if section.settings.overlay_opacity %}{{ section.settings.overlay_opacity | divided_by: 10.0 }}{% else %}1{% endif %};
+      }
+    </style>
+    <div class="wrapper">
+
+      {% if section.settings.show_paw %}
+        {% render 'icon-paw' %}
+      {% endif %}
+
+      {%- unless section.settings.title == blank -%}
+        <h2 class="h1"{% if section.settings.text_color %} style="color: {{ section.settings.text_color }}"{% endif %}>{{ section.settings.title }}</h2>
+      {%- endunless -%}
+
+      {%- unless section.settings.text == blank -%}
+        <p class="gd-text{% if section.settings.text_size == 'large' %} large-text{% endif %}"{% if section.settings.text_color %} style="color: {{ section.settings.text_color }}"{% endif %}>{{ section.settings.text }}</p>
+      {%- endunless -%}
+      {%- if section.settings.button_link or section.settings.button_link_alt -%}
+        <div class="gd_hero-buttons">
+          {%- if section.settings.button_link_alt -%}
+            <div class="gd_hero-button">
+              <a href="{{ section.settings.button_link_alt }}" style="{% if section.settings.button_color_alt %}background: {{ section.settings.button_color_alt }};{% endif %}{% if section.settings.button_text_color_alt %}color: {{ section.settings.button_text_color_alt }};{% endif %}" class="btn {% unless section.settings.button_color_alt %}btn--blue{% endunless %}" title="take a look">{{ section.settings.button_text_alt }}</a>
+            </div>
+          {%- endif -%}
+          <div class="gd_hero-button">
+            {%- if section.settings.show_arrow -%}
+              <a href="{{ section.settings.button_link }}" aria-label="{{ section.settings.button_text }}">
+                <svg width="47" height="37" viewBox="0 0 47 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M23.5492 36.4486L3.24023 18.8752L43.8582 18.8752L23.5492 36.4486Z" fill="#BE92C5"/>
+                  <rect x="15.7324" width="15.6339" height="19.526" fill="#BE92C5"/>
+                </svg>
+              </a>
+            {%- else -%}
+              <a href="{{ section.settings.button_link }}" style="{% if section.settings.button_color %}background: {{ section.settings.button_color }};{% endif %}{% if section.settings.button_text_color %}color: {{ section.settings.button_text_color }};{% endif %}" class="btn {% unless section.settings.button_color %}btn--blue{% endunless %}" title="take a look">{{ section.settings.button_text }}</a>
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+    </div>
+  </div>
+
+  {%- if section.settings.image and section.settings.image_placement == 'center' -%}
+    <div class="litter-image">
+      {% render 'image', image: section.settings.image %}
+    </div>
+  {%- endif -%}
+
+  <div id="pip-video" class="gd_hero_pip__image{% if section.settings.image_placement == 'right' %} has-image{% endif %}">
+    {%- if section.settings.image and section.settings.image_placement == 'right' -%}
+      <div class="litter-image">
+        {% render 'image', image: section.settings.image %}
+      </div>
+    {%- endif -%}
+
+    {% if section.settings.video_thumbnail %}
+      {% assign image = section.settings.video_thumbnail %}
+      <img
+        class=""
+        {% if image.src contains 'jpg' or image.src contains 'jpeg' -%}
+        srcset="{%- if image.width >= 165 -%}{{ image | img_url: '165x', format: 'pjpg' }} 165w,{%- endif -%}
+        {%- if image.width >= 330 -%}{{ image | img_url: '330x', format: 'pjpg' }} 330w,{%- endif -%}
+        {%- if image.width >= 535 -%}{{ image | img_url: '535x', format: 'pjpg' }} 535w,{%- endif -%}
+        {%- if image.width >= 750 -%}{{ image | img_url: '750x', format: 'pjpg' }} 750w,{%- endif -%}
+        {%- if image.width >= 1000 -%}{{ image | img_url: '1000x', format: 'pjpg' }} 1000w,{%- endif -%}
+        {%- if image.width >= 1500 -%}{{ image | img_url: '1500x', format: 'pjpg' }} 1500w,{%- endif -%}
+        {%- if image.width >= 3000 -%}{{ image | img_url: '3000x', format: 'pjpg' }} 3000w{%- endif -%}"
+        src="{{ image | img_url: '3000x' }}"
+        {%- else -%}
+        srcset="{%- if image.width >= 165 -%}{{ image | img_url: '165x' }} 165w,{%- endif -%}
+            {%- if image.width >= 330 -%}{{ image | img_url: '330x' }} 330w,{%- endif -%}
+            {%- if image.width >= 535 -%}{{ image | img_url: '535x' }} 535w,{%- endif -%}
+            {%- if image.width >= 750 -%}{{ image | img_url: '750x' }} 750w,{%- endif -%}
+            {%- if image.width >= 1000 -%}{{ image | img_url: '1000x' }} 1000w,{%- endif -%}
+            {%- if image.width >= 1500 -%}{{ image | img_url: '1500x' }} 1500w,{%- endif -%}
+            {%- if image.width >= 3000 -%}{{ image | img_url: '3000x' }} 3000w{%- endif -%}"
+        src="{{ image | img_url: '3000x' }}"
+        {%- endif %}
+        alt="{{ image.alt | escape }}"
+        loading="lazy"
+      />
+      <a class="play-btn" data-fancybox href="https://www.youtube.com/watch?v={{ section.settings.video_url }}" title="play video">
+        <div id="video-play-btn" class="play-btn-container">
+          <div class="play-icon"></div>
+        </div>
+      </a>
+      {% if section.settings.video_url_with_audio %}
+        <a class="audio-description-link" target="_blank" href="{{ section.settings.video_url_with_audio }}">Video with Audio Description</a>
+      {% endif %}
+      <div class="remodal video" data-remodal-id="{{ section.settings.video_url }}-grid-video" aria-modal="true">
+        <button data-remodal-action="close" class="remodal-close"></button>
+        <div class="youtube-player" data-id="{{ section.settings.video_url }}"></div>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Guide Dog Hero Pip",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Background Image"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay Color"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay Opacity",
+      "default": 5,
+      "min": 1,
+      "max": 10,
+      "step": 1
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "radio",
+      "id": "image_placement",
+      "label": "Image Placement",
+      "options": [
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "center",
+          "label": "Center Bottom"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Left Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_paw",
+      "default": true,
+      "label": "Show Paw?"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "radio",
+      "id": "text_size",
+      "label": "Text Size",
+      "options": [
+        {
+          "value": "regular",
+          "label": "Regular"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        }
+      ],
+      "default": "regular"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button Color"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrow",
+      "default": false,
+      "label": "Show arrow for the button?"
+    },
+    {
+      "type": "text",
+      "id": "button_text_alt",
+      "label": "Additional Button Text"
+    },
+    {
+      "type": "url",
+      "id": "button_link_alt",
+      "label": "Additional Button Link"
+    },
+    {
+      "type": "color",
+      "id": "button_color_alt",
+      "label": "Additional Button Color"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color_alt",
+      "label": "Additional Button Text Color"
+    },
+    {
+      "type": "header",
+      "content": "Right Content"
+    },
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "YouTube video ID",
+      "info": "Example Fkgb6aAHyCQ"
+    },
+    {
+      "type": "text",
+      "id": "video_url_with_audio",
+      "label": "YouTube video ID (with audio description)",
+      "info": "Example Fkgb6aAHyCQ"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_thumbnail",
+      "label": "Video Thumbnail"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Image",
+      "name":"Guide Dog Hero Pip"
+    }
+  ]
+}
+{% endschema %}

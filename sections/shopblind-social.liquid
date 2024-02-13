@@ -1,0 +1,29 @@
+{% if section.blocks %}
+    <div class="grid-new shopblind-social">
+        {% for block in section.blocks %}
+          {% unless block.settings.img == empty %}
+            <div class="grid-new__item">
+                {{ block.settings.img | img_url: '400x400', crop: 'center' | img_tag: '','shopblind-social-img lazyload' }}
+            </div>
+          {% endunless %}
+        {% endfor %}
+    </div>
+  {% endif %}
+  
+  {% schema %}
+  {
+    "blocks": [
+      {
+        "type": "Image",
+        "name": "Social image",
+        "settings": [
+          {
+            "id": "img",
+            "type": "image_picker",
+          "label": "Pick 3 images"
+          }
+        ]
+      }
+    ]
+  }
+  {% endschema %}

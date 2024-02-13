@@ -1,0 +1,106 @@
+ <div class="grid grid--full videos">
+  {% for block in section.blocks%}
+    <div
+      class="grid__item large--one-quarter  medium--one-half video-block"
+      style="background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.4)), rgba(0,0,0,0.4) url('{{ block.settings.videothumb | img_url: '400x' }}')" {{ block.shopify_attributes }}
+      aria-label="{{ block.settings.title }}"
+    >
+        <div class="video-block__content">
+          <span class="h2 video-block__title" style="color:{{block.settings.textcolor}}">{{block.settings.title}}</span>
+          <a class="play-btn" data-fancybox href="https://www.youtube.com/watch?v={{ block.settings.videoid }}" title="{{ block.settings.title }}">
+              {% include 'svg_icon_play',
+                fill: {{block.settings.textcolor}}
+                title: {{block.settings.title}}
+               %}
+            </a>
+        </div>
+    </div>
+
+    {% comment %}
+    <div class="remodal video" data-remodal-id="{{ block.settings.videoid }}-grid-video" aria-modal="true">
+      <button data-remodal-action="close" class="remodal-close"></button>
+      <div class="youtube-player" data-id="{{ block.settings.videoid }}"></div>
+    </div>
+    {% endcomment %}
+
+    {% endfor %}
+
+    <div
+      class="grid__item large--one-quarter medium--one-half video-block video-block--youtube"
+      aria-label="Follow Us on Youtube"
+    >
+        <div class="video-block__content">
+        <a href="https://www.youtube.com/channel/UCtsHxYoaxKBDl_kMQmtLPCw" title="follow two blind brothers on youtube" target="_blank"/>
+             {% include 'svg_copy_follow-us-on-youtube' %}
+              {% include 'svg_arrow-solid',
+               fill: '#F0D83D',
+               classes: 'video-block__arrow' %}
+        </a>
+        </div>
+     </div>
+
+</div>
+
+
+
+
+{% schema %}
+{
+  "name": "Videos",
+  "max_blocks": 3,
+  "settings": [
+  ],
+  "blocks": [
+    {
+      "type": "vid",
+      "name": "Add Video",
+      "settings": [
+        {
+          "id": "videoid",
+          "type": "text",
+       	  "label": "YouTube video ID"
+        },
+        {
+          "id": "videothumb",
+          "type": "image_picker",
+       	  "label": "Thumbnail"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "Video title"
+        },
+        {
+            "type": "select",
+            "id": "textcolor",
+            "label": "Text color",
+            "options": [
+              { "value": "#fff", "label": "White"},
+              { "value": "#231F20", "label": "Black"},
+              { "value": "#F0D83D", "label": "Yellow"},
+              { "value": "#ebebeb", "label": "Grey"}
+           ],
+           "default":   "#fff"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video blocks",
+      "category": "Videos",
+      "blocks": [
+        {
+          "type": "vid"
+        },
+        {
+          "type": "vid"
+        },
+        {
+          "type": "vid"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

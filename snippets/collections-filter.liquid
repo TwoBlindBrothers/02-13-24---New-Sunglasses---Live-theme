@@ -1,0 +1,9 @@
+<div class="facets-vertical page-width">
+    {{ 'collections.css' | asset_url | stylesheet_tag }}
+    <script src="{{ 'collections.js' | asset_url }}" defer="defer"></script>
+    {%- if section.settings.collection_filter_enable or section.settings.collection_sort_enable -%}
+        <aside aria-labelledby="verticalTitle" class="facets-wrapper{% unless section.settings.collection_filter_enable %} facets-wrapper--no-filters{% endunless %}{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}" id="main-collection-filters" data-id="{{ section.id }}">
+            {% render 'filter-options', results: collection, enable_filtering: section.settings.collection_filter_enable, enable_sorting: section.settings.collection_sort_enable, filter_type: 'vertical' %}
+        </aside>
+    {%- endif -%}
+</div>

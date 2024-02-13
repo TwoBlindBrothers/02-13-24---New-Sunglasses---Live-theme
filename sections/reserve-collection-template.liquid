@@ -1,0 +1,289 @@
+{% assign collection_is_able_to_show_button = "false" %}
+{% if collection.metafields.style.show_add_to_cart_button %}
+  {% assign collection_is_able_to_show_button = "true" %}
+{% endif %}
+
+{%- capture arrow_left -%}
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <path d="M12 13.8L7.2 8.24912L12 3.00005" stroke="#000"/>
+  </svg>
+{%- endcapture -%}
+
+{%- capture arrow_right -%}
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <path d="M7.19922 3L11.9992 8.55093L7.19922 13.8" stroke="#343538"/>
+  </svg>
+{%- endcapture -%}
+
+{%- assign page_1_video = 0 -%}
+{% for block in section.blocks %}
+  {%- if block.settings.position <= section.settings.products_per_page -%}
+    {%- assign page_1_video = page_1_video | plus: 1 -%}
+  {%- endif -%}
+{% endfor %}
+
+{%- assign products_per_page = section.settings.products_per_page | minus: page_1_video -%}
+{%- assign video_insert = 0 -%}
+{%- liquid
+  assign filter_bar_enabled = false
+  if section.settings.show_sort or section.settings.show_filters
+  assign filter_bar_enabled = true
+  endif
+  assign paginated = true
+-%}
+<section
+  data-section-id="{{ section.id }}"
+  data-section-type="collection"
+  data-pagination-type="{{ section.settings.pagination }}"
+  data-collection-item-count="{{ collection.all_products_count }}"
+  data-collection-items-per-page="{{ products_per_page }}"
+  data-collection-columns="{{ section.settings.columns }}"
+  class="
+    section
+    section--includes-product-items
+    section--full-width
+    collection
+    collection--columns-{{ section.settings.columns }}
+    collection--pagination-{{ section.settings.pagination }}
+    {% if filter_bar_enabled %}collection--has-filter-bar{% endif %}
+    animation
+    animation--collection
+    block text-black bg-white
+  "
+>
+  <div class="collection__inner">
+    {%- if collection.all_products_count > 0 -%}
+      <script type="application/json" data-tags>
+        {% if collection.all_tags.size > 0 %}
+          [
+            {%- for tag in collection.all_tags -%}
+              { "label": "{{ tag | escape }}", "handle": "{{ tag | handleize }}" }
+              {%- if forloop.last == false -%}, {%- endif -%}
+        {%- endfor -%}
+          ]
+        {% else %}
+          []
+        {% endif %}
+      </script>
+
+      {% paginate collection.products by products_per_page %}
+      <div class="collection__container reserve-collection-template-wrapper mx-auto max-w-[1440px] w-full px-[16px] sm:px-8 md:px-10 xl:px-[56px]">
+        <div class="collection__content">
+          <div class="filter-bar-wrapper flex justify-between items-center border-t border-b border-grey-200 border-solid">
+            {%
+              render 'mobile-filters' with
+              results: collection,
+              show_sort: section.settings.show_sort,
+              show_filters: section.settings.show_filters,
+              enable_sticky_filter_bar: section.settings.enable_sticky_filter_bar
+            %}
+            {%
+              render 'filter-bar' with
+              results: collection,
+              show_item_count: section.settings.show_item_count,
+              show_sort: section.settings.show_sort,
+              show_filters: section.settings.show_filters,
+              show_swatch_filters: section.settings.show_swatch_filters,
+              show_chip_filters: section.settings.show_chip_filters,
+              enable_sticky_filter_bar: section.settings.enable_sticky_filter_bar,
+              collapse_filter_bar: section.settings.collapse_filter_bar,
+              chip_layout: section.settings.chip_layout
+            %}
+          </div>
+          <div class="collection__main-area">
+            <div class="collection__window">
+              <div class="collection__loading" data-loading>
+                {%- render 'loader-collection' -%}
+              </div>
+
+              <div
+                id="root"
+                class="animation--collection-items"
+                data-partial
+                data-collection-products-count="{{ collection.products_count }}"
+              >
+                <div
+                  class="
+                      collection__products
+                      collection__infinite-container
+                      {% if collection.products_count == 0 %}
+                        collection__products--no-products
+                      {% endif %}
+                      grid grid-cols-2 mx-auto gap-x-4 gap-y-6 sm:grid-cols-3 sm:gap-y-5 md:gap-6 xl:gap-8
+                    "
+                >
+                  {% for product in collection.products %}
+                    {%- assign position_index = total_pass_card | plus: forloop.index -%}
+
+                    {% for block in section.blocks %}
+                      {%- assign video_position = block.settings.position | minus: video_insert -%}
+                      {%- if position_index == video_position and block.settings.video_embed != blank -%}
+                        <div class="relative aspect-[164/364] sm:aspect-[224/440] md:aspect-[299/548] xl:aspect-[421/710] [&_iframe]:!h-full [&_iframe]:rounded-lg">
+                          {{- block.settings.video_embed -}}
+                        </div>
+                        {%- assign video_insert = video_insert | plus: 1 -%}
+                      {%- endif -%}
+                    {% endfor %}
+
+                    {% render 'reserve-product-card', product: product, collection_is_able_to_show_button: collection_is_able_to_show_button, position: position_index %}
+                  {% endfor %}
+
+                  {% for block in section.blocks %}
+                    {%- assign max_item_in_page = section.settings.products_per_page | times: paginate.current_page -%}
+                    {%- assign last_position = max_item_in_page | minus: page_1_video -%}
+                    {%- if block.settings.position > last_position and block.settings.position <= max_item_in_page and block.settings.video_embed != blank -%}
+                      <div class="relative aspect-[164/364] sm:aspect-[224/440] md:aspect-[299/548] xl:aspect-[421/710] [&_iframe]:!h-full [&_iframe]:rounded-lg">
+                        {{- block.settings.video_embed -}}
+                      </div>
+                    {%- endif -%}
+                  {% endfor %}
+                </div>
+
+                {% unless paginated %}
+                  <div>
+                    {%
+                      render 'pagination' with
+                      paginate: paginate,
+                      type: 'general.pagination.products',
+                      display_paginate_item_count_only: true
+                    %}
+                    <div class="collection__infinite-trigger">
+                      {% if paginate.next %}
+                        <a href="{{ paginate.next.url }}" class="btn btn--secondary no-transition" data-click-to-load>
+                          {{- 'general.pagination.load_more' | t -}}
+                        </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endunless %}
+
+                {% if paginated %}
+                  <div>
+                    {% if paginate.pages > 1 %}
+                      {%
+                        render 'pagination' with
+                        paginate: paginate,
+                        type: 'general.pagination.products',
+                        show_item_count: true
+                      %}
+                    {% else %}
+                      {%
+                        render 'pagination' with
+                        paginate: paginate,
+                        type: 'general.pagination.products',
+                        display_paginate_item_count_only: true
+                      %}
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endpaginate %}
+
+      {%
+        render 'filter-drawer' with
+        results: collection,
+        show_sort: section.settings.show_sort,
+        show_filters: section.settings.show_filters,
+        show_swatch_filters: section.settings.show_swatch_filters,
+        show_chip_filters: section.settings.show_chip_filters,
+        chip_layout: section.settings.chip_layout,
+        collapse_filter_groups_mobile: section.settings.collapse_filter_groups_mobile
+      %}
+    {%- else -%}
+      <div class="collection__empty ta-c">
+        <p class="label">{{ 'collections.general.no_matches' | t }}</p>
+        <a class="btn btn--text-link" href="{{ routes.all_products_collection_url }}">{{ 'general.404.link' | t }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+<script src="https://widget.gotolstoy.com/script.js" defer></script>
+
+{% schema %}
+{
+  "name": "Collection page",
+  "settings": [
+    {
+      "type": "number",
+      "id": "products_per_page",
+      "label": "Products Per Page",
+      "default": 15
+    },
+    {
+      "type": "checkbox",
+      "id": "show_item_count",
+      "label": "Show Item count",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Filters"
+    },
+    {
+      "id": "show_sort",
+      "type": "checkbox",
+      "label": "Show sort",
+      "default": true
+    },
+    {
+      "id": "show_filters",
+      "type": "checkbox",
+      "label": "Show Filters",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky_filter_bar",
+      "label": "Enable sticky filter bar",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "collapse_filter_bar",
+      "label": "Collapse filter bar",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "collapse_filter_groups_mobile",
+      "label": "Collapse filter groups mobile",
+      "default": true
+    },
+    {
+      "id": "show_swatch_filters",
+      "type": "checkbox",
+      "label": "Show swatch filter",
+      "default": true
+    },
+    {
+      "id": "show_chip_filters",
+      "type": "checkbox",
+      "label": "Show chip filters",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Video",
+      "type": "video",
+      "settings": [
+        {
+          "type": "number",
+          "id": "position",
+          "label": "Position",
+          "default": 3
+        },
+        {
+          "type": "html",
+          "id": "video_embed",
+          "label": "Video embed"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

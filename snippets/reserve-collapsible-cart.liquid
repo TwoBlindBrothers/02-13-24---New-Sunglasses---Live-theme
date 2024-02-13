@@ -1,0 +1,16 @@
+{% if settings.reserve_collapsible_title != blank and settings.reserve_collapsible_content != blank %}
+  <reserve-collapsible-cart class="reserve-collapsible-cart collapsible js-reserve-cart-collapsible" hidden>
+    <button type="button" class="collapsible-trigger" id="collapsible-trigger" aria-expanded="false" aria-controls="collapsible-content">
+      <span class="collapsible-title">{{ settings.reserve_collapsible_title }}</span>
+      <span class="collapsible-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="8" fill="none" viewBox="0 0 13 8"><path stroke="#000" stroke-width="1.5" d="m1 1 5.5 5L12 1"/></svg>
+      </span>
+    </button>
+    <div class="collapsible-content" id="collapsible-content" role="region" aria-labelledby="collapsible-trigger">
+      <div class="collapsible-content__inner">
+        {{ settings.reserve_collapsible_content }}
+      </div>
+    </div>
+  </reserve-collapsible-cart>
+  {%- render 'vite-tag' with 'reserve-collapsible-cart.js' -%}
+{% endif %}

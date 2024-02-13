@@ -1,0 +1,311 @@
+<header-reserve class="block bg-white header-reserve">
+  <div class="fixed inset-0 opacity-0 z-10 w-full h-full bg-black/40 invisible transition-all duration-300 ease-in-out [.is-active_&]:opacity-100 [.is-active_&]:visible" data-menu-overlay></div>
+  <div class="header-reserve__wrapper relative flex justify-center w-full items-center max-w-[1440px] mx-auto pt-[19px] pb-[12px] px-4 bg-white z-10 sm:pt-4 sm:pb-[13px] sm:px-8 md:pt-[27px] md:pb-[23px] md:px-10 lg:justify-between lg:py-[26px] lg:px-[56px]">
+    <nav class="absolute header-reserve__nav-mobile left-4 bottom-6 sm:left-8 md:left-10 md:bottom-10 lg:hidden">
+      <button class="hamburger--spring header-reserve__hamburger" type="button" data-btn-menu-trigger>
+        <span class="header-reserve__hamburger-box">
+          <span class="header-reserve__hamburger-inner"></span>
+        </span>
+      </button>
+    </nav>
+    <a class="header-reserve__logo-wrapper flex flex-col justify-center items-center gap-[6px] lg:gap-[7px]" href="{{- shop.url -}}/pages/thereserve" itemprop="url">
+      {%- if section.settings.logo != blank -%}
+        {% if template contains 'warranty' or template contains 'replacement' %}
+          <img loading="eager" src="{{ '2bb-logo.png' | asset_url }}" width="124" height="auto" alt="logo"/>
+        {% else %}
+          {{- section.settings.logo | image_url: width: 200 | image_tag: alt: 'logo', class: 'w-[98px] h-auto md:w-[124px]' -}}
+        {% endif %}
+        <h1 class="visually-hidden">{{- shop.name -}}</h1>
+      {%- else -%}
+        <h1>{{- shop.name -}}</h1>
+      {%- endif -%}
+      <span class="font-medium text-black uppercase header-reserve__logo-text text-xxs font-base md:text-xs">The reverse</span>
+    </a>
+    <nav class="hidden header-reserve__nav-desktop lg:block lg:relative lg:z-10">
+      <ul class="flex flex-row gap-6">
+        {%- for link in linklists[section.settings.menu].links -%}
+          {%- assign sub_size = link.links | size -%}
+          <li class="m-0">
+            <div class="js-header-reserve-navigation">
+              <div class="flex flex-row items-center gap-[5px] cursor-pointer header-reserve__menu-item"{% if sub_size > 0 %} data-btn-submenu-desktop{% endif %}>
+                <a class="font-medium tracking-normal text-black text-p2 font-base" href="{%- if sub_size > 0 -%}javascript:void(0){%- else -%}{{- link.url -}}{%- endif -%}">{{- link.title -}}</a>
+                {%- if sub_size > 0 -%}
+                  <span class="block w-[5px] h-[11px] rotate-90 transition-transform duration-300 ease-in-out header-reserve__menu-item-icon">
+                    {%- render 'icons', icon: 'chevron-right' -%}
+                  </span>
+                {%- endif -%}
+              </div>
+              {%- if sub_size > 0 -%}
+                <div class="absolute top-[60px] left-[-24px] flex flex-row gap-10 min-w-[830px] w-full h-auto px-6 py-4 bg-white opacity-0 invisible transition-all duration-300 ease-in-out header-reserve__menu-item-content lg:rounded-[0_0_16px_16px]">
+                  <ul class="grid w-full grid-cols-3 m-0 bg-white gap-x-10 after:content-none">
+                    {%- for sublink in link.links -%}
+                      {%- assign sub_child_size = sublink.links | size -%}
+                      <li class="m-0">
+                        {% if sublink.url != '#' %}
+                        <a href="{{- sublink.url -}}"
+                        {% else %}
+                        <p
+                        {% endif %}
+                        class="block mb-4 font-medium tracking-normal text-black text-p2 font-base">{{- sublink.title -}}
+                        {% if sublink.url == '#' %}
+                        </a>
+                        {% else %}
+                        </p>
+                        {% endif %}
+                        {%- if sub_child_size > 0 -%}
+                          <ul class="m-0 flex flex-col gap-[6px]">
+                            {%- for sub_child in sublink.links -%}
+                              <li class="m-0">
+                                <a class="font-normal tracking-normal text-p3 font-base text-grey-400 hover:underline hover:text-grey" href="{{- sub_child.url -}}">{{- sub_child.title -}}</a>
+                              </li>
+                            {%- endfor -%}
+                          </ul>
+                        {%- endif -%}
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                  {%- if section.blocks.size > 0 -%}
+                    <div class="m-0 w-full max-w-[227px]">
+                      {%- for block in section.blocks -%}
+                        <div class="relative m-0">
+                          <a href="{%- if block.settings.url != blank -%}{{- block.settings.url -}}{%- else -%}javascript:void(0){%- endif -%}" class="relative block w-full aspect-square">
+                            {{- block.settings.image | image_url: width: 300 | image_tag: class: 'absolute inset-0 w-full h-full object-cover rounded-[8px] lg:rounded-none', alt: block.settings.title, lazy: 'loading' -}}
+                          </a>
+                          <div class="absolute flex flex-col gap-2 left-4 bottom-4">
+                            {%- if block.settings.title != blank -%}
+                              <p class="font-normal tracking-normal text-black text-p3 font-base" style="color: {{ block.settings.text_color }}">{{- block.settings.title -}}</p>
+                            {%- endif -%}
+                            {%- if block.settings.url != blank -%}
+                              <a class="font-medium tracking-normal underline text-p2 text-grey-400 font-base underline-offset-2 hover:text-grey" style="color: {{ block.settings.text_color }}" href="{{- block.settings.url -}}">Shop Now</a>
+                            {%- endif -%}
+                          </div>
+                        </div>
+                      {%- endfor -%}
+                    </div>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+    <div class="absolute flex flex-row items-center justify-end gap-4 right-4 bottom-6 sm:right-8 md:right-10 md:bottom-10 lg:relative lg:inset-0 lg:gap-[13px] header-reserve__icons">
+      <a href="{{ section.settings.shop_blind_cta }}" class="hidden hover:bg-yellow-30 lg:flex justify-center items-center gap-[10px] w-fit mr-[11px] px-6 py-[11px] font-medium text-black border border-yellow bg-yellow text-p2 tracking-normal font-base rounded-[30px]">
+        <span class="block w-5 h-auto">{%- render 'icons', icon: 'blind' -%}</span>
+        <span>Shop Blind</span>
+      </a>
+      <a class="hidden lg:block" aria-controls="searchFormDesktop" href="javascript:void(0)" aria-expanded="false" data-btn-search-desktop>
+        <span class="w-5 h-auto">
+          {%- render 'icons', icon: 'search' -%}
+        </span>
+      </a>
+      <status-saved-link
+        class="block w-[22px] h-5 indent-0.5 header-reserve__icons-wishlist status-save-link hidden"
+        aria-label="View saved items"
+        style="--indicator-position-vertical: -7%; --indicator-position-horizontal: 120%;"
+      ></status-saved-link>
+      <a href="/account" class="hidden lg:block">
+        <span class="block w-5 h-auto">
+          {%- render 'icons', icon: 'account-desktop' -%}
+        </span>
+      </a>
+      <a onclick="return false" href="/cart" class="w-5 h-5 relative js-drawer-open-right header-reserve__icons-cart" aria-controls="CartDrawer" aria-expanded="false">
+        {% render 'icons', icon: 'cart' %}
+        <span class="cart__item-count bg-yellow text-black p3 flex justify-center items-center w-5 h-5 rounded-full js-item-count">{{- cart.item_count -}}</span>
+      </a>
+    </div>
+  </div>
+  <nav class="fixed top-[115px] left-[-100%] w-full h-full z-[100] bg-white transition-[left] duration-300 ease-in-out sm:top-[113px] md:top-[145px] md:max-w-[396px] [.is-active_&]:left-0 lg:absolute lg:h-auto lg:bg-transparent lg:max-w-none lg:left-0 lg:right-0 lg:hidden lg:transition-none [&.is-active]:lg:block"
+    aria-hidden
+    aria-modal="true"
+    aria-labelledby="menu-overlay-title"
+    role="dialog"
+    aria-hidden="true"
+    data-search-form-desktop
+  >
+    {% render 'predictive-search' %}
+    <div class="js-mobile-nav-container [&.open]:overflow-hidden overflow-x-hidden relative h-[calc(100%-165px)] px-4 overflow-auto sm:h-[calc(100%-120px)] sm:px-8 md:h-[calc(100%-150px)] md:px-10 lg:hidden">
+      <ul class="flex flex-col gap-6 pt-8 m-0">
+        {%- for link in linklists[section.settings.menu].links -%}
+          {%- assign sub_size = link.links | size -%}
+          <li class="m-0">
+            <div>
+              <div class="flex flex-row items-center gap-4 cursor-pointer" {% if sub_size > 0 %} data-btn-submenu{% endif %}>
+                <a class="font-normal text-black text-h2 font-base tracking-normal" href="{%- if sub_size > 0 -%}javascript:void(0){%- else -%}{{- link.url -}}{%- endif -%}">{{- link.title -}}</a>
+                {%- if sub_size > 0 -%}
+                  <span class="block w-[5px] h-[11px]">
+                    {%- render 'icons', icon: 'chevron-right' -%}
+                  </span>
+                {%- endif -%}
+              </div>
+              {%- if sub_size > 0 -%}
+                <div class="absolute right-[-100%] top-0 w-full h-auto px-4 pt-[18px] pb-5 bg-white transition-[right] duration-300 ease-in-out sm:px-8 md:px-10 [&.is-active]:right-0 [&.is-active]:h-full [&.is-active]:overflow-y-auto" data-submenu-{{ forloop.index0 }}>
+                  <div class="flex flex-row items-center gap-[9px] mb-[33px] cursor-pointer" data-btn-back-menu>
+                    <span class="block w-[10px] h-[10px]">
+                      {%- render 'icons', icon: 'arrow-left' -%}
+                    </span>
+                    <p class="font-medium tracking-normal text-black font-base text-label">Back</p>
+                  </div>
+                  <ul class="grid grid-cols-2 m-0 gap-x-4 gap-y-8">
+                    {%- for sublink in link.links -%}
+                      {%- assign sub_child_size = sublink.links | size -%}
+                      <li class="m-0">
+                        <a class="block mb-4 font-medium tracking-normal text-black text-label font-base !text-[15px]" href="{%- if sub_child_size > 0 -%}javascript:void(0){%- else -%}{{- sublink.url -}}{%- endif -%}">{{- sublink.title -}}</a>
+                        {%- if sub_child_size > 0 -%}
+                          <ul class="m-0">
+                            {%- for sub_child in sublink.links -%}
+                              <li class="m-0">
+                                <a class="font-normal tracking-normal text-p1 font-base text-grey-400" href="{{- sub_child.url -}}">{{- sub_child.title -}}</a>
+                              </li>
+                            {%- endfor -%}
+                          </ul>
+                        {%- endif -%}
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                  {%- if section.blocks.size > 0 -%}
+                    <div class="mt-[80px]">
+                      {%- for block in section.blocks -%}
+                        <div class="grid grid-cols-2 gap-4 m-0">
+                          <a href="{%- if block.settings.url != blank -%}{{- block.settings.url -}}{%- else -%}javascript:void(0){%- endif -%}" class="relative block w-full aspect-square">
+                            {{- block.settings.image | image_url: width: 300 | image_tag: class: 'absolute inset-0 w-full h-full object-cover rounded-[8px] lg:rounded-none', alt: block.settings.title, lazy: 'loading' -}}
+                          </a>
+                          <div class="flex flex-col gap-2">
+                            {%- if block.settings.title != blank -%}
+                              <p class="font-normal text-black text-p1 tracking-normal font-base max-w-[145px]">{{- block.settings.title -}}</p>
+                            {%- endif -%}
+                            {%- if block.settings.url != blank -%}
+                              <a class="font-medium tracking-normal underline text-label text-grey-400 font-base underline-offset-2" href="{{- block.settings.url -}}">Shop Now</a>
+                            {%- endif -%}
+                          </div>
+                        </div>
+                      {%- endfor -%}
+                    </div>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+      <ul class="flex flex-col gap-4 mt-[52px] sm:mt-[48px] md:mt-8">
+        {%- for link in linklists[section.settings.sub_menu].links -%}
+          <li class="m-0">
+            <a class="font-medium tracking-normal text-black text-label font-base" href="{{- link.url -}}">{{- link.title -}}</a>
+          </li>
+        {%- endfor -%}
+      </ul>
+      <ul class="flex flex-wrap justify-between items-center gap-4 mt-[63px] mb-6">
+        <li class="flex flex-row items-center gap-2 m-0">
+          <status-saved-link
+            class="relative w-4 h-4 z-[-1] indent-0.5 hidden"
+            aria-label="View saved items"
+            style="--indicator-position-vertical: -5px; --indicator-position-horizontal: 22px;"
+          >
+          </status-saved-link>
+          <span class="font-medium tracking-normal text-black text-label font-base">Wishlist</span>
+        </li>
+        <li class="m-0">
+          <a href="/account" class="flex flex-row items-center gap-2">
+            <span class="block w-4 h-4">
+              {%- render 'icons', icon: 'account' -%}
+            </span>
+            <span class="font-medium tracking-normal text-black text-label font-base">Account</span>
+          </a>
+        </li>
+        <li class="flex flex-row items-center gap-2 m-0">
+          <a href="javascript:void(0)" class="flex flex-row items-center gap-2">
+            <span class="block w-4 h-4">
+              {%- render 'icon-shipping-returns' -%}
+            </span>
+            <span class="font-medium tracking-normal text-black text-label font-base">Shipping & Returns</span>
+          </a>
+        </li>
+      </ul>
+      <div class="flex flex-col gap-3 py-4 border-solid border-y border-grey-200">
+        {%- if section.settings.headline != blank -%}
+          <p class="font-medium tracking-normal text-black font-base text-p2">{{ section.settings.headline }}</p>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <p class="font-normal tracking-normal text-grey-400 font-base text-p2">{{ section.settings.description }}</p>
+        {%- endif -%}
+        <a href="{{ section.settings.shop_blind_cta }}" class="flex justify-center items-center gap-[10px] px-8 py-2 font-medium text-black bg-yellow text-p2 tracking-normal font-base rounded-[30px] md:py-[10px]">
+          <span class="block w-5 h-auto">{%- render 'icons', icon: 'blind' -%}</span>
+          <span>Shop Blind</span>
+        </a>
+      </div>
+      {%- render 'social-icons', class: 'mt-6 mb-5' -%}
+    </div>
+  </nav>
+</header-reserve>
+
+{% schema %}
+{
+  "name": "Header Reserve",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu"
+    },
+    {
+      "type": "link_list",
+      "id": "sub_menu",
+      "label": "SubMenu"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Take the Shop Blind Challenge"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Would you buy something that you can’t see? We promise you’ll get something you’ll love. No Tricks just Treats. If you don’t think it’s perfect, you can return it, no questions asked. Trust us! 100% of the profits are donated to Foundation Fighting Blindness to help find a cure for blindness."
+    },
+    {
+      "type": "url",
+      "id": "shop_blind_cta",
+      "label": "Shop Blind CTA"
+    }
+  ],
+  "max_blocks": 1,
+  "blocks": [
+    {
+      "type": "features",
+      "name": "Featured Collection",
+      "settings": [
+        {
+          "type": "url",
+          "id": "url",
+          "label": "URL"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text Color",
+          "default": "#ffffff"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

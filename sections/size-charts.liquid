@@ -1,0 +1,207 @@
+{% assign type = "" %}
+
+{% if product.type == "Mens" %}
+  {% assign type = "mens" %}
+{% endif %}
+
+{% if product.type == "Womens" %}
+  {% assign type = "womens" %}
+{% endif %}
+
+{% if product.tags contains "unisex" %}
+  {% assign type = "unisex" %}
+{% endif %}
+
+{% if product.metafields.global.include_size_chart %}
+  <a data-remodal-target="{{ type }}-size-chart" class="h5 size-chart-link">View Sizing Chart</a>
+{% endif %}
+
+<div class="remodal" data-remodal-id="{{ type }}-size-chart" data-remodal-options="hashTracking: false">
+  <button data-remodal-action="close" class="remodal-close"></button>
+  <div class="wrapper size-chart">
+    <table>
+      <caption>{{ product.title }}</caption>
+      <tbody>
+        <tr>
+          <td>&nbsp;</td>
+
+          {% if product.metafields.global.length_xxs != blank or product.metafields.global.waist_xxs != blank or product.metafields.global.chest_xxs != blank or product.metafields.global.neck_xxs != blank %}
+            <th scope="col">XXS</th>
+          {% endif %}
+
+          {% if product.metafields.global.length_xs != blank or product.metafields.global.waist_xs != blank or product.metafields.global.chest_xs != blank or product.metafields.global.neck_xs != blank %}
+            <th scope="col">XS</th>
+          {% endif %}
+
+          {% if product.metafields.global.length_s != blank or product.metafields.global.waist_s != blank or product.metafields.global.chest_s != blank or product.metafields.global.neck_s != blank %}
+            <th scope="col">S</th>
+          {% endif %}
+
+          {% if product.metafields.global.length_m != blank or product.metafields.global.waist_m != blank or product.metafields.global.chest_m != blank or product.metafields.global.neck_m != blank %}
+            <th scope="col">M</th>
+          {% endif %}
+
+          {% if product.metafields.global.length_l != blank or product.metafields.global.waist_l != blank or product.metafields.global.chest_l != blank or product.metafields.global.neck_l != blank %}
+            <th scope="col">L</th>
+          {% endif %}
+
+          {% if product.metafields.global.length_xl != blank or product.metafields.global.waist_xl != blank or product.metafields.global.chest_xl != blank or product.metafields.global.neck_xl != blank %}
+            <th scope="col">XL</th>
+          {% endif %}
+
+          {% if product.metafields.global.length_xxl != blank or product.metafields.global.waist_xxl != blank or product.metafields.global.chest_xxl != blank or product.metafields.global.neck_xxl != blank %}
+            <th scope="col">XXL</th>
+          {% endif %}
+        </tr>
+        {% if product.metafields.global.neck_xxs != blank or product.metafields.global.neck_xs != blank or product.metafields.global.neck_s != blank or product.metafields.global.neck_m != blank or product.metafields.global.neck_l != blank or product.metafields.global.neck_xl != blank  or product.metafields.global.neck_xxl != blank %}
+        <tr>
+            <th scope="row">Neck (in.)</th>
+
+            {% if product.metafields.global.neck_xxs != blank %}
+              <td>{{ product.metafields.global.neck_xxs }}</td>
+            {% endif %}
+
+            {% if product.metafields.global.neck_xs != blank %}
+              <td>{{ product.metafields.global.neck_xs }}</td>
+            {% endif %}
+
+            {% if product.metafields.global.neck_s != blank %}
+              <td>{{ product.metafields.global.neck_s }}</td>
+            {% endif %}
+
+            {% if product.metafields.global.neck_m != blank %}
+              <td>{{ product.metafields.global.neck_m }}</td>
+            {% endif %}
+
+            {% if product.metafields.global.neck_l != blank %}
+              <td>{{ product.metafields.global.neck_l }}</td>
+            {% endif %}
+
+            {% if product.metafields.global.neck_xl != blank %}
+              <td>{{ product.metafields.global.neck_xl }}</td>
+            {% endif %}
+
+            {% if product.metafields.global.neck_xxl != blank %}
+              <td>{{ product.metafields.global.neck_xxl }}</td>
+            {% endif %}
+        </tr>
+        {% endif %}
+
+        {% if product.metafields.global.length_xxs != blank or product.metafields.global.length_xs != blank or product.metafields.global.length_s != blank or product.metafields.global.length_m != blank or product.metafields.global.length_l != blank or product.metafields.global.length_xl != blank  or product.metafields.global.length_xxl != blank %}
+        <tr>
+          <th scope="row">Length (in.)</th>
+
+          {% if product.metafields.global.length_xxs != blank %}
+            <td>{{ product.metafields.global.length_xxs }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.length_xs != blank %}
+            <td>{{ product.metafields.global.length_xs }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.length_s != blank %}
+            <td>{{ product.metafields.global.length_s }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.length_m != blank %}
+            <td>{{ product.metafields.global.length_m }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.length_l != blank %}
+            <td>{{ product.metafields.global.length_l }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.length_xl != blank %}
+            <td>{{ product.metafields.global.length_xl }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.length_xxl != blank %}
+            <td>{{ product.metafields.global.length_xxl }}</td>
+          {% endif %}
+
+        </tr>
+       {% endif %}
+
+        {% if product.metafields.global.waist_xxs != blank or product.metafields.global.waist_xs != blank or product.metafields.global.waist_s != blank or product.metafields.global.waist_m != blank or product.metafields.global.waist_l != blank or product.metafields.global.waist_xl != blank  or product.metafields.global.waist_xxl != blank %}
+
+         <tr>
+          <th scope="row">Waist (in.)</th>
+           {% if product.metafields.global.waist_xxs != blank %}
+            <td>{{ product.metafields.global.waist_xxs }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.waist_xs != blank %}
+            <td>{{ product.metafields.global.waist_xs }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.waist_s != blank %}
+            <td>{{ product.metafields.global.waist_s }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.waist_m != blank %}
+            <td>{{ product.metafields.global.waist_m }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.waist_l != blank %}
+            <td>{{ product.metafields.global.waist_l }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.waist_xl != blank %}
+            <td>{{ product.metafields.global.waist_xl }}</td>
+          {% endif %}
+         </tr>
+          {% endif %}
+
+        {% if product.metafields.global.chest_xxs != blank or product.metafields.global.chest_xs != blank or product.metafields.global.chest_s != blank or product.metafields.global.chest_m != blank or product.metafields.global.chest_l != blank or product.metafields.global.chest_xl != blank  or product.metafields.global.chest_xxl != blank %}
+
+        <tr>
+          <th scope="row">Chest (in.)</th>
+
+          {% if product.metafields.global.chest_xxs != blank %}
+            <td>{{ product.metafields.global.chest_xxs }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.chest_xs != blank %}
+            <td>{{ product.metafields.global.chest_xs }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.chest_s != blank %}
+            <td>{{ product.metafields.global.chest_s }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.chest_m != blank %}
+            <td>{{ product.metafields.global.chest_m }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.chest_l != blank %}
+            <td>{{ product.metafields.global.chest_l }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.chest_xl != blank %}
+            <td>{{ product.metafields.global.chest_xl }}</td>
+          {% endif %}
+
+          {% if product.metafields.global.chest_xxl != blank %}
+            <td>{{ product.metafields.global.chest_xxl }}</td>
+          {% endif %}
+
+        </tr>
+         {% endif %}
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Size Charts",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Size Charts",
+        "info": "Enter your size chart [information here.](/admin/bulk?resource_name=Product&edit=metafields.global.include_size_chart:boolean,metafields.global.neck_xxs:string,metafields.global.length_xxs:string,metafields.global.waist_xxs:string,metafields.global.chest_xxs:string,metafields.global.neck_xs:string,metafields.global.length_xs:string,metafields.global.waist_xs:string,metafields.global.chest_xs:string,metafields.global.neck_s:string,metafields.global.length_s:string,metafields.global.waist_s:string,metafields.global.chest_s:string,metafields.global.neck_m:string,metafields.global.length_m:string,metafields.global.waist_m:string,metafields.global.chest_m:string,metafields.global.neck_l:string,metafields.global.length_l:string,metafields.global.waist_l:string,metafields.global.chest_l:string,metafields.global.neck_xl:string,metafields.global.length_xl:string,metafields.global.waist_xl:string,metafields.global.chest_xl:string,metafields.global.neck_xxl:string,metafields.global.length_xxl:string,metafields.global.waist_xxl:string,metafields.global.chest_xxl:string)"
+      }
+    ]
+  }
+{% endschema %}

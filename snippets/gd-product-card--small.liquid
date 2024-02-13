@@ -1,0 +1,110 @@
+{%-liquid
+  assign on_sale = false
+  if product_card_product.compare_at_price > product_card_product.price
+    assign on_sale = true
+  endif
+
+  assign sold_out = true
+  if product_card_product.available
+    assign sold_out = false
+  endif
+
+  if product_card_product.metafields.guidedog.sold_out
+    assign sold_out = true
+  endif
+
+  assign shop_blind_only = false
+  if product_card_product.metafields.guidedog.rarity == "Ultra-Rare" or product_card_product.metafields.guidedog.sold_out
+    assign shop_blind_only = true
+  endif
+
+  assign presale = false
+  if product_card_product.selected_or_first_available_variant.metafields.accentuate.presale
+    assign today_date = 'now' | date: '%s'
+    assign four_hours = 60 | times: 60 | times: 4
+    assign today_date = today_date | times: 1
+    assign today_date = today_date | minus: four_hours
+    assign presale_start_date = product_card_product.selected_or_first_available_variant.metafields.accentuate.presale_start_date | date: '%s' | times: 1
+    assign presale_end_date = product_card_product.selected_or_first_available_variant.metafields.accentuate.presale_end_date | date: '%s' | times: 1
+    if today_date >= presale_start_date and today_date < presale_end_date
+      assign presale = true
+      assign sold_out = false
+    else 
+      assign presale = false 
+      if sold_out == true
+        assign sold_out = false
+      endif
+    endif
+  endif
+
+  assign limited_quantity = blank
+  if product_card_product.selected_or_first_available_variant.metafields.available_stock.count != blank
+    assign limited_quantity = product_card_product.selected_or_first_available_variant.metafields.available_stock.count | times: 1
+  endif 
+  if limited_quantity != blank and limited_quantity <= 0
+    assign presale = false 
+    assign sold_out = true
+  endif
+
+-%}
+
+<div class="gd_complete">
+  <div class="gd_complete__inner">
+    <a class="gd_complete__image" href="{{ product_card_product.url }}" aria-hidden="true">
+      <picture>
+        <source data-srcset="{{ product_card_product.featured_image.src | img_url: '700x' }}" media="(min-width: 1200px)" />
+        <source data-srcset="{{ product_card_product.featured_image.src | img_url: '500x' }}" media="(min-width: 769px)" />
+        <source data-srcset="{{ product_card_product.featured_image.src | img_url: '300x' }}" media="(min-width: 500px)" />
+        <source data-srcset="{{ product_card_product.featured_image.src | img_url: '200x' }}" media="(min-width: 320px)" />
+        <img data-src="{{ product_card_product.featured_image.src | img_url: '700x' }}" alt="{% if product_card_product.metafields.accessibility.description %}{{ product_card_product.metafields.accessibility.description }}{% else %}{{ product_card_product.title }}{% endif %}" class="lazyload"/>
+      </picture>
+    </a>
+    <div class="gd_complete__info">
+      <h3 class="h6">
+        <a href="{{ product_card_product.url }}">
+          {{- product_card_product.title -}}
+        </a>
+      </h3>
+      {%- if sold_out -%}
+        {% assign title_size = product_card_product.title | size %}
+        <a href="{{ product_card_product.url }}" class="btn btn--blue btn--small" style="{% if title_size > 16 %}font-size: .75rem; line-height: 1.1; padding-right: .25rem; padding-left: .25rem;{% endif %}">
+          {{ product_card_product.title | prepend: 'Meet ' }}
+        </a>
+      {%- else -%}
+        <button type="button" class="btn btn--blue btn--small" id="AddGuideDog-{{ index }}">
+          <span>{%- if presale -%}Pre-order{%- else -%}{{ 'products.product.add_to_cart' | t }}{%- endif -%}</span> | {{ product_card_product.price | money_without_trailing_zeros }}
+        </button>
+        <script>
+          $( document ).ready(function() {
+            // let timber = timber || window.timber
+            $('#AddGuideDog-{{ index }}').click(function() {
+              let itemData = {
+                'id': {{ product_card_product.selected_or_first_available_variant.id }},
+                'quantity': 1
+              }
+              {% if presale %}
+                itemData.properties = { 'Presale': '10/22/2022' }
+              {% endif %}
+              let formData = {
+              'items': [itemData]
+              };
+              fetch('/cart/add.js', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+              })
+              .then(response => {
+                return $("#utility-links .js-drawer-open-right").click()
+              })
+              .catch((error) => {
+                console.error('Error:', error);
+              });
+            })
+          });
+        </script>
+      {%- endif -%}
+    </div>
+  </div>
+</div>

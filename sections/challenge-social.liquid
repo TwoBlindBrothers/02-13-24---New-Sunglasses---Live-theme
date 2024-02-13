@@ -1,0 +1,47 @@
+{% if section.blocks %}
+  <ul class="inline-list social-icons">
+    {% for block in section.blocks %}
+      {% if block.settings.icon_svg %}
+        {%- assign social_icon = block.settings.icon | file_url -%}
+        {% if social_icon != empty %}
+          <li>
+            <a class="social-icon" href="{{ block.settings.url }}" target="_blank" rel="noopener" title="{{ shop.name }} on {{ block.settings.title }}">
+              {% comment %}<img class="lazy" src="{{- social_icon -}}" alt="{{- block.settings.icon.alt | escape -}}" width="auto" height="18">{% endcomment %}
+              {{ block.settings.icon_svg }}
+            </a>
+          </li>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  </ul>
+{% endif %}
+
+{% schema %}
+{
+ "blocks": [
+    {
+      "type": "social",
+      "name": "Social",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Social Media Platform",
+          "info": "ie. Twitter"
+        },
+        {
+          "type": "html",
+          "id": "icon_svg",
+          "label": "Icon svg",
+          "info": "svg content"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Social URL"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

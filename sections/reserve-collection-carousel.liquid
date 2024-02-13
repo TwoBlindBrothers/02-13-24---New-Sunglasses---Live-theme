@@ -1,0 +1,74 @@
+{%- if section.blocks.size > 0 -%}
+  <reserve-collection-carousel class="relative text-black bg-white reserve-collection-carousel">
+    <div class="reserve-collection-carousel__inner relative flex flex-col max-w-[1440px] mx-auto md:flex-row md:gap-6 lg:gap-8 py-8 md:py-12 lg:pt-0 lg:pb-[56px] pl-[15px] sm:pl-8 md:pl-10 lg:pl-14">
+      {%- if section.settings.title != blank -%}
+        <h2 class="h2-reserve md:w-[218px] lg:w-[308px] shrink-0 js-heading-reserve-carousel">{{ section.settings.title }}</h2>
+      {%- endif -%}
+      <div class="w-full grow mt-4 md:mt-0 md:w-[calc(100%-242px)] lg:w-[calc(100%-340px)] reserve-collection-carousel__slick js-slick-carousel">
+        {%- for block in section.blocks -%}
+          {%- if block.settings.collection != blank -%}
+            {%- assign collection = collections[block.settings.collection] -%}
+            {%- assign image = collection.featured_image.src -%}
+
+            {%- if block.settings.image != blank -%}
+              {%- assign image = block.settings.image | image_url -%}
+            {%- endif -%}
+            <div class="reserve-collection-carousel__item w-[160px] sm:w-[164px] md:w-[218px] lg:w-[308px] js-carousel-item">
+              <a href="{{ collection.url }}">
+                <div class="hover:opacity-80 transition-opacity reserve-collection-carousel__item-image w-full relative overflow-hidden before:content-[''] before:pb-[100%] before:block rounded-lg">
+                  <picture>
+                    <source data-srcset="{{ image | img_url: '600x' }}" media="(min-width: 769px)" />
+                    <source data-srcset="{{ image | img_url: '500x' }}" media="(min-width: 500px)" />
+                    <source data-srcset="{{ image | img_url: '300x' }}" media="(min-width: 320px)" />
+                    <img data-src="{{ image | img_url: '500x' }}" alt="{{ image.alt }}" class="absolute top-0 left-0 object-cover w-full h-full lazyload"/>
+                  </picture>
+                </div>
+                <h3 class="p1 mt-[3px] md:mt-2 inline-block hover:underline">{{ collection.title }}</h3>
+              </a>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+      <div class="js-progress-bar relative bg-yellow/80 w-[calc(100%-15px)] h-[2px] mt-[11px] sm:w-[calc(100%-32px)] sm:mt-[14px] overflow-hidden">
+        <span class="absolute inset-0 h-full bg-black js-progress-bar-scroll transition-[width] duration-100 ease-in-out"></span>
+      </div>
+    </div>
+  </reserve-collection-carousel>
+  {%- render 'vite-tag' with 'reserve-collection-carousel.js' -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Reserve - Collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reserve - Collection"
+    }
+  ]
+}
+{% endschema %}

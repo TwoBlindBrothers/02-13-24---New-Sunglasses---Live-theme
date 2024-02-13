@@ -1,0 +1,14 @@
+<div class="contact__sections__block" style="{% unless question %}display: none;{% endunless %}">
+    <button class="contact_toggle" aria-expanded="false" aria-label="{{ question }}}" tabindex="0">
+        <div class="contact_toggle-icon">
+            <svg width="28" height="27" viewBox="0 0 28 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 13.8649H27.7297" stroke="black" stroke-width="5"/>
+                <path d="M13.8647 0L13.8647 27" stroke="black" stroke-width="5"/>
+            </svg>
+        </div>
+        <div class="desc-title"{% if text_color %} style="color: {{ text_color }};"{% endif %}>{{ question }}</div>
+    </button>
+    <div class="desc-body"{% if text_color %} style="color: {{ text_color }};"{% endif %}>
+       {{ answer }}
+    </div>
+</div>

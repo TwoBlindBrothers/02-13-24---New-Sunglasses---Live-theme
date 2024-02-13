@@ -1,0 +1,470 @@
+{% unless grid_item_width %}
+  {% assign grid_item_width = 'large--one-half medium--one-half' %}
+{% endunless %}
+
+{% assign alignment = alignment | default: 'under-image' %}
+{% assign text_layout = text_layout | default: 'left' %}
+{% assign price_decimals = price_decimals | default: true %}
+
+{% assign on_sale = false %}
+{% if product.compare_at_price > product.price %}
+    {% assign on_sale = true %}
+{% endif %}
+
+{% assign sold_out = true %}
+{% if product.available %}
+    {% assign sold_out = false %}
+{% endif %}
+
+{% if product.metafields.guidedog.sold_out %}
+    {% assign sold_out = true %}
+{% endif %}
+
+{% assign early_access = false %}
+{% if product.selected_or_first_available_variant.metafields.accentuate.early_access %}
+    {% assign early_access = true %}
+{% endif %}
+
+{% if product.metafields.guidedog.sold_out %}
+    {% assign sold_out = true %}
+{% endif %}
+
+{% assign presale = false %}
+{% if product.selected_or_first_available_variant.metafields.accentuate.presale %}
+    {% assign today_date = 'now' | date: '%s' %}
+    {% assign four_hours = 60 | times: 60 | times: 4 %}
+    {% assign today_date = today_date | times: 1 %}
+    {% assign today_date = today_date | minus: four_hours %}
+    {% assign presale_start_date = product.selected_or_first_available_variant.metafields.accentuate.presale_start_date | date: '%s' | times: 1 %}
+    {% assign presale_end_date = product.selected_or_first_available_variant.metafields.accentuate.presale_end_date | date: '%s' | times: 1 %}
+    {% if today_date >= presale_start_date and today_date < presale_end_date %}
+        {% assign presale = true %}
+        {% assign sold_out = false %}
+    {% else  %}
+        {% assign presale = false  %}
+    {% endif %}
+{% endif %}
+
+{% assign limited_quantity = blank   %}
+{% if product.selected_or_first_available_variant.metafields.available_stock.count != blank %}
+    {% assign limited_quantity = product.selected_or_first_available_variant.metafields.available_stock.count | times: 1 %}
+{% endif  %}
+{% if limited_quantity != blank %}
+    {% if limited_quantity <= 0 %}
+        {% assign presale = false  %}
+        {% assign sold_out = true %}
+    {% else  %}
+        {% assign sold_out = false %}
+    {% endif  %}
+{% endif %}
+
+{% assign product_title = product.title | replace: "Women's ", "" | replace: "Men's ", "" %}
+
+{% comment %}
+{% if product_title contains collection.title %}
+  {% assign product_title = product_title | replace: collection.title, '' %}
+{% endif %}
+{% endcomment %}
+
+{% capture 'product_subtext' %}
+    {% if presale %}
+        Pre-Order | {% if sold_out == false %}Limited Quantity{% else %}Sold Out{% endif%}
+    {% endif %}
+    {% if early_access %}
+        Early Access | {% if sold_out == false %}Limited Quantity{% else %}Sold Out{% endif%}
+    {% endif %}
+    {% if sold_out and presale == false and early_access == false %}
+        Sold Out
+    {% endif %}
+{% endcapture %}
+
+{% capture 'product_price' %}
+    {% if on_sale %}
+        {% if product.price_varies %}
+            {% assign sale_price = product.price | money_without_trailing_zeros %}
+            </br><s style="font-weight: normal; margin-right: .25rem; opacity: .5;">{{ product.compare_at_price | money_without_trailing_zeros }}</s><span style="letter-spacing: .1rem;">{{ 'products.product.on_sale_from_html' | t: price: sale_price }}</span>
+        {% else %}
+            <span class="h4">{{ 'products.product.on_sale' | t }}</span>
+            <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
+            <s style="font-weight: normal; margin-right: .25rem; opacity: .5;">{{ product.compare_at_price | money_without_trailing_zeros }}</s>
+            {{ product.price | money_without_trailing_zeros }}
+        {% endif %}
+    {% else %}
+        {% if product.price_varies %}
+            {% assign price = product.price | money_without_trailing_zeros %}
+            <span class="h2 price">{{ product.price_min | money_without_trailing_zeros }} - {{ product.price_max | money_without_trailing_zeros }}</span>
+        {% else %}
+            <span class="h2 price">{{ product.price | money_without_trailing_zeros }}</span>
+        {% endif %}
+    {% endif %}
+    {% if sold_out %}
+        <br><span class="h4">{{ 'products.product.sold_out' | t }}</span>
+    {% endif %}
+{% endcapture %}
+
+{% comment %}
+  Show add to cart button if there is only 1 variant and it's not Title (no variant product)
+{% endcomment %}
+
+{% assign show_add_to_cart = collection_is_able_to_show_button | default: "false" %}
+
+{% for option in product.options_with_values %}
+    {% if option.position == 1 and option.name == 'Color' %}
+        {% assign show_add_to_cart = "true" %}
+    {% endif %}
+    {% if option.position == 2 and option.values.size == 1 %}
+        {% assign show_add_to_cart = "true" %}
+    {% endif %}
+    {% if option.position == 2 and option.values.size > 1 %}
+        {% assign show_add_to_cart = "false" %}
+    {% endif %}
+{% endfor %}
+
+{% assign show_add_to_cart = "false" %}
+
+{% capture 'add_to_cart_button' %}
+    {% assign variantIdToAddCart = -1 %}
+    {% if product.variants.size > 0 %}
+        {% assign variantIdToAddCart = product.variants.first.id %}
+    {% endif %}
+
+    {% for variant in product.variants %}
+        {% if variant.metafields.cart_option.default_variant_add_cart == "true" %}
+            {% assign variantIdToAddCart = variant.id %}
+            {% break %}
+        {% endif %}
+    {% endfor %}
+
+    {% if sold_out %}
+        <button type="submit" name="add" class="btn btn--blue btn--wide disabled ajax-add-to-cart">
+        <span>Sold Out</span>
+        </button>
+        {% if product.metafields.guidedog.sold_out_message %}
+            {% unless template contains 'collection' %}
+                <p style="font-size: 14px; letter-spacing: 0px;">{{ product.metafields.guidedog.sold_out_message }}</p>
+            {% endunless %}
+        {% endif %}
+    {% else %}
+        {% assign button_label = 'products.product.add_to_cart' | t %}
+        {% assign properties = empty %}
+        {% if presale %}
+            {% assign properties = "{ 'Presale': 'Estimated delivery October 10th' }" %}
+            {% assign button_label = 'Pre-order now' %}
+        {% endif %}
+        <button class="addToCart btn btn--blue btn--wide ajax-add-to-cart" data-properties="{{ properties }}" data-product-id="{{ product.id }}" data-variant-id="{{variantIdToAddCart}}" type="submit" name="add to cart">
+            <span class="addToCartText">{{ button_label }}</span>
+        </button>
+    {% endif %}
+{% endcapture %}
+
+<div class="grid__item {{ grid_item_width }} {% for tag in product.tags %} filter-{{ tag }} {% endfor %}">
+    <div class="grid__product-container{% if alignment == 'bottom' %} layout-bottom{% endif %}"  id="product-{{ product.id }}">
+
+        <div class="top-wrapper"{% if show_add_to_cart == "true" and alignment == 'under-image' %} style="border: 4px solid {{ collection_product_border_color }}"{% endif %}>
+            <div class="grid-image-wrapper">
+                {% if alt_product %}
+                    <div class="grid__image">
+                {% else %}
+                    <a href="{{ product.url | within: collection }}" class="grid__image" style="margin-bottom: 0;">
+                {% endif %}
+                {% assign variantsFeaturedImage = '' %}
+                {% for variant in product.variants %}
+                    {% if variant.metafields.cart_option.default_variant_add_cart == "true" %}
+                        {% assign variantsFeaturedImage = variant.featured_image %}
+                        {% break %}
+                    {% endif %}
+                {% endfor %}
+                {% assign images = product.images %}
+
+                {% if product.options contains 'Color' %}
+                    {% assign values = product.variants.first | map: "option1" | uniq %}
+                {% endif %}
+                {% assign variantColor = values[0] | downcase %}
+
+                {% assign found = false %}
+                
+                {% assign hoverColorHover = values[0] | downcase | append: ' hover' %}
+                {% assign hoverImage = product.featured_image %}
+                {% for image in images %}
+                    {% assign alt_downcase = image.alt | downcase %}
+                    {% if alt_downcase contains hoverColorHover and found == false %}
+                        {% assign hoverImage = image %}
+                        {% assign found = true %}
+                    {% endif %}
+                {% endfor %}
+                <picture class="hover-image" data-image="{{ hoverImage.alt }}">
+                    <source data-srcset="{{ hoverImage | img_url: '500x' }}" media="(min-width: 1200px)" />
+                    <source data-srcset="{{ hoverImage | img_url: '500x' }}" media="(min-width: 769px)" />
+                    <source data-srcset="{{ hoverImage | img_url: '400x' }}" media="(min-width: 500px)" />
+                    <source data-srcset="{{ hoverImage | img_url: '300x' }}" media="(min-width: 320px)" />
+                    <img loading="lazy" data-src="{{ hoverImage | img_url: '500x560' }}" alt="{% if product.metafields.accessibility.description %}{{ product.metafields.accessibility.description }}{% else %}{{ product.title | escape }}{% endif %}" class="grid__variant-hover lazyload"/>
+                    <input type="hidden" class="default-hover-image" value="{{ hoverImage | img_url: '500x' }}" />
+                </picture>
+                {% assign found = false %}
+
+                {% assign variant = product.variants.first %}
+
+                {% for image in images %}
+                    {% assign alt_downcase = image.alt | downcase %}
+                    {% if alt_downcase contains variantColor and found == false %}
+                        <picture class="default-image" data-image="{{ image.alt }}">
+                            <source data-srcset="{{ image.src | img_url: '800x' }}" media="(min-width: 1200px)" />
+                            <source data-srcset="{{ image.src | img_url: '700x' }}" media="(min-width: 769px)" />
+                            <source data-srcset="{{ image.src | img_url: '600x' }}" media="(min-width: 320px)" />
+                            <img data-src="{{ image.src | img_url: '500x' }}"
+                            alt="{{ product.title | escape }} in {{ variant.option1 }}" class="lazyload"/>
+                        </picture>
+                        {% assign found = true %}
+                    {% endif %}
+                {% endfor %}
+                
+                {% if found == false %}
+                    <picture class="default-image">
+                        <source data-srcset="{{ product.featured_image.src | img_url: '800x' }}" media="(min-width: 1200px)" />
+                        <source data-srcset="{{ product.featured_image.src | img_url: '700x' }}" media="(min-width: 769px)" />
+                        <source data-srcset="{{ product.featured_image.src | img_url: '600x' }}" media="(min-width: 320px)" />
+                        <img data-src="{{ product.featured_image.src | img_url: '500x' }}" alt="{% if product.metafields.accessibility.description %}{{ product.metafields.accessibility.description }}{% else %}{{ product.title | escape }}{% endif %}" class="lazyload"/>
+                    </picture>
+                {% endif %}
+                {% if alt_product %}
+                    </div>
+                {% else %}
+                    </a>
+                {% endif %}
+                {% if template != 'product.cart-req' %}
+                    <button {% if sold_out %}disabled {% endif %}id="quick-add-{{ product.id }}" class="quick-add" data-variant-id="{{ product.selected_or_first_available_variant.id }}" onClick="handleClickQuickAdd(this, {{ product.id }});">{% if sold_out %}Sold Out{% else %}Quick Add{% endif %}</button>
+                {% endif %}
+                {% for option in product.options_with_values %}
+                    {% if option.values.size == 1 %}
+                        {% continue %}
+                    {% endif %}
+                    {% if option.name == 'Color' %}
+                        {% continue %}
+                    {% endif %}
+                    
+                    <div>
+                        <div 
+                        id="ajax-swatch-wrapper-{{ product.id }}"
+                        aria-hidden aria-modal="true" 
+                        aria-labelledby="ajax-swatch-label-{{ product.id }}" 
+                        role="dialog">
+                        <div 
+                            class="swatch {{ option.name | downcase }}-swatch" 
+                            data-position="{{ option.position }}">
+                            <h4 class="sr-only" id="ajax-swatch-label-{{ product.id }}">{{ option.name }}</h4>
+                            <div class="ajax-swatches" id="ajax-swatches-{{ product.id }}">
+                            {% for value in option.values %}
+                                {% assign escaped_value = value | escape %}
+                                {% assign non_useless_option = 'option1' %}
+                                {% assign variant_one = '' %}
+                                {% for variant in product.variants %}
+                                    {% if variant.option1 == variant_one %}
+                                        {% assign non_useless_option = 'option2' %}
+                                    {% endif %}
+                                    {% assign variant_one = variant.option1 %}
+                                {% endfor %}
+                                {% assign value_variants = product.variants | where: non_useless_option, escaped_value %}
+                                <div class="swatch-element">
+                                <input 
+                                    id="swatch-{{ forloop.index0 }}-{{ value | handle }}-{{ product.id }}" 
+                                    type="radio" 
+                                    name="option-{{ option.name | downcase }}-{{ product.id }}" 
+                                    value="{{ value }}"
+                                    data-position="{{ option.position }}"
+                                    data-variant-id="{{ value_variants[0].id | string }}"
+                                    data-product-id="{{ product.id }}"/>
+                                <label for="swatch-{{ forloop.index0 }}-{{ value | handle }}-{{ product.id }}">
+                                    <span class="{% if value.size > 2 %}small-swatch{% endif %}">{{ value }}</span>
+                                </label>
+                                </div>
+                            {% endfor %}
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="save-button-wrapper">
+                    <status-save-button product-id="{{ product.id }}"></status-save-button>
+                </div>
+            </div>
+
+            <select name="id" data-productid="{{ product.id }}" id="productSelect-{{ product.id }}" class="product-single__variants">
+                {% for variant in product.variants %}
+                {% if variant.available %}
+                    {% comment %}
+                    Note: if you use option_selection.js, your <select> tag will be overwritten, meaning what you have inside <option> will not reflect what you coded below.
+                    {% endcomment %}
+                    <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} data-sku="{{ variant.sku }}" value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+
+                {% else %}
+                    <option disabled="disabled">
+                    {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+                    </option>
+                {% endif %}
+                {% endfor %}
+            </select>
+
+            {% if show_add_to_cart == "true" and alignment == 'under-image' %}
+                {{ add_to_cart_button }}
+            {% endif %}
+        </div>
+        <div class="grid__product-content">
+            <div class="grid__product-wrapper">
+                <h6 class="grid__product layout-{{ text_layout }}">
+                {% if alt_product %}
+                    <p class="alt-product-title h3 text-center" style="font-weight: bold;">{{ product_title }}</p>
+                {% else %}
+                    <a class="h2" href="{{ product.url | within: collection }}" title="{{product_title}}">{{ product_title }}</a>
+                {% endif %}
+                {% if product_subtext != blank %}
+                    {% unless template contains 'collection' %}
+                    <p class="product-subtext">{{ product_subtext }}</p>
+                    {% endunless %}
+                {% endif %}
+                {% if on_sale %}
+                    {% if product.price_varies %}
+                    {% assign sale_price = product.price | money %}
+                    {{ 'products.product.on_sale_from_html' | t: price: sale_price }}
+                    {% else %}
+                    <span class="h4">{{ 'products.product.on_sale' | t }}</span>
+                    <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
+                    <s style="font-weight: normal; margin-right: .25rem; opacity: .5;">{{ product.compare_at_price | money }}</s>
+                    {% assign formatted_price = product.price | money %}
+                    {% if price_decimals == false %}
+                        {% assign formatted_price = product.price | money_without_trailing_zeros %}
+                    {% endif %}
+                    {{ formatted_price }}
+                    {% endif %}
+                {% else %}
+                    {% if product.price_varies %}
+                    {% assign price = product.price | money %}
+                    <span class="h2 price">{{ product.price_min | money }} - {{ product.price_max | money }}</span>
+                    {% else %}
+                    {% assign formatted_price = product.price | money %}
+                    {% if price_decimals == false %}
+                        {% assign formatted_price = product.price | money_without_trailing_zeros %}
+                    {% endif %}
+                    <span class="h2 price">{{ formatted_price }}</span>
+                    {% endif %}
+                {% endif %}
+                </h6>
+                
+                {% if sold_out %}
+                <p class="h4" style="opacity: .4; margin-top: .5rem;">Sold Out</p>
+                {% endif %}
+                {% if show_add_to_cart == "true" and alignment == 'bottom' %}
+                {{ add_to_cart_button }}
+                {% endif %}
+            </div>
+            {% assign file_extension = 'jpg' %}
+            {% assign values = null %}
+            {% assign option = product.options_with_values[0] %}
+            <div class="flex align-items-start">
+                {% if option.name == 'Color' and option.values.size > 1 %}
+                    {% assign swatch_colors = shop.metafields.swatch %}
+                    <div class="{{ option.name | downcase }}-swatch-wrapper swatch-wrapper">
+                        <h4 class="sr-only">{{ option.name }}</h4>
+                        <div class="{{ option.name | downcase }}-swatches swatch" id="{{ option.name | downcase }}-swatches-{{ product.id }}">
+                            {% assign counting = 0 %}
+                            {% for value in option.values %}
+                                {% assign value_lower = value | downcase %}
+                                {% assign escaped_value = value | escape %}
+                                {% assign non_useless_option = 'option1' %}
+                                {% assign variant_one = '' %}
+                                {% for variant in product.variants %}
+                                    {% if variant.option1 == variant_one %}
+                                        {% assign non_useless_option = 'option2' %}
+                                    {% endif %}
+                                    {% assign variant_one = variant.option1 %}
+                                {% endfor %}
+                                {% assign value_variants = product.variants | where: non_useless_option, escaped_value %}
+                                {% assign foundImageSrc = false %}
+                                {% assign foundHoverImageSrc = false %}
+                                {% assign valueDownCase = value | downcase %}
+
+                                {% assign currentColor = valueDownCase %}
+                                {% assign imageSrc = '' %}
+                                {% assign hoverImageSrc = '' %}
+                                {% for image in product.images %}
+                                    {% assign dataColor = image.alt | downcase | split: 'caption:' | first %}
+                                    {% assign dataColor = dataColor | split: ' - ' | first %}
+                                    {% if dataColor == valueDownCase and foundImageSrc == false %}
+                                        {% assign imageSrc = image | img_url: '500x' %}
+                                        {% assign foundImageSrc = true %}
+                                    {% endif %}
+                                    {% assign image_alt = image.alt | downcase %}
+                                    {% if image_alt contains currentColor and image_alt contains 'hover' and foundHoverImageSrc == false %}
+                                        {% assign hoverImageSrc = image | img_url: '500x' %}
+                                        {% assign foundHoverImageSrc = true %}
+                                    {% endif %}
+                                    {% if foundImageSrc == true and foundHoverImageSrc == true %}
+                                        {% break %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% if foundHoverImageSrc == false %}
+                                    {% assign hoverImageSrc = imageSrc %}
+                                {% endif %}
+
+                                {% assign color_value = value | replace: '%20+%20', '-' | replace: ' + ', '-' | replace: ' ', '-' | replace: '%20', '-' %}
+                                {% assign color_bg = color_value | prepend: 'color-' | handle | append: '.' | append: file_extension | file_url %}
+                                {% assign has_swatch = false %}
+
+                                {% comment %} {% assign color_bg = value | prepend: 'swatch-' | handle | append: '.' | append: file_extension | asset_url %}
+                                {% assign has_swatch = false %}
+                                {% for swatch_name in swatch_colors.name %}
+                                    {% if has_swatch %}
+                                        {% continue %}
+                                    {% endif %}
+                                    {% assign swatch_name_lower = swatch_name | downcase %}
+                                    {% if value_lower == swatch_name_lower %}
+                                        {% assign has_swatch = true %}
+                                        {% assign color_bg = swatch_colors.image[forloop.index0][0].cloudinary_src %}
+                                    {% endif %}
+                                {% endfor %} {% endcomment %}
+
+                                {% if counting < 6 %}
+                                    {% assign counting = counting | plus: 1 %}
+                                    <div data-value="{{ value }}" data-type="" class="swatch-element {{ option.name | downcase }} black available">
+                                        {% if option.name == 'Color' %}
+                                            <div class="tooltip"><div class="tooltip-content">{{ value }}<div class="tooltip-point"></div></div></div>
+                                        {% endif %}
+                                        <input 
+                                            id="swatch-{{ forloop.index0 }}-{{ option.name | downcase }}-{{ value | handle }}-{{ product.id }}" 
+                                            type="radio" 
+                                            onChange="handleColorSwatchChange(this)"
+                                            class="swatch-element-single"
+                                            name="option-color-{{ product.id }}" 
+                                            value="{{ value }}"
+                                            {% if imageSrc %}
+                                                data-img-src="{{ imageSrc }}"
+                                            {% endif %}
+                                            {% if hoverImageSrc %}
+                                                data-img-src-hover="{{ hoverImageSrc }}"
+                                            {% endif %}
+                                            data-variant-id="{{ value_variants[0].id | string }}"
+                                            data-product-id="{{ product.id }}"
+                                            {% if forloop.index0 == 0 %}checked{% endif %}>
+                                        <label 
+                                            for="swatch-{{ forloop.index0 }}-{{ option.name | downcase }}-{{ value | handle }}-{{ product.id }}" 
+                                            style="background-color: {{ value | split: ' ' | last | handle }}; background-image: url({{ color_bg }})">
+                                            <span class="{% if option.name == 'Color' %}visually-hidden{% endif %}">{{ value }}</span>
+                                        </label>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% if values.size > 6 %}
+                            {% assign leftSize = values.size | minus: 6 %}
+                            <a href="{{ product.url | within: collection }}" class="more-item"> +{{ leftSize }} More</a>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="color-swatch-empty"></div>
+                {% endif %}
+                {% if template == 'product.cart-req' %}
+                    <button {% if sold_out %}disabled {% endif %}id="quick-add-{{ product.id }}" type="button" class="quick-add" data-variant-id="{{ product.selected_or_first_available_variant.id }}" onClick="handleClickQuickAdd(this, {{ product.id }});">{% if sold_out %}Sold Out{% else %}Quick Add{% endif %}</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

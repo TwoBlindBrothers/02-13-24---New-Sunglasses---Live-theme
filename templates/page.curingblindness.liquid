@@ -1,0 +1,401 @@
+
+
+
+{{ 'curing-blindness.scss.css' | asset_url | stylesheet_tag }}
+{% assign cb-position = '
+data-bottom-top="top:220%;transform:translateY(-50%)"
+data-top-top="top:50%; transform:translateY(-50%)"
+data-center-bottom="top:50%; transform:translateY(-50%)"
+data-top-bottom="top:-120%;transform:translateY(0%)"' %}
+
+
+   <div id="curingblindness">
+    <div class="curingblindness__hero">
+     <div class="centered-vertical">
+          <div class="scaling-container medium-down--hide" style="width:100%; padding-top:25%">
+           {% include 'svg_copy_were-in-business-to-cure-blindness' %}
+            </div>
+
+             <div class="scaling-container large--hide" style="width:100%; padding-top:50%">
+           {% include 'svg_copy_were-in-business-to-cure-blindness_m' %}
+            </div>
+        </div>
+
+       <a href="#mainarea" name="main content">
+        {% include 'svg_arrow-solid',
+           classes: 'curingblindness__hero__down',
+           fill: '#f0d83d' %}</a>
+
+    </div>
+
+    <div class="curingblindness__mainarea" id="mainarea">
+
+    <div class="cb-section__1">
+       <div class="cb-section-data" data-anchor-target=".cb-section__1" {{ cb-position }}>
+           <div class="wrapper cb-1">
+            <div class="grid">
+                <div class="grid__item large--one-half curingblindness__happening--left">
+                    <div class="scaling-container" style="width:100%; padding-top:100%">
+                        {% include 'svg_badge_a-cure-for-blindness' ,
+                        classes: 'curingblindness__happening__badge' %}
+                    </div>
+                </div>
+                <div class="grid__item large--five-twelfths push--large--one-twelfth curingblindness__happening--right">
+                    <div data-center-top="margin-top:250px" data-100-top-top="margin-top:0">
+                       <div class="scaling-container" style="width:100%; padding-top:40%">
+                            {% include 'svg_copy_this-is-happening' %}
+                        </div>
+                    </div>
+                    <p data-center-top="margin-top:200px" data-200-top-top="margin-top:0">The scientific community is racing towards a breakthrough as you read this. Don’t just believe us: believe <a href="http://www.cnn.com/2016/03/07/health/using-stem-cells-to-cure-blindness/index.html" title="Using Stem Cells to Cure Blindness" target="_blank" rel="noopener">CNN</a>, <a href="http://www.nationalgeographic.com/magazine/2016/09/blindness-treatment-medical-science-cures/" title="Why There’s New Hope About Ending Blindness" target="_blank" rel="noopener">National Geographic</a>, and <a href="http://time.com/4026658/blindness-cure-treatment/" title="Bionic Eyes, Stem Cells and Gene Therapy: 3 Cutting Edge Cures for Blindness" target="_blank" rel="noopener">TIME</a>.</p>
+                </div>
+                {% include 'svg_arrow-outline',
+                classes: 'arrow--this-is-happening medium-down--hide',
+                dataAttr: 'data-center-top="right:-100%" data-200-top-top="right:0%"' %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cb-section__2">
+        <div class="cb-section-data" data-anchor-target=".cb-section__2" {{ cb-position }}>
+            <div class="wrapper cb-2">
+                <div class="deco yellow1" data-center-top="transform:scale(0.3)" data-top-top="transform:scale(1)"></div>
+                {% include 'svg_tee_100-profits',
+                classes: 'curingblindness__profitsforcure__tee',
+                dataAttr: 'data-anchor-target=".yellow1" data-center-top="margin-top:350px" data-top-top="margin-top:0"' %}
+
+                {% include 'svg_braille_feel',
+                classes: 'curingblindness__braille__feel',
+                dataAttr: 'data-anchor-target=".curingblindness__profitsforcure__tee" data-center-top="top:550px" data-top-top="top:0"' %}
+
+                {% include 'svg_copy_the-development-of-a-cure-requires-time-funding',
+                classes: 'curingblindness__profits__timefundingh',
+                dataAttr: 'data-bottom-top="left:-100%" data-center-top="left:0%"'  %}
+
+                <p class="curingblindness__profits__p medium-down--hide">So, you can see why we're selling shirts and donating 100% of our profits to make this a reality.</p>
+
+                {% include 'svg_arrow-outline',
+                    classes: 'arrow--time-funding centered medium-down--hide',
+                    dataAttr: 'data-bottom-top="right:-2000px" data-center-top="right:30px"'  %}
+
+            </div>
+        </div>
+    </div>
+
+    <div class="cb-section__3">
+        <div class="cb-section-data" data-anchor-target=".cb-section__3" {{ cb-position }}>
+            <div class="wrapper">
+                <div class="scaling-container medium-down--hide" style="width:100%; padding-top:35%" data-center-top="transform:scale(0.3)" data-top-top="transform:scale(1)">
+                    {% include 'svg_copy_thats-where-you-come-in'%}
+                </div>
+                <div class="scaling-container large--hide" style="width:100%; padding-top:80%; margin-top:90px; margin-bottom:90px" data-center-top="transform:scale(0.3)" data-top-top="transform:scale(1)">
+                  {% include 'svg_copy_thats-where-you-come-in_m'%}
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <div class="cb-section__4">
+        <div class="cb-section-data" data-anchor-target=".cb-section__4" {{ cb-position }}>
+            <div class="wrapper cb-4">
+                <div class="curingblindness__hours" style="background-image:url('{{ 'duotone-eye.png' | asset_url }}')">
+
+                    {% include 'svg_braille_so-close',
+                    classes: "braille--so-close",
+                    dataAttr: 'data-anchor-target=".curingblindness__hours" data-center-top="top:400px; transform:scale(0.2)" data-top-top="top:0; transform:scale(1)"' %}
+
+                    {% include 'svg_braille_cure',
+                    {% include 'svg_braille_cure',
+                    classes: "braille--cure",
+                    dataAttr: 'data-anchor-target=".curingblindness__hours" data-center-top="left:-100%; transform:rotate(270deg)" data-top-top="left:0; transform:rotate(0deg)"' %}
+                </div>
+                 <div class="curingblindness__hours__hours" data-anchor-target=".cb-section__4" data--100-top="bottom:-300px" data--200-top="bottom:0">
+                        <div class="scaling-container medium-down--hide" style="width:100%; padding-top:40%">
+                            {% include 'svg_copy_30678-hours' %}
+                        </div>
+                        <div class="scaling-container large--hide" style="width:100%; padding-top:40%">
+                            {% include 'svg_copy_30678-hours_m' %}
+                        </div>
+                        <p>of clinical studies through Foundation Fighting Blindness (FFB).</p>
+
+                    </div>
+            </div>
+         </div>
+    </div>
+
+    <div class="cb-section__5">
+       <div class="cb-section-data" data-anchor-target=".cb-section__5" {{ cb-position }}>
+            <div class="wrapper cb-5">
+                  <div class="grid">
+
+                   <div class="grid__item large--one-whole curingblindness__why svg-text">
+                        {%include 'svg_copy_why',
+                            classes: 'curingblindness__why__heading',
+                             %}
+                    </div>
+
+                    <div class="grid__item large--one-half large--hide">
+                      <div class="eyeballs">
+                          {% include 'svg_eye', classes: 'eyeball' %}
+                        {% include 'svg_eye', classes: 'eyeball' %}
+                      </div>
+                    </div>
+
+                    <div class="grid__item large--five-twelfths medium-down--hide">
+                          <div class="eyeballs" data-anchor-target=".cb-section__5" data-center-top="position:relative;top:500px" data--180-top-top="top:0">
+                          {% include 'svg_eye', classes: 'eyeball' %}
+                            {% include 'svg_eye', classes: 'eyeball' %}
+                          </div>
+                    </div>
+
+                    <div class="grid__item large--seven-twelfths" style="position:relative">
+                         {% include 'svg_copy_were-just-two',
+                         dataAttr: 'data-anchor-target=".cb-section__5" data-center-top="position:relative;top:600px" data--180-top-top="top:0"' %}
+                          <p style="max-width:600px" data-anchor-target=".cb-section__5" data-top-top="position:relative;top:600px" data--300-top="top:0">of the more than <strong>10 million people</strong> in the U.S. <strong>who could benefit</strong> from the promising stem-cell-transplant research, gene-therapy treatment and <strong>clinical trials completed</strong> in the <strong>last 50 years</strong> and underway today.</p>
+                        </div>
+
+                  </div>
+             </div>
+        </div>
+    </div>
+
+      <div id="timeline">
+
+        <div id="progress" data-anchor-target="#timeline"
+        data-bottom-top="top:200%"
+        data-top-top="display:block;position:fixed;top:50%"
+        data-center-bottom="top:50%"
+        data-top-bottom="top:-55%">
+
+         <h1 class="h2 text-center" style="bottom:50px; position:relative">A look at how close we are</h1>
+
+          <svg id="progressbar__bg" viewBox="0 0 922.7 20" version="1.1" preserveAspectRatio="xMinYMin slice">
+              <path class="st6" d="M942,3.7v7.5h-75c-1.3,2.2-3.7,3.7-6.4,3.7c-2.7,0-5.1-1.5-6.4-3.7h-98.5c-1.3,2.2-3.7,3.7-6.4,3.7
+                                   c-2.7,0-5.1-1.5-6.4-3.7h-98.5c-1.3,2.2-3.7,3.7-6.4,3.7c-2.7,0-5.1-1.5-6.4-3.7H533c-1.3,2.2-3.7,3.7-6.4,3.7
+                                   c-2.7,0-5.1-1.5-6.4-3.7h-98.5c-1.3,2.2-3.7,3.7-6.4,3.7c-2.7,0-5.1-1.5-6.4-3.7h-98.5c-1.3,2.2-3.7,3.7-6.4,3.7
+                                   c-2.7,0-5.1-1.5-6.4-3.7h-98.5c-1.3,2.2-3.7,3.7-6.4,3.7c-2.7,0-5.1-1.5-6.4-3.7H87.8c-1.3,2.2-3.7,3.7-6.4,3.7
+                                   c-2.7,0-5.1-1.5-6.4-3.7H0V3.7h75C76.3,1.5,78.7,0,81.4,0c2.7,0,5.1,1.5,6.4,3.7h98.5c1.3-2.2,3.7-3.7,6.4-3.7
+                                   c2.7,0,5.1,1.5,6.4,3.7h98.5c1.3-2.2,3.7-3.7,6.4-3.7c2.7,0,5.1,1.5,6.4,3.7h98.5c1.3-2.2,3.7-3.7,6.4-3.7c2.7,0,5.1,1.5,6.4,3.7
+                                   h98.5c1.3-2.2,3.7-3.7,6.4-3.7c2.7,0,5.1,1.5,6.4,3.7h98.5c1.3-2.2,3.7-3.7,6.4-3.7c2.7,0,5.1,1.5,6.4,3.7h98.5
+                                   c1.3-2.2,3.7-3.7,6.4-3.7c2.7,0,5.1,1.5,6.4,3.7h98.5c1.3-2.2,3.7-3.7,6.4-3.7c2.7,0,5.1,1.5,6.4,3.7H942z"
+                    width="922"
+                    height="20"
+                    fill="#ebebeb"></path>
+          </svg>
+          <svg id="progressbar" viewBox="0 0 922.7 20" version="1.1" preserveAspectRatio="xMinYMin slice">
+            <mask id="mask_d">
+              <rect height="15" width="868"
+                    x="0" y="0"
+                    fill="hsl(52, 86%, 59%)"
+                    data-anchor-target="#timeline"
+                    data-0-top="@x:-900"
+                    data--2800-top="@x:0">
+              </rect>
+            </mask>
+              <path d="M942,3.7v7.5h-75c-1.3,2.2-3.7,3.7-6.4,3.7c-2.7,0-5.1-1.5-6.4-3.7h-98.5c-1.3,2.2-3.7,3.7-6.4,3.7
+                       c-2.7,0-5.1-1.5-6.4-3.7h-98.5c-1.3,2.2-3.7,3.7-6.4,3.7c-2.7,0-5.1-1.5-6.4-3.7H533c-1.3,2.2-3.7,3.7-6.4,3.7
+                       c-2.7,0-5.1-1.5-6.4-3.7h-98.5c-1.3,2.2-3.7,3.7-6.4,3.7c-2.7,0-5.1-1.5-6.4-3.7h-98.5c-1.3,2.2-3.7,3.7-6.4,3.7
+                       c-2.7,0-5.1-1.5-6.4-3.7h-98.5c-1.3,2.2-3.7,3.7-6.4,3.7c-2.7,0-5.1-1.5-6.4-3.7H87.8c-1.3,2.2-3.7,3.7-6.4,3.7
+                       c-2.7,0-5.1-1.5-6.4-3.7H0V3.7h75C76.3,1.5,78.7,0,81.4,0c2.7,0,5.1,1.5,6.4,3.7h98.5c1.3-2.2,3.7-3.7,6.4-3.7
+                       c2.7,0,5.1,1.5,6.4,3.7h98.5c1.3-2.2,3.7-3.7,6.4-3.7c2.7,0,5.1,1.5,6.4,3.7h98.5c1.3-2.2,3.7-3.7,6.4-3.7c2.7,0,5.1,1.5,6.4,3.7
+                       h98.5c1.3-2.2,3.7-3.7,6.4-3.7c2.7,0,5.1,1.5,6.4,3.7h98.5c1.3-2.2,3.7-3.7,6.4-3.7c2.7,0,5.1,1.5,6.4,3.7h98.5
+                       c1.3-2.2,3.7-3.7,6.4-3.7c2.7,0,5.1,1.5,6.4,3.7h98.5c1.3-2.2,3.7-3.7,6.4-3.7c2.7,0,5.1,1.5,6.4,3.7H942z"
+                    width="922"
+                    height="20"
+                    mask="url(#mask_d)"
+                    data-anchor-target="#timeline"
+                    data-top-center="fill:hsl(52, 86%, 59%);">
+              </path>
+          </svg>
+
+          <div class="timeline__1"
+           data-anchor-target="#timeline" data--270-top="opacity:0" data--300-top="opacity:1" data--550-top="opacity:1" data--590-top="opacity:0">
+            <span class="h2">1988</span>
+            <p>Retinal cells are transplanted in animals</p>
+          </div>
+
+          <div class="timeline__2"
+           data-anchor-target="#timeline" data--620-top="opacity:0" data--650-top="opacity:1" data--900-top="opacity:1" data--1000-top="opacity:0">
+            <span class="h2">1995</span>
+            <p>Gene therapy is performed in animals</p>
+          </div>
+
+          <div class="timeline__3"
+           data-anchor-target="#timeline" data--1010-top="opacity:0" data--1040-top="opacity:1" data--1290-top="opacity:1" data--1330-top="opacity:0">
+            <span class="h2">2000</span>
+            <p>Artificial retina is implanted in humans</p>
+          </div>
+
+          <div class="timeline__4"
+           data-anchor-target="#timeline" data--1350-top="opacity:0" data--1380-top="opacity:1" data--1650-top="opacity:1" data--1690-top="opacity:0">
+            <span class="h2">2006</span>
+            <p>Retinal cells are developed from stem cells</p>
+          </div>
+
+          <div class="timeline__5"
+           data-anchor-target="#timeline" data--1680-top="opacity:0" data--1710-top="opacity:1" data--2010-top="opacity:1" data--2050-top="opacity:0">
+            <span class="h2">2009</span>
+            <p>Retinal cells are developed from skin cells</p>
+          </div>
+
+          <div class="timeline__6"
+           data-anchor-target="#timeline" data--2040-top="opacity:0" data--2070-top="opacity:1" data--2300-top="opacity:1" data--2400-top="opacity:0">
+            <span class="h2">2015</span>
+            <p>3 clinical trials for gene therapy launch</p>
+          </div>
+
+          <div class="timeline__7"
+           data-anchor-target="#timeline" data--2370-top="opacity:0" data--2400-top="opacity:1" data--2700-top="opacity:1" data--2750-top="opacity:0">
+            <span class="h2">2016</span>
+            <p>Stem-cell therapy is successful on first patient</p>
+          </div>
+
+          <div class="timeline__8"
+           data-anchor-target="#timeline" data--2720-top="opacity:0" data--2750-top="opacity:1" data--3150-top="opacity:1" data--3200-top="opacity:0">
+            <span class="h2">2018</span>
+            <p>Study to evaluate Stargardt disease drug begins</p>
+          </div>
+
+          <div class="timeline__end"
+           data-anchor-target="#timeline" data--3200-top="opacity:0" data--3230-top="opacity:1">
+            <p class="h2">Help us close the gap <img src="{{'arrow-elbow.svg' | asset_url }}" role="presentation"/></p>
+          </div>
+        </div>
+
+      </div>
+{%comment%}
+      <div id="timeline_m">
+
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+             viewBox="0 0 11.1 564.8" width="15px" class="timeline_m"  preserveAspectRatio="xMinYMin meet" style="z-index:0">
+            <path d="M11.1,159.7c0-1.6-0.7-3.1-1.8-4.1V71.8c1.1-1,1.8-2.5,1.8-4.1s-0.7-3.1-1.8-4.1V0H1.8v63.6
+                     c-1.1,1-1.8,2.5-1.8,4.1s0.7,3.1,1.8,4.1v83.8c-1.1,1-1.8,2.5-1.8,4.1c0,1.6,0.7,3.1,1.8,4.1v83.8c-1.1,1-1.8,2.5-1.8,4.1
+                     c0,1.6,0.7,3.1,1.8,4.1v83.8c-1.1,1-1.8,2.5-1.8,4.1s0.7,3.1,1.8,4.1v83.8c-1.1,1-1.8,2.5-1.8,4.1c0,1.6,0.7,3.1,1.8,4.1v83.8
+                     c-1.1,1-1.8,2.5-1.8,4.1c0,1.6,0.7,3.1,1.8,4.1v33.1h7.5v-33c1.1-1,1.8-2.5,1.8-4.1c0-1.6-0.7-3.1-1.8-4.1v-83.8
+                     c1.1-1,1.8-2.5,1.8-4.1c0-1.6-0.7-3.1-1.8-4.1v-83.8c1.1-1,1.8-2.5,1.8-4.1s-0.7-3.1-1.8-4.1v-83.8c1.1-1,1.8-2.5,1.8-4.1
+                     c0-1.6-0.7-3.1-1.8-4.1v-83.8C10.4,162.8,11.1,161.3,11.1,159.7z"
+                     fill="#ebebeb"/>
+        </svg>
+
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+             viewBox="0 0 11.1 564.8" width="15px" class="timeline_m"  preserveAspectRatio="xMinYMin meet" style="z-index:1">
+                <mask id="mask_m">
+                  <rect width="20" height="532.5" fill="#f0d83d"
+                         x="0" y="0"
+                        data-anchor-target="#timeline_m"
+                        data-bottom-top="@y:-850"
+                        data-center-bottom="@y:0">
+                  </rect>
+                </mask>
+            <path d="M11.1,159.7c0-1.6-0.7-3.1-1.8-4.1V71.8c1.1-1,1.8-2.5,1.8-4.1s-0.7-3.1-1.8-4.1V0H1.8v63.6
+                     c-1.1,1-1.8,2.5-1.8,4.1s0.7,3.1,1.8,4.1v83.8c-1.1,1-1.8,2.5-1.8,4.1c0,1.6,0.7,3.1,1.8,4.1v83.8c-1.1,1-1.8,2.5-1.8,4.1
+                     c0,1.6,0.7,3.1,1.8,4.1v83.8c-1.1,1-1.8,2.5-1.8,4.1s0.7,3.1,1.8,4.1v83.8c-1.1,1-1.8,2.5-1.8,4.1c0,1.6,0.7,3.1,1.8,4.1v83.8
+                     c-1.1,1-1.8,2.5-1.8,4.1c0,1.6,0.7,3.1,1.8,4.1v33.1h7.5v-33c1.1-1,1.8-2.5,1.8-4.1c0-1.6-0.7-3.1-1.8-4.1v-83.8
+                     c1.1-1,1.8-2.5,1.8-4.1c0-1.6-0.7-3.1-1.8-4.1v-83.8c1.1-1,1.8-2.5,1.8-4.1s-0.7-3.1-1.8-4.1v-83.8c1.1-1,1.8-2.5,1.8-4.1
+                     c0-1.6-0.7-3.1-1.8-4.1v-83.8C10.4,162.8,11.1,161.3,11.1,159.7z"
+                     fill="#f0d83d"
+                  mask="url(#mask_m)">
+            </path>
+
+        </svg>
+
+        <div class="timeline__title">
+            <h2>A look at how close we are</h2>
+        </div>
+
+		<div class="timeline__1" data-center-top="opacity:0" data-300-top="opacity:1">
+            <span class="h6">1988</span>
+            <p>Retinal cells are transplanted in animals</p>
+          </div>
+
+        <div class="timeline__3" data-center-top="opacity:0" data-300-top="opacity:1">
+            <span class="h6">2000</span>
+            <p>Artificial retina is implanted in humans</p>
+         </div>
+
+        <div class="timeline__4" data-center-top="opacity:0" data-300-top="opacity:1">
+            <span class="h6">2006</span>
+            <p>Retinal cells are developed from stem cells</p>
+          </div>
+
+          <div class="timeline__5" data-center-top="opacity:0" data-300-top="opacity:1">
+            <span class="h6">2009</span>
+            <p>Retinal cells are developed from skin cells</p>
+          </div>
+
+          <div class="timeline__7" data-center-top="opacity:0" data-300-top="opacity:1">
+            <span class="h6">2016</span>
+            <p>Stem-cell therapy is successful on first patient</p>
+          </div>
+
+          <div class="timeline__end" data-center-top="opacity:0" data-300-top="opacity:1">
+             <img src="{{'arrow-outline.svg' | asset_url }}" role="presentation"/><p class="h2">Help us close the gap</p>
+          </div>
+
+      </div>
+   {%endcomment%}
+
+    <div class="cb-section__6">
+        <div class="cb-section-data" data-anchor-target=".cb-section__6"
+           data-bottom-top="top:130%;transform:translateY(-50%);"
+           data-center-top="top:50%;transform:translateY(-50%);"
+           data--600-top-top="top:50%;transform:translateY(-50%);"
+           data--850-top="top:20%;transform:translateY(-50%)"
+          data--2600-top="top:-110%;transform:translateY(-50%)"
+           >
+            <div class="wrapper cb-6">
+                <div class="scaling-container" style="width:100%; padding-top:25%">
+                 {% include 'svg_copy_restoring-sight-is-in-store' %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cb-section__7" style="margin-bottom:300px">
+        <div class="cb-section-data" data-anchor-target=".cb-section__7"
+           data-50-bottom-top="top:130%;transform:translateY(50%)"
+           data-top-top="top:65%; transform:translateY(-50%)"
+           data-center-bottom="top:10%; transform:translateY(0)"
+           data-top-bottom="top:-80%;transform:translateY(0%)">
+            <div class="curingblindness__restoring">
+               {% assign tee-opacity = 'data-anchor-target=".curingblindness__restoring__tees" data-bottom-top="opacity:0" data-top-top="opacity:1"' %}
+                <div class="curingblindness__restoring__tees">
+                    <img src="{{ 'curing-blindness_tee-s.svg' | asset_url }}" alt="" class="curingblindness__restoring__tee--s"
+                    {{ tee-opacity }}>
+                    <img src="{{ 'curing-blindness_tee-m.svg' | asset_url }}" alt="" class="curingblindness__restoring__tee--m medium-down--hide" {{ tee-opacity }}>
+                        {% include 'svg_tee_be-part-of-the-cure',
+                            classes: 'curingblindness__restoring__tee'.
+                            dataAttr: 'data-anchor-target=".curingblindness__restoring__tees" data-bottom-top="opacity:0" data-top-top="opacity:1"' %}
+                    <img src="{{ 'curing-blindness_tee-m.svg' | asset_url }}" alt="" class="curingblindness__restoring__tee--m medium-down--hide" {{ tee-opacity }}>
+                    <img src="{{ 'curing-blindness_tee-s.svg' | asset_url }}" alt="" class="curingblindness__restoring__tee--s"
+                    {{ tee-opacity }}>
+                </div>
+                <a class="bold" href="/collections/mens" title="Shop Men's">Shop Men's</a>
+                <a class="bold" href="/collections/womens" title="Shop Women's" style="margin-left:15%">Shop Women's</a>
+            </div>
+            </div>
+        </div>
+
+    </div> <!-- end curingblindness__mainarea -->
+
+    {% section 'curing_custom-sections' %}
+    {% section 'curing_custom-grid' %}
+    {% include 'blog-recent-posts' %}
+
+  </div>
+
+ <script type="text/javascript">
+
+   if (Modernizr.touch) {
+     window.location = "https://two-blind-brothers.myshopify.com/pages/curing-blindness-mobile"
+   }
+
+   {% comment %}
+   //this old code redirected based on screen size, rather than touch which is more important
+    $(window).on('resize',function(){
+        if($(window).width() < 769){
+         window.location = "https://two-blind-brothers.myshopify.com/pages/curing-blindness-mobile"
+        }
+    });
+   {% endcomment %}
+</script>

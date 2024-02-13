@@ -1,0 +1,58 @@
+<div class="gd_podcast text-center" style="background-color: #f0d83d;">
+  <div class="gd_podcast__inner">
+    <div class="left">
+      <div>  
+        {% render 'svg_quote' %}
+        <h2 class="h1 text-center">{{ section.settings.title }}</h2>
+        <hr/>
+        {% render 'svg_waveform' %}
+      </div>
+    </div>
+    <div class="right">
+      <p class="text-center">{{ section.settings.text }}</p>
+      <p class="text-center"><strong>{{ section.settings.callout }}</strong></p>
+      {%- unless section.settings.button_link == blank or section.settings.button_text == blank -%}
+        <a href="{{ section.settings.button_link }}" class="btn" target="_blank">{{ section.settings.button_text }}</a>
+      {%- endunless -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Guide Dog Podcast",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "callout",
+      "label": "Callout Text"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Audio",
+      "name": "Guide Dog Podcast"
+    }
+  ]
+}
+{% endschema %}

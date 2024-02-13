@@ -1,0 +1,23 @@
+<section id="shop-blind__header-b">
+  <div class="grid">
+    <div class="shop-blind__header-image-wrapper grid__item one-half small--one-whole">
+      {% assign main_image = page.metafields.shop_blind.hero_image[0] %}
+      {%- assign main_img_url = main_image.cloudinary_src | append: 'w_800' -%}
+      <div
+        class="shop-blind__header-image lazyload"
+        style="background-image:url('{{ main_img_url }}');">
+      </div>
+      <div class="shop-blind__header-mobile-title">
+        <h1 tabindex="0" class="text-center">{{ page.metafields.shop_blind.shop_blind_title }}</h1>
+      </div>
+    </div>
+    <div class="shop-blind__header-content one-half small--one-whole">
+      {% if page.metafields.shop_blind.shop_blind_title != blank %}
+        <h1 tabindex="0" class="shop-blind-title">{{ page.metafields.shop_blind.shop_blind_title }}</h1>
+      {% endif %}
+      {% if page.metafields.shop_blind.hero_content != blank %}
+        <p tabindex="0" class="shop-blind-desc">{{ page.metafields.shop_blind.hero_content }}</p>
+      {% endif %}
+    </div>
+  </div>
+</section>

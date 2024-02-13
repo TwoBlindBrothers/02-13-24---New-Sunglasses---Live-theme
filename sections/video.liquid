@@ -1,0 +1,52 @@
+{%- render 'reserve-video',
+  video: section.settings.video,
+  video_url: section.settings.video_url,
+  autoplay: section.settings.autoplay,
+  muted: section.settings.muted,
+  show_muted: section.settings.show_muted
+-%}
+
+{% schema %}
+{
+  "name": "Video",
+  "settings": [
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url",
+      "label": "Video Url",
+      "accept": [
+        "youtube",
+        "vimeo"
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "muted",
+      "label": "Muted",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_muted",
+      "label": "Show Icon Muted",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video"
+    }
+  ]
+}
+{% endschema %}

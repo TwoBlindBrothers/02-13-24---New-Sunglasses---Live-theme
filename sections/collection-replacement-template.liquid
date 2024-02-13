@@ -1,0 +1,159 @@
+{% assign grid_item_width = 'one-half' %}
+{% assign product_rows = section.settings.collection_rows_per_page %}
+{% assign products_per_row = section.settings.collection_products_per_row %}
+{% assign products_per_page = product_rows | times: products_per_row %}
+{% assign collection_background_color = '#FFF' %}
+{% assign collection_product_border_color = '#000' %}
+{% assign collection_is_able_to_show_button = collection.metafields.style.show_add_to_cart_button %}
+{% if collection.metafields.style.collection_background %}
+{%  assign collection_background_color = collection.metafields.style.collection_background %}
+{% endif %}
+{% if collection.metafields.style.products_border_color %}
+{%  assign collection_product_border_color = collection.metafields.style.products_border_color %}
+{% endif %}
+
+<div class="hero collection{% unless collection.description %} no-desc{% endunless %}" style="height: 200px;">
+  <div class="wrapper center-text">
+    <div class="hero-text">
+      <h1 class="slab">
+        <span class="slabtext">{{ collection.title }}</span>
+        </h1>
+      <div class="hero-description medium-down--hide">
+          <p>{{ collection.description }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if collection.description != blank %}
+    <div class="hero-description large--hide">
+        <p>{{ collection.description }}</p>
+    </div>
+{% endif %}
+
+{% paginate collection.products by products_per_page %}
+
+<div class="wide" style="background-color: {{ collection_background_color }};">
+  <div class="wrapper">
+  
+  
+      {% comment %}
+        Loop through our products in the current collection.
+        See the snippet 'product-grid-item' for the layout.
+      {% endcomment %}
+      {% include 'cavalier-replacement-check' %}
+  
+      {% if blackReplacement or tortReplacement %}
+      <div class="grid-uniform products-grid">
+          {% for product in collection.products %}
+  
+                  {% if tortReplacement %}
+  
+                      {% if product.id == 2257385685088 %}
+                          {% include 'product-grid-item' %}
+                      {% endif %}
+  
+                  {% endif %}
+  
+                  {% if blackReplacement %}
+  
+                      {% if product.id == 2257385750624 %}
+                          {% include 'product-grid-item' %}
+                      {% endif %}
+  
+                  {% endif %}
+  
+          {% endfor %}
+      </div>
+      {% else %}
+        <p class="h3">Hold on, friend!</p>
+        <p>{{ rejectReason }}</p>
+        <p><a href="mailto:hello@twoblindbrothers.com">Email for help if you think we’re wrong.</a></p>
+      {% endif %}
+  
+  
+    {% if paginate.pages > 1 %}
+      <hr>
+      <div class="pagination">
+        {{ paginate | default_pagination | replace: '&laquo; Previous', '&larr;' | replace: 'Next &raquo;', '&rarr;' }}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endpaginate %}
+
+{% schema %}
+  {
+    "name": "Collection page",
+    "settings": [
+      {
+        "type": "select",
+        "id": "collection_products_per_row",
+        "label": "Products per row",
+        "options": [
+          {
+            "value": "2",
+            "label": "2"
+          },
+          {
+            "value": "3",
+            "label": "3"
+          },
+          {
+            "value": "4",
+            "label": "4"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "collection_rows_per_page",
+        "label": "Rows per page",
+        "options": [
+          {
+            "value": "8",
+            "label": "8"
+          },
+          {
+            "value": "12",
+            "label": "12"
+          },
+          {
+            "value": "16",
+            "label": "16"
+          },
+          {
+            "value": "24",
+            "label": "24"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "collection_tags_enable",
+        "label": "Enable tag filtering"
+      },
+      {
+        "type": "checkbox",
+        "id": "collection_sort_enable",
+        "label": "Enable collection sorting"
+      },
+      {
+        "type": "select",
+        "id": "product_details_display_method",
+        "label": "Show product title and price",
+        "options": [
+          {
+            "value": "always",
+            "label": "Always"
+          },
+          {
+            "value": "hover",
+            "label": "On hover"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

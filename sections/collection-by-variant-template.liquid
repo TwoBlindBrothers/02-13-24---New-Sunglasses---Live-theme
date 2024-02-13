@@ -1,0 +1,218 @@
+	{% assign grid_item_width = 'large--one-third medium--one-half small--one-half' %}
+{% assign product_rows = section.settings.collection_rows_per_page %}
+{% assign products_per_row = section.settings.collection_products_per_row %}
+<!-- {% assign products_per_page = product_rows | times: products_per_row %} -->
+{% assign products_per_page = 50 %}
+{% assign collection_background_color = '#FFF' %}
+{% assign collection_product_border_color = '#000' %}
+{% assign collection_is_able_to_show_button = "false" %}
+{% if collection.metafields.style.show_add_to_cart_button %}
+  {% assign collection_is_able_to_show_button = "true" %}
+{% endif %}
+{% if collection.metafields.style.collection_background %}
+	{% assign collection_background_color = collection.metafields.style.collection_background %}
+{% endif %}
+{% if collection.metafields.style.products_border_color %}
+	{% assign collection_product_border_color = collection.metafields.style.products_border_color %}
+{% endif %}
+{% assign products_per_page = 9 %}
+
+<div class="hero collection{% unless collection.description %} no-desc{% endunless %}" {% if collection.image %}style="background-image: url({{ collection.image | img_url: '1880x' }});"{% endif %}>
+  <div class="wrapper center-text">
+    <div class="hero-text">
+			{% if collection.metafields.custom-title != blank %}
+				<h1 class="hero-text-container">
+					{% for field in collection.metafields.custom-title %}
+						<span class="hero-text-line">
+							{{ field | last }}
+						</span>
+					{% endfor %}
+				</h1>
+      {% elsif collection.handle == 'mens' %}
+          {% include 'svg_copy_hello-mens-collection' %}
+      {% elsif collection.handle == 'womens' %}
+          {% include 'svg_copy_hello-womens-collection' %}
+      {% else %}
+          <h1 class="slab"><span class="slabtext">{{ collection.title }}</span></h1>
+      {% endif %}
+
+      <div class="hero-description medium-down--hide">
+          <p>{{ collection.description }}</p>
+      </div>
+    </div>
+  </div>
+	{% if settings.easter_enabled and settings.hunt_type == '2bb' %}
+		{% if collection.url contains 'sock-collection' %}
+			<a class="easter-link easter-link-2bb socks-egg" href="{{ settings.easter_url }}">
+				<img src="{{ '2BB-sticker-bryan.png' | file_img_url: '100x' }}" class="easter-egg-2bb"/>
+			</a>
+		{% endif %}
+		{% if collection.url contains 'feel-the-difference' %}
+			<a class="easter-link easter-link-2bb ftd-egg" href="{{ settings.easter_url }}">
+				<img src="{{ '2BB-sticker-brad.png' | file_img_url: '100x' }}" class="easter-egg-2bb"/>
+			</a>
+		{% endif %}
+	{% endif %}
+</div>
+
+{% if collection.description != empty %}
+    <div class="hero-description large--hide">
+        <p>{{ collection.description }}</p>
+    </div>
+{% endif %}
+
+{% include "collection-nav" %}
+
+{% paginate collection.products by products_per_page %}
+<div class="wide" style="background-color: {{ collection_background_color }};">
+  <div class="wrapper">
+    {% render 'collections-filter' %}
+    <div class="grid-flex products-grid" id="collection-container">
+
+      {% for product in collection.products %}
+
+        {% include "product-grid-item", product: product, collection_is_able_to_show_button: collection_is_able_to_show_button, collection_background_color: collection_background_color, collection_product_border_color: collection_product_border_color %}
+
+      {% endfor %}
+
+    </div>
+
+    {% if paginate.pages > 1 %}
+      <hr>
+      <div class="pagination">
+        {{ paginate | default_pagination | replace: '&laquo; Previous', '&larr;' | replace: 'Next &raquo;', '&rarr;' }}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endpaginate %}
+
+{{ 'bigtext.js' | asset_url | script_tag  }}
+
+{% javascript %}
+	$(document).ready(function() {
+		if ( $('.hero-text-container').length ) {
+			$('.hero-text-container').bigtext({
+				maxfontsize: 115
+			});
+		}
+		setTimeout(function() {
+			window.dispatchEvent(new Event('resize'));
+		}, 300)
+	})
+
+  var $products = $("#collection-container > .grid__item");
+  var $filters = $(".filter-btn").on("click", function(e) {
+
+    if ($(this).hasClass("filter--has-sub")) {
+      $("#sub-collection-filters").slideDown();
+    } else if ($(this).hasClass("filter-btn--sub")) {
+      // do nothing
+    } else {
+      $("#sub-collection-filters").slideUp();
+    }
+
+    var active =
+      $filters.removeClass("active")
+        .filter(this)
+        .addClass("active")
+        .data("filter");
+
+    $products
+      .hide()
+      .filter( "." + active )
+      .fadeIn(450);
+
+    window.location.hash = $(this).data("hash");
+    e.preventDefault();
+
+  });
+  $(document).on('click', '.filter-btn', function(){
+    if($('#collection-container').children(':visible').length == 0) {
+      $('#no-products').fadeIn(450);
+    } else {
+      $('#no-products').hide();
+    }
+  });
+{% endjavascript %}
+
+{% schema %}
+  {
+    "name": "Collection by Variant",
+    "settings": [
+      {
+        "type": "select",
+        "id": "collection_products_per_row",
+        "label": "Products per row",
+        "options": [
+          {
+            "value": "2",
+            "label": "2"
+          },
+          {
+            "value": "3",
+            "label": "3"
+          },
+          {
+            "value": "4",
+            "label": "4"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "collection_rows_per_page",
+        "label": "Rows per page",
+        "options": [
+          {
+            "value": "8",
+            "label": "8"
+          },
+          {
+            "value": "12",
+            "label": "12"
+          },
+          {
+            "value": "16",
+            "label": "16"
+          },
+          {
+            "value": "24",
+            "label": "24"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "collection_tags_enable",
+        "label": "Enable tag filtering"
+      },
+      {
+        "type": "checkbox",
+        "id": "collection_sort_enable",
+        "label": "Enable collection sorting"
+      },
+      {
+        "type": "checkbox",
+        "id": "collection_filter_enable",
+        "label": "Enable collection filtering"
+      },
+      {
+        "type": "select",
+        "id": "product_details_display_method",
+        "label": "Show product title and price",
+        "options": [
+          {
+            "value": "always",
+            "label": "Always"
+          },
+          {
+            "value": "hover",
+            "label": "On hover"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,41 @@
+{%- assign highlight_bg_rgb = highlight_color | color_to_rgb | replace: 'rgb(', '' | replace: ')', '' -%}
+{%- assign highlight_bg_rgb = highlight_bg_rgb | split: ',' -%}
+{%- assign highlight_red = highlight_bg_rgb[0] | plus: 0 | times: 0.85 -%}
+{% if highlight_red > 255 %}
+    {% assign highlight_red = 255 %}
+{% endif %}
+{%- assign highlight_green = highlight_bg_rgb[1] | plus: 0 | times: 0.85 -%}
+{% if highlight_green > 255 %}
+    {% assign highlight_green = 255 %}
+{% endif %}
+{%- assign highlight_blue = highlight_bg_rgb[2] | plus: 0 | times: 0.85 -%}
+{% if highlight_blue > 255 %}
+    {% assign highlight_blue = 255 %}
+{% endif %}
+
+<div class="grid__item shopblind_prod{% if special %} special-product{% endif %}{% if highlight_color.alpha != 0.0 and highlighted_product == true %} highlight_prod{% endif %}"{% if highlight_color.alpha != 0.0 and highlighted_product == true %} style="--highlight-color: {{ highlight_color }}; --highlight-color-dark: rgb({{ highlight_red }}, {{ highlight_green }}, {{ highlight_blue }});"{% endif %}>
+    {% if highlight_color.alpha != 0.0 and highlighted_product == true %}
+        <div class="bg-starburst">{% render 'icon-starburst', fill_color: starburst_color %}</div>
+    {% endif %}
+
+    <div class="shopblind_prod-container">
+        {% if product.metafields.shop_blind_header.header or product.metafields.shop_blind_header.subtext %}
+            <div class="shopblind_prod__header text-center">
+            {% if product.metafields.shop_blind_header.header %}
+                <h3 class="h2 text-center">{{ product.metafields.shop_blind_header.header }}</h3>
+            {% endif %}
+            {% if product.metafields.shop_blind_header.subtext %}
+                <div class="shopblind_prod__subheader">{{ product.metafields.shop_blind_header.subtext }}</div>
+            {% endif %}
+            </div>
+        {% endif %}
+
+        {% render 'shop-blind-item-form',
+            product: product,
+            highlight_button_bg: highlight_button_bg,
+            highlight_button_text_color: highlight_button_text_color,
+            highlighted_product: highlighted_product,
+            special: special,
+        %}
+    </div>
+</div>

@@ -1,0 +1,110 @@
+{% assign related_products = '' %}
+{% for tag in product.tags %}
+    {% if tag contains 'related-' %}
+        {% assign product_handle = tag | remove: 'related-' %}
+        {% assign related_products = related_products | append: ',' | append: product_handle %}
+    {% endif %}
+{% endfor %}
+
+{% assign related_products = related_products | remove_first: ',' | split: ',' %}
+
+<div id="related-products-container" class="grid-uniform bg-white product-recommendations" data-product-id="{{ product.id }}" data-limit="4">
+    {%- if recommendations.products_count > 0 -%}
+        <div class="wrapper products-grid">
+            {% if product.metafields.c_f.related_products_title %}
+                <h2 class="text-center">{{ product.metafields.c_f.related_products_title }}</h2>
+            {% else %}
+                <h2 class="text-center">More Products You'll Love</h2>
+            {% endif %}
+
+            {%- for product in recommendations.products -%}
+                {% assign product_related = all_products[product_handle] %}
+                {% if product_related.available == true %}
+                    <div class="grid__item large--one-third medium--one-third small--one-whole">
+                        <div class="grid__product-container">
+                            <a href="{{ product_related.url | within: collection }}" class="grid__image">
+                                <picture>
+                                    <source data-srcset="{{ product_related.selected_or_first_available_variant.image.src | img_url: '500x' }}" media="(min-width: 769px)" />
+                                    <source data-srcset="{{ product_related.selected_or_first_available_variant.image.src | img_url: '300x' }}" media="(min-width: 500px)" />
+                                    <source data-srcset="{{ product_related.selected_or_first_available_variant.image.src | img_url: '200x' }}" media="(min-width: 320px)" />
+                                    <img data-src="{{ product_related.selected_or_first_available_variant.image.src | img_url: '500x' }}"
+                                    alt="{{ product_related.title | escape }}" class="lazyload"/>
+                                </picture>
+                            </a>
+                            <h6 class="grid__product">
+                                <a class="h2" href="{{ product_related.url | within: collection }}">
+                                    {% if product_related.options.size > 1 %}
+                                        {{ product_related.selected_or_first_available_variant.title | split: '/' | first | prepend: 'The ' }}
+                                    {% else %}
+                                        {{ product_related.title | split: '/' | first }}
+                                    {% endif %}
+                                </a>
+                                {% if on_sale %}
+                                    {% if product_related.price_varies %}
+                                        {% assign sale_price = product_related.price | money_without_trailing_zeros %}
+                                        {{ 'products.product.on_sale_from_html' | t: price: sale_price }}
+                                    {% else %}
+                                        <strong>{{ 'products.product.on_sale' | t }}</strong>
+                                        {{ product_related.price | money_without_trailing_zeros }}
+                                    {% endif %}
+                                {% else %}
+                                    {% if product_related.price_varies %}
+                                        {% assign price = product_related.selected_or_first_available_variant.price | money_without_trailing_zeros %}
+                                        {% comment %} {{ 'products.general.from_text_html' | t: price: price }} {% endcomment %}
+                                        {{ price }}
+                                    {% else %}
+                                        {{ sca_price | money_without_trailing_zeros }}
+                                    {% endif %}
+                                {% endif %} 
+                                {% if on_sale %}
+                                    <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
+                                    <s>{{ product_related.compare_at_price | money_without_trailing_zeros }}</s>
+                                {% endif %}
+                                {% if sold_out %}
+                                    <br><strong>{{ 'products.product.sold_out' | t }}</strong>
+                                {% endif %}
+                            </h6>
+                        </div>
+                    </div>
+                {% endif %}
+            {%- endfor -%}
+        </div>
+    {% endif %}
+</div>
+
+
+<script>
+var loadProductRecommendationsIntoSection = function() {
+  // Look for an element with class 'product-recommendations'
+  var productRecommendationsSection = document.querySelector(".product-recommendations");
+  if (productRecommendationsSection === null) { return; }
+  // Read product id from data attribute
+  var productId = productRecommendationsSection.dataset.productId;
+  // Read limit from data attribute
+  var limit = productRecommendationsSection.dataset.limit;
+  // Build request URL
+  var requestUrl = "/recommendations/products?section_id=related-products&limit="+limit+"&product_id="+productId;
+  // Create request and submit it using Ajax
+  var request = new XMLHttpRequest();
+  request.open("GET", requestUrl);
+  request.onload = function() {
+    if (request.status >= 200 && request.status < 300) {
+      var container = document.createElement("div");
+      container.innerHTML = request.response;
+      productRecommendationsSection.parentElement.innerHTML = container.querySelector(".product-recommendations").innerHTML;
+    }
+  };
+  request.send();
+};
+// If your section has theme settings, the theme editor
+// reloads the section as you edit those settings. When that happens, the
+// recommendations need to be fetched again.
+// See https://help.shopify.com/en/themes/development/sections/integration-with-theme-editor
+document.addEventListener("shopify:section:load", function(event) {
+  if (event.detail.sectionId === "product-recommendations") {
+    loadProductRecommendationsIntoSection();
+  }
+});
+// Fetching the recommendations on page load
+loadProductRecommendationsIntoSection();
+</script>

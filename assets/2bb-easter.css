@@ -1,0 +1,194 @@
+.easter-egg-header {
+  margin-bottom: 1rem;
+  text-align: right;
+}
+.easter-egg-wrapper {
+  background-color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 1rem;
+  border-radius: 80px;
+  box-shadow: 0 0 12px rgba(0,0,0,.2);
+}
+.easter-egg-header p {
+  margin: 0 0 0 .25rem;
+  font-size: .8rem;
+  text-transform: uppercase;
+}
+.easter-egg-header .egg-image-wrapper {
+  padding: .25rem;
+  border-radius: 100%;
+}
+.easter-egg-header .easter-egg {
+  width: 30px;
+  height: auto;
+  margin-right: .5rem;
+  pointer-events: none;
+  display: block;
+  transform: rotate(17deg) scale(1.7);
+}
+
+.easter-egg-spot {
+  position: relative;
+  display: inline-block;
+  width: auto;
+}
+
+.easter-egg-spot .easter-egg {
+  width: 100%;
+  height: auto;
+}
+
+.easter-egg-spot .easter-link {
+  position: absolute;
+  transition: transform .2s linear;
+  width: 16px;
+  height: auto;
+}
+
+.easter-egg-spot .easter-link:hover {
+  transform: scale(1.2);
+}
+
+.easter-egg-spot.paw-icon .easter-link {
+  left: 0;
+  top: 16%;
+  width: 34%;
+}
+
+.easter-egg-spot.paw-icon .easter-egg {
+  transform: rotate(3deg);
+}
+
+.easter-egg-spot.paw-icon .easter-link.v-day-link {
+  left: -3%;
+}
+
+.easter-egg-spot.paw-icon .v-day-link .easter-egg {
+  transform: rotate(-40deg) scale(1.3);
+}
+
+.easter-egg-spot.sb-logo .easter-link {
+  width: 12%;
+  height: auto;
+  left: 26%;
+  top: -10%;
+}
+
+.easter-egg-spot.sb-logo .easter-egg {
+  transform: rotate(3deg);
+}
+
+.easter-egg-spot.cure-blindness-egg .easter-link {
+  width: 40px;
+  height: auto;
+  right: 1.5rem;
+  bottom: 1rem;
+}
+
+.easter-egg-spot.cure-blindness-egg .easter-egg {
+  transform: rotate(16deg);
+}
+
+.easter-egg-spot.faq-egg .easter-link, .easter-egg-spot.look-great-egg .easter-link {
+  width: 40%;
+  height: auto;
+  left: 20%;
+  bottom: 10%;
+}
+
+.easter-egg-spot.faq-egg .easter-link.v-day-link {
+  transform: rotate(-45deg) scale(1.4);
+  left: 5%;
+  bottom: 10%;
+}
+
+.easter-egg-spot.look-great-egg .easter-link-2bb {
+  width: 120%;
+  bottom: -10%;
+  left: -20%;
+  transform: rotate(16deg);
+}
+
+.easter-egg-spot.look-great-egg .easter-link.v-day-link {
+  bottom: 3%;
+  left: 2%;
+  transform: rotate(-80deg) scale(1.3);
+}
+
+.easter-egg-spot.faq-egg .easter-link.easter-link-2bb {
+  width: 100%;
+  height: auto;
+  left: 90%;
+  bottom: -10%;
+  transform: rotate(22deg);
+}
+
+.easter-egg-spot.faq-egg .easter-egg, .easter-egg-spot.look-great-egg .easter-egg {
+  transform: rotate(60deg);
+}
+
+.easter-egg-2bb {
+  -webkit-filter: drop-shadow(3px 3px 5px rgba(0,0,0,.2));
+  filter: drop-shadow(3px 3px 5px rgba(0,0,0,.2));
+}
+
+.easter-link.socks-egg {
+  position: absolute;
+  width: 5%;
+  min-width: 40px;
+  max-width: 70%;
+  height: auto;
+  right: 2%;
+  left: auto;
+  bottom: 2%;
+}
+
+.easter-link.ftd-egg {
+  position: absolute;
+  width: 5%;
+  min-width: 40px;
+  max-width: 70%;
+  height: auto;
+  right: 9.5%;
+  left: auto;
+  bottom: 35%;
+}
+
+@media (max-width: 768px) {
+  .easter-link.ftd-egg {
+    right: 8%;
+    bottom: 47%;
+  }
+}
+
+.easter-link.gd-egg {
+  position: absolute;
+  width: 120px;
+  height: auto;
+  left: -5%;
+  top: -5%;
+  transform: rotate(-10deg);
+}
+
+.easter-link.home-hero-egg {
+  position: absolute;
+  width: 60px;
+  height: auto;
+  left: auto;
+  right: 3%;
+  top: 18%;
+  transform: rotate(12deg);
+}
+
+.mobile-carousel-wrapper .easter-egg-header {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+}
+
+.mobile-carousel-wrapper .easter-egg-header .h3 {
+  font-size: .6rem;
+}

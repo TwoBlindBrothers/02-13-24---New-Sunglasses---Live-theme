@@ -1,0 +1,16 @@
+<div class="facets-vertical page-width !block !w-full !px-0">
+  {{ 'collections.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'reserve-collections.js' | asset_url }}" defer="defer"></script>
+  {%- if section.settings.collection_filter_enable or section.settings.collection_sort_enable -%}
+    <aside aria-labelledby="verticalTitle"
+           class="facets-wrapper{% unless section.settings.collection_filter_enable %} facets-wrapper--no-filters{% endunless %} page-width !pr-0 border-b border-t border-grey-200 border-solid py-3 mb-4 sm:mb-[22px] lg:mb-[28px]"
+           id="main-collection-filters" data-id="{{ section.id }}">
+      {% render 'reserve-filter-options',
+        results: collection,
+        enable_filtering: section.settings.collection_filter_enable,
+        enable_sorting: section.settings.collection_sort_enable,
+        filter_type: 'horizontal'
+      %}
+    </aside>
+  {%- endif -%}
+</div>

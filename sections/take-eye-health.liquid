@@ -1,0 +1,72 @@
+<div class="take-eye-health">
+    <div class="take-eye-health-wrapper">
+        <div class="take-eye-health-header">
+            {% if section.settings.heading != blank %}
+                <h2>{{ section.settings.heading }}</h2>
+            {% endif %}
+            {% if section.settings.subheading != blank %}
+                <h3>{{ section.settings.subheading }}</h3>
+            {% endif %}
+            {% if section.settings.content != blank %}
+                {{ section.settings.content }}
+            {% endif %}
+        </div>
+        <div class="take-eye-health-row">
+            {% for block in section.blocks %}
+            <div class="take-eye-health-col">
+                {% if block.settings.img != blank %}
+                    <img src="{{ block.settings.img |  img_url: 'master' }}" alt="">
+                {% endif %}
+                {% if block.settings.content != blank %}                    
+                    {{ block.settings.content }}
+                {% endif %}
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+{% schema %}
+    {
+        "name": "Take Eye Health",
+        "settings": [
+            {
+                "type": "text",
+                "id": "heading",
+                "label": "Heading"
+            },
+            {
+                "type": "text",
+                "id": "subheading",
+                "label": "Sub Heading"
+            },
+            {
+                "type": "richtext",
+                "id": "content",
+                "label": "Content"
+            }
+        ],
+        "blocks": [
+            {
+                "name": "block",
+                "type": "block",
+                "settings": [
+                    {
+                        "type": "richtext",
+                        "id": "content",
+                        "label": "Content"
+                    },
+                    {
+                        "type": "image_picker",
+                        "id": "img",
+                        "label": "Image"
+                    }
+                ]
+            }
+        ],
+      "presets": [
+        {
+          "name": "Take Eye Health"
+        }
+      ]
+    }
+{% endschema %}

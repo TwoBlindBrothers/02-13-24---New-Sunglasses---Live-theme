@@ -1,0 +1,77 @@
+{% assign has_options = false %}
+{% assign options = product.options %}
+
+{% for option in options %}
+  {% assign option_lower = option | downcase %}
+  {% if option_lower != 'title' and option_lower != 'option' %}
+    {% assign has_options = true %}
+  {% endif %}
+{% endfor %}
+
+{% if product.variants.size == 1 %}
+    {% assign has_options = false %}
+{% endif %}
+
+{% assign button_title = 'Add To Cart' %}
+{% if product.available %}
+    {% if featured %}
+        {% assign formatted_price = product.price | money_without_trailing_zeros %}
+        {% assign button_title = button_title | append: ' | ' | append: formatted_price %}
+    {% endif %}
+{% else %}
+    {% assign button_title = 'Sold Out' %}
+{% endif %}
+
+<div class="shop-blind-prod-content">
+    <form
+        class="shop-blind-form"
+        data-product-url="{{ product.url}}"
+        data-variant="{{ product.selected_or_first_available_variant.id }}"
+        data-has-options="{{ has_options }}"
+        id="shop-blind-form-{{ product.id }}{% if featured %}-featured{% endif %}">
+        {% unless featured %}
+            <span class="h1" tabIndex="0">{{ product.price | money_without_trailing_zeros }}</span>
+        {% endunless %}
+        <div
+            id="box-animation-product-{{ product.id }}"
+            class="box-animation box-animation-product-{{ product.id }}"
+            data-product-id="{{ product.id }}"></div>
+        <input
+            role="button"
+            {% if has_options %}
+            aria-haspopup="true"
+            onClick="openDialog('product-options-wrapper-{{ product.id }}', this)"
+            {% endif %}
+            {% unless product.available %}
+            disabled="true"
+            {% endunless %}
+            class="btn"
+            type="submit"
+            style="{% if highlight_button_bg.alpha != 0.0 and highlighted_product == true %}background: {{ highlight_button_bg }};{% endif %}{% if highlight_button_text_color.alpha != 0.0 and highlighted_product == true %}color: {{ highlight_button_text_color }};{% endif %}"
+            value="{{ button_title }}" />
+    </form>
+
+    {% if special %}
+    <div class="trust-us special-img deco">
+        <img src="{{ 'trust-us.svg' | asset_url }}" alt="Trust us, it's worth it" /></div>
+    <div class="pause-rotation">
+        ||
+    </div>
+    {% endif %}
+</div>
+
+<script>
+$('#shop-blind-form-{{ product.id }}{% if featured %}-featured{% endif %}').on('submit', function(e) {
+    e.preventDefault()
+    var product = {
+        title: "{{ product.title | escape }}",
+        id: {{ product.id }},
+        image: "{{ product.images[0] }}",
+        vendor: '{{ product.vendor | escape }}',
+        price: {{ product.selected_or_first_available_variant.price }}
+    }
+    if (!$(this).data('has-options')) {
+        addProductToCart(product, {{ product.selected_or_first_available_variant.id }})
+    }
+})
+</script>

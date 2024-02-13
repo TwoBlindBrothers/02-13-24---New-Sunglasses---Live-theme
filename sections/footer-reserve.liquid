@@ -1,0 +1,233 @@
+{%- liquid
+  assign footer_bg = section.settings.footer_bg
+  assign footer_bottom = section.settings.footer_bottom_menu
+  assign footer_title_class = 'label mb-[18px] md:mb-[20px] capitalize'
+  assign social_instagram_icon = section.settings.social_instagram_icon
+  assign social_twitter_icon = section.settings.social_twitter_icon
+  assign social_facebook_icon = section.settings.social_facebook_icon
+  assign social_tiktok_icon = section.settings.social_tiktok_icon
+  assign social_instagram_link = section.settings.social_instagram_link
+  assign social_twitter_link = section.settings.social_twitter_link
+  assign social_facebook_link = section.settings.social_facebook_link
+  assign social_tiktok_link = section.settings.social_tiktok_link
+-%}
+
+<footer class="footer-reserve bg-black text-white" role="contentinfo">
+  <div class="wrapper max-w-[1440px] px-[15px] pt-[32px] pb-[20px] sm:px-[32px] sm:pt-[32px] md:px-[40px] md:pt-[40px] lg:px-[56px] lg:pt-[56px]">
+    <div class="footer-reserve__top flex flex-col-reverse sm:flex-row sm:justify-between gap-[80px]">
+      <div class="footer-reserve__item-links flex gap-[15px] sm:gap-[24px] md:gap-[48px] lg:gap-[61px]">
+        {% for block in section.blocks %}
+          {% assign menu_object = block.settings.link_list %}
+          <div class="footer-reserve__item w-1/2 sm:w-[165px] md:w-[180px] shrink-0">
+            <h2 class="{{ footer_title_class }}">{{ block.settings.title | default: menu_object.title }}</h2>
+            <nav aria-labelledby="footer-menu" class="footer-menu-container">
+              <ul class="no-bullets p1">
+                {% for link in menu_object.links %}
+                  <li class="mb-2" {% if link.active %}class="site-nav--active"{% endif %}>
+                    <a class="hover:text-yellow hover:underline" href="{{ link.url }}">{{ link.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </nav>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="footer-reserve__item--newsletter w-full sm:w-[321px] md:w-[380px] lg:w-[495px] lg:mr-[153px]">
+        <h2 class="{{ footer_title_class }}">{{ section.settings.newsletter_title }}</h2>
+        <div class="footer-reserve__newsletter-form">
+          <p class="p1">{{ section.settings.newsletter_text }}</p>
+          {% include 'active-campaign-reserve' %}
+        </div>
+        <div class="footer-reserve__socials">
+          <ul class="inline-list flex items-end gap-[18px] mt-[26px] lg:mt-[32px]">
+            {% if social_instagram_icon != blank and social_instagram_link != blank %}
+              <li>
+                <a class="social-icon" href="{{ social_instagram_link }}" target="_blank" rel="noopener" title="{{- social_instagram_icon.alt -}}">
+                  <img class="lazy" src="{{- social_instagram_icon | image_url -}}" alt="{{- social_instagram_icon.alt | escape -}}" width="auto" height="26">
+                </a>
+              </li>
+            {% endif %}
+            {% if social_twitter_icon != blank and social_twitter_link != blank %}
+              <li>
+                <a class="social-icon" href="{{ social_twitter_link }}" target="_blank" rel="noopener" title="{{- social_twitter_icon.alt -}}">
+                  <img class="lazy" src="{{- social_twitter_icon | image_url -}}" alt="{{- social_twitter_icon.alt | escape -}}" width="auto" height="26">
+                </a>
+              </li>
+            {% endif %}
+            {% if social_facebook_icon != blank and social_facebook_link != blank %}
+              <li>
+                <a class="social-icon" href="{{ social_facebook_link }}" target="_blank" rel="noopener" title="{{- social_facebook_icon.alt -}}">
+                  <img class="lazy" src="{{- social_facebook_icon | image_url -}}" alt="{{- social_facebook_icon.alt | escape -}}" width="auto" height="26">
+                </a>
+              </li>
+            {% endif %}
+            {% if social_tiktok_icon != blank and social_tiktok_link != blank %}
+              <li>
+                <a class="social-icon" href="{{ social_tiktok_link }}" target="_blank" rel="noopener" title="{{- social_tiktok_icon.alt -}}">
+                  <img class="lazy" src="{{- social_tiktok_icon | image_url -}}" alt="{{- social_tiktok_icon.alt | escape -}}" width="auto" height="26">
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    {%- if footer_bg != blank -%}
+      <div class="footer-reserve__middle mb-[32px] mt-[72px] sm:mb-[47px] sm:mt-[90px] md:mb-[56px] md:mt-[96px] lg:mb-[76px] lg:mt-[125px]">
+        <picture class="w-full">
+          <source data-srcset="{{ footer_bg | img_url: 'master' }}" media="(min-width: 769px)" />
+          <source data-srcset="{{ footer_bg | img_url: '1024x' }}" media="(min-width: 500px)" />
+          <source data-srcset="{{ footer_bg | img_url: '500x' }}" media="(min-width: 320px)" />
+          <img data-src="{{ footer_bg | img_url: '500x' }}" alt="{{ footer_bg.alt }}" class="lazyload"/>
+        </picture>
+      </div>
+    {%- endif -%}
+
+    <div class="footer-reserve__bottom pt-[24px] border-t border-grey flex flex-col-reverse sm:flex-row sm:justify-between">
+      <p class="p1 mt-[14px] sm:mt-0">
+        {{ section.settings.footer_bottom_text }}
+        {% if section.settings.footer_bottom_credit_link != blank and section.settings.footer_bottom_credit_text != blank %}
+          • <a href="{{ section.settings.footer_bottom_credit_link }}" class="no-underline hover:text-yellow hover:underline" target="_blank">{{ section.settings.footer_bottom_credit_text }}</a>
+        {% endif %}
+      </p>
+      <nav>
+        <ul class="no-bullets p1 flex gap-[12px] md:gap-[32px]">
+          {% for link in footer_bottom.links %}
+            <li>
+              <a class="hover:text-yellow hover:underline" href="{{ link.url }}">{{ link.title }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Newsletter"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_title",
+      "label": "Footer Newsletter Title",
+      "default": "Newsletter"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_text",
+      "label": "Footer Newsletter Text",
+      "default": "Subscribe to get notified about any and all brand updates and info."
+    },
+    {
+      "type": "header",
+      "content": "Socials"
+    },
+    {
+      "type": "image_picker",
+      "id": "social_instagram_icon",
+      "label": "Instagram Icon"
+    },
+    {
+      "type": "text",
+      "id": "social_instagram_link",
+      "label": "Instagram URL",
+      "info": "https:\/\/www.instagram.com\/shopify"
+    },
+    {
+      "type": "image_picker",
+      "id": "social_twitter_icon",
+      "label": "Twitter Icon"
+    },
+    {
+      "type": "text",
+      "id": "social_twitter_link",
+      "label": "Twitter URL",
+      "info": "https:\/\/www.twitter.com\/shopify"
+    },
+    {
+      "type": "image_picker",
+      "id": "social_facebook_icon",
+      "label": "Facebook Icon"
+    },
+    {
+      "type": "text",
+      "id": "social_facebook_link",
+      "label": "Facebook URL",
+      "info": "https:\/\/www.facebook.com\/shopify"
+    },
+    {
+      "type": "image_picker",
+      "id": "social_tiktok_icon",
+      "label": "Tiktok Icon"
+    },
+    {
+      "type": "text",
+      "id": "social_tiktok_link",
+      "label": "Tiktok URL",
+      "info": "https:\/\/tiktok.com\/shopify"
+    },
+    {
+      "type": "header",
+      "content": "Footer Background"
+    },
+    {
+      "type": "image_picker",
+      "id": "footer_bg",
+      "label": "Footer Background Middle"
+    },
+    {
+      "type": "header",
+      "content": "Footer Bottom"
+    },
+    {
+      "type": "text",
+      "id": "footer_bottom_text",
+      "label": "Footer Bottom Text",
+      "default": "© Two Blind Brothers 2023"
+    },
+    {
+      "type": "text",
+      "id": "footer_bottom_credit_text",
+      "label": "Footer Bottom Credit Text",
+      "default": "Site Credit"
+    },
+    {
+      "type": "text",
+      "id": "footer_bottom_credit_link",
+      "label": "Footer Bottom Credit Link",
+      "default": "https:\/\/www.barrelny.com\/"
+    },
+    {
+      "type": "link_list",
+      "id": "footer_bottom_menu",
+      "label": "Footer Bottom Menu"
+    }
+  ],
+  "max_blocks": 2,
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "link_list",
+          "id": "link_list",
+          "label": "Menu"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

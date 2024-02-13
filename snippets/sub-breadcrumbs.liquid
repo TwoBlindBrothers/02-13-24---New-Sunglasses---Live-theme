@@ -1,0 +1,48 @@
+{%- comment -%}
+  Parameters
+  * menu
+  * active_product
+  * active_collection
+{%- endcomment -%}
+
+{%- liquid
+  assign last_breadcrumbs = ''
+
+  for link in menu.links
+    assign breadcrumbs = ''
+    assign breadcrumbs_item = '|' | append: link.title | append: '::' | append: link.url
+
+    if link.type == 'collection_link'
+      if active_product != blank
+        for current_product in link.object.products
+          if current_product == active_product 
+            assign breadcrumbs = breadcrumbs | append: breadcrumbs_item
+            break
+          endif
+        endfor
+      elsif active_collection != blank and link.object == active_collection
+        assign breadcrumbs = breadcrumbs | append: breadcrumbs_item
+      endif
+    endif
+
+    if link.links.size > 0
+      capture sub_breadcrumbs
+        render 'sub-breadcrumbs', menu: link, active_product: active_product, active_collection: active_collection
+      endcapture
+
+      if sub_breadcrumbs != blank
+        if breadcrumbs != blank
+          assign breadcrumbs = breadcrumbs | append: sub_breadcrumbs
+        else
+          assign breadcrumbs = breadcrumbs | append: breadcrumbs_item | append: sub_breadcrumbs
+        endif
+      endif
+    endif
+
+    if breadcrumbs != blank
+      assign last_breadcrumbs = breadcrumbs
+    endif
+  endfor
+
+  echo last_breadcrumbs
+-%}

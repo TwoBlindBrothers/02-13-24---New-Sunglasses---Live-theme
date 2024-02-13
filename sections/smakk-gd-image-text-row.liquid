@@ -1,0 +1,73 @@
+<section id="trapped-puppies" tabindex="-1">
+  <div class="wrapper">
+    <div class="grid">
+      {% if section.settings.image %}
+        <div class="grid__item large--one-half">
+          <div class="gd_image_text__image" style="margin: 0 auto;">
+            <picture>
+                <source data-srcset="{{ section.settings.image.src | img_url: '700x' }}" media="(min-width: 1200px)" />
+                <source data-srcset="{{ section.settings.image.src | img_url: '500x' }}" media="(min-width: 769px)" />
+                <source data-srcset="{{ section.settings.image.src | img_url: '300x' }}" media="(min-width: 500px)" />
+                <source data-srcset="{{ section.settings.image.src | img_url: '200x' }}" media="(min-width: 320px)" />
+                <img style="width: 100%; height: auto;" data-src="{{ section.settings.image.src | img_url: '700x' }}" alt="{{ section.settings.image.alt }}" class="lazyload"/>
+            </picture>
+          </div>
+        </div>
+      {% endif %}
+      <div class="grid__item large--one-half">
+        <div class="gd_image_text__text">
+          <div class="wrapper">
+            {% if section.settings.title %}
+              <h2 class="h1">{{ section.settings.title }}</h2>
+            {% endif %}
+            {% if section.settings.subcopy %}
+              {{ section.settings.subcopy }}
+            {% endif %}
+            {% if section.settings.url %}
+              <a class="btn" href="{{ section.settings.url }}">{{ section.settings.button_text | default: 'Learn more' }}</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Image and text row",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Main image"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "subcopy",
+      "label": "Subcopy"
+    },
+    {
+      "type": "url",
+      "id": "url",
+      "label": "Url"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Text",
+      "name":"Image & text row"
+    }
+  ]
+}
+{% endschema %}

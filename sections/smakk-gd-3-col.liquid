@@ -1,0 +1,61 @@
+<div class="gd_cols">
+  {%- if section.settings.title != blank or section.settings.text != blank -%}
+  <div class="wrapper text-center">
+    <h2 class="h1 text-center">{{ section.settings.title }}</h2>
+    {%- if section.settings.text != blank -%}
+      <p>{{ section.settings.text }}</p>
+    {%- endif -%}
+    </div>
+  {%- endif -%}
+  <ul class="gd_cols__grid">
+    {%- for block in section.blocks -%}
+    <li class="gd_cols__col">
+      <div>{% render 'icon-paw', hideEgg: true %}</div>
+      <h3 class="h5">{{ block.settings.title }}</h3>
+      <p>{{ block.settings.text }}</p>
+    </li>
+    {%- endfor -%}
+  </ul>
+</div>
+
+{% schema %}
+{
+  "name": "Guide Dog 3-Cols",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Column",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Text",
+      "name": "Guide Dog 3-Cols"
+    }
+  ]
+}
+{% endschema %}

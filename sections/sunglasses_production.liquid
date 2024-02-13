@@ -1,0 +1,77 @@
+<div id="production" class="wrapper sunglasses_about">
+    <div class="grid grid--seal seal-right clearfix">
+        <div class="grid__item grid__item--text large--one-half">
+            <h2 class="h1 slab">
+                <span class="slabtext">{{ section.settings.production_title }}</span>
+            </h2>
+            <div class="grid__thumb">
+                 <img
+                    data-sizes="auto"
+                    data-src="{{ section.settings.prod_image | img_url: '600x600', crop: 'center' }}"
+                    data-srcset="
+                       {{  section.settings.prod_image | img_url: '600x600', crop: 'center' }} 600w,
+                       {{  section.settings.prod_image | img_url: '400x400', crop: 'center' }} 400w"
+                    class="grid__thumb__img lazyload" 
+                    alt="Blind production staff" />
+                <img data-src="//cdn.shopify.com/s/files/1/1330/8707/t/24/assets/seal_blind-crafted.svg?10994" class="deco seal lazyloaded" style="left: auto;right: -10%;" src="//cdn.shopify.com/s/files/1/1330/8707/t/24/assets/seal_blind-crafted.svg?10994">
+            </div>
+            <p class="grid__text" style="text-align:left">{{ section.settings.production_copy }}</p>
+        </div>
+        <div class="grid__item large--one-half grid__item--seal">
+            <div class="grid__thumb">
+                 <img
+                    data-sizes="auto"
+                    data-src="{{ section.settings.prod_image | img_url: '600x600', crop: 'center' }}"
+                    data-srcset="
+                       {{  section.settings.prod_image | img_url: '600x600', crop: 'center' }} 600w,
+                       {{  section.settings.prod_image | img_url: '400x400', crop: 'center' }} 400w"
+                    class="grid__thumb__img lazyload" 
+                    alt="Blind production staff" />
+                
+                <img data-src="//cdn.shopify.com/s/files/1/1330/8707/t/24/assets/arrow-outline.svg?10994" alt="pointing arrow" role="presentation" class="deco arrow--4 arrow--right lazyloaded" style="top: 70%;" src="//cdn.shopify.com/s/files/1/1330/8707/t/24/assets/arrow-outline.svg?10994">
+            
+            </div>
+        </div>
+    </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Other stuff",
+    "settings": [
+        { 
+            "type": "header",
+            "content": "2bb stuff"
+        },
+        { 
+            "type": "text",
+            "id": "bb_quote",
+            "label": "Quote from B and B"
+        },
+        {
+          "type": "image_picker",
+          "id": "bb_image",
+          "label": "B-B Image"
+        },
+        { 
+            "type": "header",
+            "content": "Production stuff"
+        },
+        { 
+            "type": "text",
+            "id": "production_title",
+            "label": "Production title"
+        },
+        { 
+            "type": "text",
+            "id": "production_copy",
+            "label": "Subcopy"
+        },
+        {
+          "type": "image_picker",
+          "id": "prod_image",
+          "label": "Production Image"
+        }
+    ]
+}
+{% endschema %}

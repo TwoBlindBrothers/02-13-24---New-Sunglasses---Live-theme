@@ -1,0 +1,14 @@
+<form action="/search" method="get" class="search-bar" id="searchForm">
+    {% comment %}<input type="hidden" name="type" value="page">{% endcomment %}
+    <div role="search" class="input-group">
+        <label for="FormSearchField" class="hidden-label">{{ 'general.search.placeholder' | t }}</label>
+        <input type="search" id="FormSearchField" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'general.search.placeholder' | t }}" class="input-group-field" aria-label="{{ 'general.search.placeholder' | t }}">
+        <span class="input-group-btn">
+            <button type="submit" class="icon-fallback-text search-icon">
+                <span class="fallback-text">{{ 'general.search.submit' | t }}</span>
+                <title id="searchLink">Search</title>
+                {% render 'svg-icon-search' %}
+            </button>
+        </span>
+    </div>
+</form>

@@ -1,0 +1,21 @@
+{% if section.settings.show_curing %}
+ {% include 'curing-blindness' %}
+{% endif %}
+
+ {% schema %}
+  {
+    "name": "Curing blindness module",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_curing",
+        "label": "Show curing blindness module?"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Curing Blindness module"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,108 @@
+{% assign featureIndex = featureIndex | plus: 1 %}
+{% assign heading = block.settings.heading | escape %}
+{% assign subheading = block.settings.subheading | escape %}
+{% assign button = block.settings.button | escape %}
+{% assign url = block.settings.url | escape %}
+{% assign video = block.settings.video | escape %}
+{% assign mobile = block.settings.mobile %}
+{% assign label = block.settings.arialLabel %}
+
+{% assign blockLink = false %}
+{% if block.settings.url != blank and block.settings.button == blank and block.settings.heading == blank %}
+{% assign blockLink = true %}
+{% endif %}
+
+{% assign hasAlt = false %}
+{% if blockLink and url == '/pages/about-us' %}
+{% assign hasAlt = true %}
+{% endif %}
+
+{% assign hasimage = false %}
+{% if block.settings.image != blank %}
+{% assign hasimage = true %}
+{% endif %}
+{% if block.settings.image != blank %}
+{% capture image %}{{ block.settings.image | img_url: '1440x' }} {% endcapture %}
+{% endif %}
+{% assign hasvideobg = false %}
+{% if block.settings.videobg != blank %}
+{% assign hasvideobg = true %}
+{% endif %}
+
+{% capture videobg %}{{ block.settings.videobg | append: '.mp4' | file_url }} {% endcapture %}
+{% assign color = block.settings.color %}
+{% assign bgcolor = block.settings.bgcolor %}
+
+
+<div
+     id="{{ block.id }}"
+     class="grid-masonry-feature lazyload
+            grid-masonry-feature-{{ featureIndex }}
+            {% if mobile %}medium-down--hide{% endif %}"
+     style="background-color:{{ bgcolor }}"
+     {% if hasimage %}
+     	data-bg={{ image }}
+     {% endif %}
+     {{ block.shopify_attributes }}>
+
+  {% if block.settings.ellen == true %}
+  	{% include 'svg_ellen' %}
+  {% endif %}
+  {% if blockLink %}
+    {% if hasAlt %}
+      <a href="{{url}}" class="block-link" aria-label="Meet the brothers">
+    {% else %}
+      <a href="{{url}}" class="block-link">
+    {% endif %}
+  {%endif%}
+
+  {% if hasvideobg %}
+    <video class="video-box lazyload" loop="true" muted="true" autoplay="true" autostart="true" poster="{{ image }}">
+      <source type="video/mp4" src="{{ videobg }}">
+      Your browser doesn't support HTML5 video tag.
+    </video>
+  {% endif %}
+
+  {% if heading != blank or button != blank or video != blank %}
+    <div class="grid-masonry-feature-text">
+
+      {% if heading  != blank %}
+        {% if url != blank %}
+          <a href="{{ url }}">
+            <span style="color: {{ color }}" class="h1 text-center">{{ heading }}</span>
+            {% if subheading != blank %}
+              <p style="color: {{ color }}">{{ subheading }}</p>
+            {% endif %}
+          </a>
+        {% else %}
+        	<span style="color: {{ color }}" class="h1 text-center">{{ heading }}</span>
+          {% if subheading != blank %}
+          	<p  style="color: {{ color }}">{{ subheading }}</p>
+          {% endif %}
+        {% endif %}
+      {% endif %}
+
+      {% if video != blank %}
+        <a class="play-btn" data-fancybox href="https://www.youtube.com/watch?v={{ video }}" title="play video">
+          {% include 'svg_icon_play',
+            fill: {{color}} %}
+        </a>
+      {% endif %}
+
+      {% if button != blank %}
+        <a href="{{ url }}" class="btn-cta" style="color: {{ color }};{% if hasimage %}background-color:{{ bgcolor }}{% endif %}">
+          {{ button }}
+        </a>
+      {% endif %}
+
+    </div>
+  {% endif %}
+
+  {% if block.settings.ellen == true %}
+    <div class="remodal video" data-remodal-id="ellen-grid-video" aria-modal="true">
+      <button data-remodal-action="close" class="remodal-close"></button>
+      <div class="youtube-player" data-id="4WMHWH_6i0U"></div>
+   </div>
+  {% endif %}
+{% if blockLink %}</a>{%endif%}
+</div>

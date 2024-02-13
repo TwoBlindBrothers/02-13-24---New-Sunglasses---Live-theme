@@ -1,0 +1,178 @@
+{% comment %}
+  Set the extension of your color files below. Use 'png', 'jpeg', 'jpg' or 'gif'.
+{% endcomment %}
+
+{% assign file_extension = 'jpg' %}
+
+{% if swatch == blank %}
+<div class="swatch error">
+  <p>You must include the snippet swatch.liquid with the name of a product option.</p>
+  <p>Use: <code>{% raw %}{% include 'swatch' with 'name of your product option here' %}{% endraw %}</code></p>
+  <p>Example: <code>{% raw %}{% include 'swatch' with 'Color' %}{% endraw %}</code></p>
+</div>
+{% else %}
+
+{% assign found_option = false %}
+{% assign is_color = false %}
+{% assign is_size = false %}
+{% assign size_count = 0 %}
+{% assign option_index = 0 %}
+
+{% for option in product.options %}
+  {% if option == swatch %}
+    {% assign found_option = true %}
+    {% assign option_index = forloop.index0 %}
+    <style>
+      label[for="product-select-option-{{ option_index }}"] { display: none; }
+      #product-select-option-{{ option_index }} { display: none; }
+      #product-select-option-{{ option_index }} + .custom-style-select-box { display: none !important; }
+    </style>
+    <script>$(window).load(function() { $('.selector-wrapper:eq({{ option_index }})').hide(); });</script>
+    {% assign downcased_option = swatch | downcase %}
+    {% if downcased_option contains 'color' or downcased_option contains 'colour' %}
+      {% assign is_color = true %}
+    {% endif %}
+    {% if downcased_option contains 'size' %}
+      {% assign is_size = true %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+{% for option in product.options_with_values %}
+  {%- if option.name == "Size" -%}
+    {% assign size_count = option.values.size %}
+  {%- endif -%}
+{% endfor %}
+
+{% unless found_option %}
+<div class="swatch error">
+  <p>You included the snippet swatch.liquid with the name of a product option — <code>'{{ swatch }}'</code> — that does not belong to your product.</p>
+  <p>Use <code>{% raw %}{% include 'swatch' with 'name of your product option here' %}{% endraw %}</code></p>
+  <p>Example: <code>{% raw %}{% include 'swatch' with 'Color' %}{% endraw %}</code></p>
+  <p><strong>This is case-sensitive!</strong> Do not put in <code>'color'</code> if your product option name is <code>'Color'</code>.</p>
+</div>
+{% else %}
+  {% if swatch != "Style" and swatch != "Title" and product.variants.size > 0 %}
+    <div class="swatch {{ downcased_option | handleize }}-swatch{% if is_size and size_count < 1 %} hidden{% endif %}" data-product-id="{{ product.id }}" data-option-index="{{ option_index }}">
+      <div class="label text-left mb-2">
+        {% if swatch == "Protection" %}
+          <strong>Replacements for any reason for life</strong>
+        {% elsif swatch == "Color" %}
+          <span class="variant-meta color-meta reserve-color-meta !normal-case"{% unless product.options[0] == 'Color' %} data-toggle="false"{% endunless %} style="{% unless product.options[0] == 'Color' or product.metafields.custom.default_color %}display: none;{% endunless %}">
+            {% if product.metafields.custom.default_color %}{{ product.metafields.custom.default_color }}{% endif %}
+          </span>
+        {% else %}
+          {{ swatch }}
+        {% endif %}
+      </div>
+      <div class="swatch-container">
+        {% assign values = '' %}
+        {% assign striped = false %}
+        {% assign solid = false %}
+        {% if swatch == 'Size' %}
+          <div class="swatch-title" data-title="Size">
+            <div class="selection-error">
+              <p><strong>Oops! Look like you forgot something.</strong></p>
+              <p>Please select a size</p>
+            </div>
+          </div>
+        {% endif %}
+        {% for variant in product.variants %}
+          {% assign sold_out_toggled = variant.metafields.guidedog.sold_out %}
+          {% assign value = variant.options[option_index] | remove: csp_flag_string %}
+
+          {% if variant.options[2] == "Solid" %}
+            {% assign solid = true %}
+          {% endif %}
+
+          {% assign is_checked = '' %}
+          {% if forloop.first %}
+            {% if is_size == false %}
+              {% assign is_checked = 'checked' %}
+            {% endif %}
+          {% endif %}
+
+          {% if variant.options[2] == "Striped" %}
+            {% assign striped = true %}
+          {% endif %}
+
+          {% unless values contains value %}
+            {% assign values = values | join: ',' %}
+            {% assign values = values | append: ',' | append: value %}
+            {% assign values = values | split: ',' %}
+            {% assign value_lower = value | downcase %}
+            <div data-value="{{ value | escape }}" {% if is_color %}data-type="{{ variant.options[2] }}"{% endif %} class="swatch-element {% if is_color %}color {% endif %}{% if is_size %}size {% endif %}{{ value | handle }} {% if variant.available and sold_out_toggled == blank %}available{% else %}soldout{% endif %}">
+              <input id="swatch-{{ option_index }}-{{ value | handle }}-{{ product.id }}" type="radio" name="option-{{ product.id }}-{{ option_index }}" value="{{ value | escape }}" {{ is_checked }} {% unless variant.available and sold_out_toggled == blank %}disabled{% endunless %} />
+              {% if is_color %}
+                {% assign has_swatch = false %}
+                {% assign color_bg = value | prepend: 'color-' | append: '.jpg' | file_url %}
+                {% assign color_bg = color_bg | downcase | replace: '%20+%20', '-' | replace: ' + ', '-' | replace: '%20', '-' | replace: ' ', '-' %}
+                {% comment %} {% assign has_swatch = false %}
+                {% assign color_bg = value | prepend: 'swatch-' | handle | append: '.' | append: file_extension | asset_url %}
+                {% for swatch_name in swatch_colors.name %}
+                  {% if has_swatch %}
+                    {% continue %}
+                  {% endif %}
+                  {% assign swatch_name_lower = swatch_name | downcase %}
+                  {% if value_lower == swatch_name_lower %}
+                    {% assign has_swatch = true %}
+                    {% assign color_bg = swatch_colors.image[forloop.index0][0].cloudinary_src %}
+                  {% endif %}
+                {% endfor %} {% endcomment %}
+                <label for="swatch-{{ option_index }}-{{ value | handle }}-{{ product.id }}" style="background-color: {{ value | split: ' ' | last | handle }}; background-image: url({{ color_bg }})">
+                  <span class="visually-hidden">{{ value }}</span>
+                </label>
+              {% else %}
+                {% if value == "Single Pair" %}
+                  <label for="swatch-{{ option_index }}-{{ value | handle }}-{{ product.id }}">
+                    Just a single pair, I never lose my sunglasses
+                  </label>
+                  {% elsif value == "Protected" %}
+                  <label for="swatch-{{ option_index }}-{{ value | handle }}-{{ product.id }}">
+                    Count me in
+                  </label>
+                {% else %}
+                  <label for="swatch-{{ option_index }}-{{ value | handle }}-{{ product.id }}"{% if value.size > 2 %} style="font-size: .9rem;"{% endif %}>
+                    {% assign swatch_val = value | downcase %}
+                    {% case swatch_val %}
+                      {% when 'one size' %}
+                        {% assign swatch_val = 'O/S' %}
+                    {% endcase %}
+                    {{ swatch_val }}
+                  </label>
+                {% endif %}
+              {% endif %}
+            </div>
+            {% if variant.available and sold_out_toggled == blank %}
+              <script>
+                jQuery('.swatch[data-option-index="{{ option_index }}"] .{{ value | handle }}').removeClass('soldout').addClass('available').find(':radio').removeAttr('disabled');
+              </script>
+            {% endif %}
+          {% endunless %}
+        {% endfor %}
+      </div>
+      {%- if swatch == 'Size' -%}
+        <div class="flex justify-between items-center">
+          <div class="size-chart-link-container flex flex-col-reverse md:flex-row-reverse items-start justify-start">
+            {% if product.tags contains 'tops' and customer.metafields.info.last_purchased_size_top != blank %}
+              <div class="p2 relative md:ml-2.5 md:pl-4
+              md:before:absolute md:before:w-[4px] md:before:h-[4px] md:before:bg-black md:before:content-[''] md:before:left-0 md:before:top-2 md:before:rounded-full">
+                Last purchased:
+                  <span>{{ customer.metafields.info.last_purchased_size_top }}</span>
+              </div>
+            {% endif %}
+            {% if product.tags contains 'bottoms' and customer.metafields.info.last_purchased_size_bottom != blank %}
+              <div class="p2 relative md:ml-2.5 md:pl-4
+              md:before:absolute md:before:w-[4px] md:before:h-[4px] md:before:bg-black md:before:content-[''] md:before:left-0 md:before:top-2 md:before:rounded-full">
+                Last purchased:
+                <span>{{ customer.metafields.info.last_purchased_size_bottom }}</span>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  {% endif %}
+{% endunless %}
+
+{% endif %}

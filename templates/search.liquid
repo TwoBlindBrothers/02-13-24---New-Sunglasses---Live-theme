@@ -1,0 +1,196 @@
+{% assign grid_results = false %}
+
+{% assign respond_js_secret_key = shop.domain | md5 %}
+{% unless search.terms == respond_js_secret_key %}
+
+{% paginate search.results by 10 %}
+<div class="wrapper">
+  <div class="grid">
+    <div class="grid__item large--two-thirds push--large--one-sixth">
+      {% assign shopBlindItems = false %}
+      {% if search.performed %}
+        {% for item in search.results %}
+          {% if item.type == 'shopblind' %}
+            {% assign shopBlindItems = true %}
+          {% endif %}
+        {% endfor %}
+        {% if search.results_count == 0 %}
+          <h1 class="text-center">{{ 'general.search.no_results_html' | t: terms: search.terms }}</h1>
+        {% else %}
+          {% if shopBlindItems == true %}
+            <div style="text-align: center">
+              <a class="btn" style="display: inline-block; margin: 0 auto 2rem" href="https://twoblindbrothers.com">Click to Shop Blind Now</a>
+            </div>
+            <h1 class="text-center">Looking for help with Shop Blind?</h1>
+            <h3 style="text-transform: uppercase; text-align: center;">Check out the links below.</h3>
+          {% else %}
+            <h1 class="text-center">{{ 'general.search.results_for_html' | t: terms: search.terms }}</h1>
+          {% endif %}
+        {% endif %}
+      {% else %}
+        <h1 class="text-center">{{ 'general.search.title' | t }}</h1>
+      {% endif %}
+
+      {% unless shopBlindItems == true %}
+        {% include 'search-bar' %}
+      {% endunless %}
+
+      {% if search.performed %}
+
+        <hr class="hr--clear">
+
+        <div class="grid-uniform">
+          {% for item in search.results %}
+
+            {% comment %}
+              Check if the product is on sale and set a variable to be used below.
+            {% endcomment %}
+            {% assign on_sale = false %}
+            {% if sca_compare_at_price > sca_price %}
+              {% assign on_sale = true %}
+            {% endif %}
+
+            {% comment %}
+              Check if the product is sold out and set a variable to be used below.
+            {% endcomment %}
+            {% assign sold_out = true %}
+            {% if item.available %}
+              {% assign sold_out = false %}
+            {% endif %}
+            {% assign lowerTitle = item.title | downcase %}
+            {% if lowerTitle contains 'guide dog' %}
+              {% continue %}
+            {% endif %}
+            {% if grid_results == false %}
+              <!-- begin list search results-->
+              {% unless item.type == 'shopblind' or item.type == 'guidedog' %}
+                <div class="grid__item">
+                  <div class="grid">
+                    {% if item.featured_image %}
+                      {% comment %}
+                        We have a featured_image, so it's likely a product
+                      {% endcomment %}
+                      <div class="grid__item one-third" style="position: relative;">
+                        <a href="{{ item.url }}" title="{{ item.title | escape }}">
+                          {{ item.featured_image.src | img_url: 'medium' | img_tag: item.featured_image.alt }}
+                        </a>
+
+                        <div name="secomapp-fg-image-{{ item.id }}" style="display: none;"> {{ "icon-freegift.png" | asset_url | img_tag: "", "sca-fg-img-collect" }} </div>
+                        <div class="sca-fg-cat-list" style="display:none;" name="secomapp-fg-data-{{ item.id }}" prod-show='list'> </div>
+                      </div>
+                    {% endif %}
+
+                    {% comment %}
+                      If we don't have a featured_image, add a push-- class to keep the alignment the same
+                    {% endcomment %}
+                    <div class="grid__item {% if item.featured_image %} two-thirds {% else %} one-whole {% endif %}">
+                      <h2 class="h3">{{ item.title | link_to: item.url }}</h2>
+
+                      {% if sca_price %}
+                        <p>
+                          {% comment %}
+                            You can show a leading 'from' or 'up to' by checking 'product.price_varies'
+                            if your variants have different prices.
+                          {% endcomment %}
+                          {% if on_sale %}
+                            {% if sca_price_varies %}
+                              {% assign sale_price = sca_price | money %}
+                              {{ 'products.product.on_sale_from_html' | t: price: sale_price }}
+                            {% else %}
+                              <strong>{{ 'products.product.on_sale' | t }}</strong>
+                              <span itemprop="price">{{ sca_price | money }}</span>
+                            {% endif %}
+                          {% else %}
+                            {% if sca_price_varies %}
+                              {% assign price = sca_price | money %}
+                              <span itemprop="price">{{ 'products.general.from_text_html' | t: price: price }}</span>
+                            {% else %}
+                              <span itemprop="price">{{ sca_price | money }}</span>
+                            {% endif %}
+                          {% endif %}
+                          {% if sold_out %}
+                            <br><strong>{{ 'products.product.sold_out' | t }}</strong>
+                          {% endif %}
+                          {% if on_sale %}
+                            <br><span class="visually-hidden">{{ 'products.general.sale_price' | t }}</span><s>{{ sca_compare_at_price | money }}</s>
+                          {% endif %}
+                        </p>
+                      {% endif %}
+
+                      {% comment %}
+                        Get a brief excerpt of raw text from the page/product
+                        <p>{{ item.content | strip_html | truncatewords: 50 }}</p>
+                      {% endcomment %}
+
+                    </div>
+                  </div>
+                  {% unless forloop.last %}<hr>{% endunless %}
+                </div>
+              {% endunless %}
+              <!-- //list search results-->
+            {% else %}
+              <!-- begin grid search results-->
+              {% unless item.type == 'shopblind' %}
+                <div class="grid__item search-result large--one-third medium--one-third">
+                  {% if item.featured_image %}
+                    <a href="{{ item.url | within: collection }}" title="{{ item.title | escape }}">
+                      {{ item.featured_image.src | img_url: 'medium' | img_tag: item.featured_image.alt }}
+                    </a>
+                  {% endif %}
+
+                  <h5>{{ item.title | link_to: item.url }}</h5>
+
+                  {% if sca_price %}
+                    <p>
+                      {% if on_sale %}
+                        {% if sca_price_varies %}
+                          {% assign sale_price = sca_price | money %}
+                          {{ 'products.product.on_sale_from_html' | t: price: sale_price }}
+                        {% else %}
+                          <strong>{{ 'products.product.on_sale' | t }}</strong>
+                          <span itemprop="price">{{ sca_price | money }}</span>
+                        {% endif %}
+                      {% else %}
+                        {% if sca_price_varies %}
+                          {% assign price = sca_price | money %}
+                          <span itemprop="price">{{ 'products.general.from_text_html' | t: price: price }}</span>
+                        {% else %}
+                          <span itemprop="price">{{ sca_price | money }}</span>
+                        {% endif %}
+                      {% endif %}
+                      {% if sold_out %}
+                        <br><strong>{{ 'products.product.sold_out' | t }}</strong>
+                      {% endif %}
+                      {% if on_sale %}
+                        <br><s>{{ sca_compare_at_price | money }}</s>
+                      {% endif %}
+                    </p>
+                  {% else %}
+                    <p>{{ item.content | strip_html | truncatewords: 50 }}</p>
+                  {% endif %}
+                </div>
+              {% endunless %}
+              <!-- //grid search results-->
+            {% endif %}
+
+          {% endfor %}
+        </div>
+
+        {% if paginate.pages > 1 %}
+          <hr>
+          <div class="pagination">
+            {{ paginate | default_pagination | replace: '&laquo; Previous', '&larr;' | replace: 'Next &raquo;', '&rarr;' }}
+          </div>
+        {% endif %}
+
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endpaginate %}
+
+{% else %}
+  {% include 'respond' %}
+  {% layout none %}
+{% endunless %}

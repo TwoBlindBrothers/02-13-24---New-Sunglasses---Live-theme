@@ -1,0 +1,25 @@
+{% assign delay = section.settings.delay | default: 1000 %}
+<page-loading class="page-loading {% unless template.name == 'collection' %} is-active{% endunless %}" data-delay="{{ section.settings.delay }}">
+  <div class="loader">
+    <div class="dot dot-1"></div>
+    <div class="dot dot-2"></div>
+    <div class="dot dot-3"></div>
+    <div class="dot dot-4"></div>
+    <div class="dot dot-5"></div>
+    <div class="dot dot-6"></div>
+  </div>
+</page-loading>
+
+{% schema %}
+{
+  "name": "Page Loading",
+  "settings": [
+    {
+      "type": "number",
+      "id": "delay",
+      "label": "Delay (ms)",
+      "default": 1000
+    }
+  ]
+}
+{% endschema %}

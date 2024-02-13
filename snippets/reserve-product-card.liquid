@@ -1,0 +1,489 @@
+{% liquid
+  unless grid_item_width
+    assign grid_item_width = 'large--one-half medium--one-half'
+  endunless
+
+  assign alignment = alignment | default: 'under-image'
+  assign text_layout = text_layout | default: 'left'
+  assign price_decimals = price_decimals | default: true
+
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+  endif
+
+  assign sold_out = true
+  if product.available
+    assign sold_out = false
+  endif
+
+  if product.metafields.guidedog.sold_out
+    assign sold_out = true
+  endif
+
+  assign early_access = false
+  if product.selected_or_first_available_variant.metafields.accentuate.early_access
+    assign early_access = true
+  endif
+
+  if product.metafields.guidedog.sold_out
+    assign sold_out = true
+  endif
+
+  assign presale = false
+  if product.selected_or_first_available_variant.metafields.accentuate.presale
+    assign today_date = 'now' | date: '%s'
+    assign four_hours = 60 | times: 60 | times: 4
+    assign today_date = today_date | times: 1
+    assign today_date = today_date | minus: four_hours
+    assign presale_start_date = product.selected_or_first_available_variant.metafields.accentuate.presale_start_date | date: '%s' | times: 1
+    assign presale_end_date = product.selected_or_first_available_variant.metafields.accentuate.presale_end_date | date: '%s' | times: 1
+    if today_date >= presale_start_date and today_date < presale_end_date
+      assign presale = true
+      assign sold_out = false
+    else
+      assign presale = false
+    endif
+  endif
+
+  assign limited_quantity = blank
+  if product.selected_or_first_available_variant.metafields.available_stock.count != blank
+    assign limited_quantity = product.selected_or_first_available_variant.metafields.available_stock.count | times: 1
+  endif
+  if limited_quantity != blank
+    if limited_quantity <= 0
+      assign presale = false
+      assign sold_out = true
+    else
+      assign sold_out = false
+    endif
+  endif
+
+  assign product_title = product.title | replace: "Women's ", "" | replace: "Men's ", ""
+  assign show_add_to_cart = collection_is_able_to_show_button | default: 'false'
+
+  for option in product.options_with_values
+    if option.position == 1 and option.name == 'Color'
+      assign show_add_to_cart = 'true'
+    endif
+    if option.position == 2 and option.values.size == 1
+      assign show_add_to_cart = 'true'
+    endif
+    if option.position == 2 and option.values.size > 1
+      assign show_add_to_cart = 'false'
+    endif
+  endfor
+
+  assign show_add_to_cart = 'false'
+
+  assign variantsFeaturedImage = ''
+  for variant in product.variants
+  if variant.metafields.cart_option.default_variant_add_cart == "true"
+    assign variantsFeaturedImage = variant.featured_image
+    break
+  endif
+  endfor
+  assign images = product.images
+
+  if product.options contains 'Color'
+    assign values = product.variants.first | map: "option1" | uniq
+  endif
+  assign variantColor = values[0] | downcase
+
+  assign found = false
+  assign hoverColorHover = values[0] | downcase | append: ' hover'
+  assign hoverImage = product.featured_image
+  for image in images
+    assign alt_downcase = image.alt | downcase
+    if alt_downcase contains hoverColorHover and found == false
+      assign hoverImage = image
+      assign found = true
+    endif
+  endfor
+
+  assign file_extension = 'jpg'
+  assign values = null
+  assign option = product.options_with_values[0]
+
+  if option.name == 'Color' and option.values.size > 1
+    assign option_color_default = option.values[0]
+  endif
+
+  assign product_size_guide_title = product.metafields.size_guide.title
+  assign product_size_guide_image = product.metafields.size_guide.image | first
+  assign product_size_guide_description = product.metafields.size_guide.description
+  assign product_size_guide_sizes = product.metafields.size_guide.sizes
+%}
+
+{% capture product_subtext %}
+  {% if presale %}
+    Pre-Order | {% if sold_out == false %}Limited Quantity{% else %}Sold Out{% endif%}
+  {% endif %}
+  {% if early_access %}
+    Early Access | {% if sold_out == false %}Limited Quantity{% else %}Sold Out{% endif%}
+  {% endif %}
+  {% if sold_out and presale == false and early_access == false %}
+    Sold Out
+  {% endif %}
+{% endcapture %}
+
+{% capture product_price %}
+  {% if on_sale %}
+    {% if product.price_varies %}
+      {% assign sale_price = product.price | money_without_trailing_zeros %}
+      </br><s style="font-weight: normal; margin-right: .25rem; opacity: .5;">{{ product.compare_at_price | money_without_trailing_zeros }}</s><span style="letter-spacing: .1rem;">{{ 'products.product.on_sale_from_html' | t: price: sale_price }}</span>
+    {% else %}
+      <span class="h4">{{ 'products.product.on_sale' | t }}</span>
+      <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
+      <s style="font-weight: normal; margin-right: .25rem; opacity: .5;">{{ product.compare_at_price | money_without_trailing_zeros }}</s>
+      {{ product.price | money_without_trailing_zeros }}
+    {% endif %}
+  {% else %}
+    {% if product.price_varies %}
+      {% assign price = product.price | money_without_trailing_zeros %}
+      <span class="h2 price">{{ product.price_min | money_without_trailing_zeros }} - {{ product.price_max | money_without_trailing_zeros }}</span>
+    {% else %}
+      <span class="h2 price">{{ product.price | money_without_trailing_zeros }}</span>
+    {% endif %}
+  {% endif %}
+  {% if sold_out %}
+    <br><span class="h4">{{ 'products.product.sold_out' | t }}</span>
+  {% endif %}
+{% endcapture %}
+
+{% comment %}
+  Show add to cart button if there is only 1 variant and it's not Title (no variant product)
+{% endcomment %}
+
+{% capture add_to_cart_button %}
+  {% assign variantIdToAddCart = -1 %}
+  {% if product.variants.size > 0 %}
+    {% assign variantIdToAddCart = product.variants.first.id %}
+  {% endif %}
+
+  {% for variant in product.variants %}
+    {% if variant.metafields.cart_option.default_variant_add_cart == "true" %}
+      {% assign variantIdToAddCart = variant.id %}
+      {% break %}
+    {% endif %}
+  {% endfor %}
+
+  {% if sold_out %}
+    <button type="submit" name="add" class="btn btn--blue btn--wide disabled ajax-add-to-cart">
+    <span>Sold Out</span>
+    </button>
+    {% if product.metafields.guidedog.sold_out_message %}
+      {% unless template contains 'collection' %}
+        <p style="font-size: 14px; letter-spacing: 0px;">{{ product.metafields.guidedog.sold_out_message }}</p>
+      {% endunless %}
+    {% endif %}
+  {% else %}
+    {% assign button_label = 'products.product.add_to_cart' | t %}
+    {% assign properties = empty %}
+    {% if presale %}
+      {% assign properties = "{ 'Presale': 'Estimated delivery October 10th' }" %}
+      {% assign button_label = 'Pre-order now' %}
+    {% endif %}
+    <button class="addToCart ajax-add-to-cart reserve-btn h-[43px] bg-black py-2 hover:bg-white" data-properties="{{ properties }}" data-product-id="{{ product.id }}" data-variant-id="{{variantIdToAddCart}}" type="submit" name="add to cart">
+      <span class="addToCartText">{{ button_label }}</span>
+    </button>
+  {% endif %}
+{% endcapture %}
+
+{% capture color_selector %}
+  {% render 'reserve-color-selector',
+    default_checked: true,
+    values: values,
+    option: option,
+    product: product,
+    collection: collection
+  %}
+{% endcapture %}
+
+{% capture color_selector_quick_add %}
+  {% render 'reserve-color-selector',
+    values: values,
+    option: option,
+    product: product,
+    collection: collection
+  %}
+{% endcapture %}
+
+{% capture product_image %}
+  {% assign found = false %}
+  {% assign variant = product.variants.first %}
+  {% for image in images %}
+    {% assign alt_downcase = image.alt | downcase %}
+    {% if alt_downcase contains variantColor and found == false %}
+      <picture class="default-image" data-image="{{ image.alt }}">
+        <source data-srcset="{{ image.src | img_url: '800x' }}" media="(min-width: 1200px)" />
+        <source data-srcset="{{ image.src | img_url: '700x' }}" media="(min-width: 769px)" />
+        <source data-srcset="{{ image.src | img_url: '600x' }}" media="(min-width: 320px)" />
+        <img
+          data-src="{{ image.src | img_url: '500x' }}"
+          alt="{{ product.title | escape }} in {{ variant.option1 }}"
+          class="lazyload absolute top-0 left-0 w-full h-full object-cover [&.lazyloaded+span]:hidden rounded-[4px] md:rounded-[8px]"
+        />
+        <span class="loader absolute top-0 left-0 flex justify-center items-center w-full h-full pointer-events-none bg-grey text-white"></span>
+      </picture>
+      {% assign found = true %}
+    {% endif %}
+  {% endfor %}
+
+  {% if found == false %}
+    <picture class="default-image">
+      <source data-srcset="{{ product.featured_image.src | img_url: '800x' }}" media="(min-width: 1200px)" />
+      <source data-srcset="{{ product.featured_image.src | img_url: '700x' }}" media="(min-width: 769px)" />
+      <source data-srcset="{{ product.featured_image.src | img_url: '600x' }}" media="(min-width: 320px)" />
+      <img
+        data-src="{{ product.featured_image.src | img_url: '500x' }}"
+        alt="{% if product.metafields.accessibility.description %}{{ product.metafields.accessibility.description }}{% else %}{{ product.title | escape }}{% endif %}"
+        class="lazyload absolute top-0 left-0 w-full h-full object-cover [&.lazyloaded+span]:hidden rounded-[4px] md:rounded-[8px]"
+      />
+      <span class="loader absolute top-0 left-0 flex justify-center items-center w-full h-full pointer-events-none bg-grey text-white"></span>
+    </picture>
+  {% endif %}
+{% endcapture %}
+
+{% capture product_price %}
+  {% if on_sale %}
+    {% if product.price_varies %}
+      {% assign sale_price = product.price | money %}
+      {{ 'products.product.on_sale_from_html' | t: price: sale_price }}
+    {% else %}
+      <span class="p1">{{ 'products.product.on_sale' | t }}</span>
+      <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
+      <s style="font-weight: normal; margin-right: .25rem; opacity: .5;">{{ product.compare_at_price | money }}</s>
+      {% assign formatted_price = product.price | money %}
+      {% if price_decimals == false %}
+        {% assign formatted_price = product.price | money_without_trailing_zeros %}
+      {% endif %}
+      {{ formatted_price }}
+    {% endif %}
+  {% else %}
+    {% if product.price_varies %}
+      {% assign price = product.price | money %}
+      <span class="price p1 text-grey-400 font-normal">{{ product.price_min | money }} - {{ product.price_max | money }}</span>
+    {% else %}
+      {% assign formatted_price = product.price | money %}
+      {% if price_decimals == false %}
+        {% assign formatted_price = product.price | money_without_trailing_zeros %}
+      {% endif %}
+      <span class="price p1 text-grey-400 font-normal">{{ formatted_price }}</span>
+    {% endif %}
+  {% endif %}
+{% endcapture %}
+
+<div class="reserve-product-card grid__item float-none flex !pl-0 {% for tag in product.tags %} filter-{{ tag }} {% endfor %}">
+  <div class="grid__product-container flex flex-col w-full !mb-0{% if alignment == 'bottom' %} layout-bottom{% endif %}" data-reserve-product-card id="product-{{ product.id }}">
+    <div class="reserve-product-card__wrapper"{% if show_add_to_cart == "true" and alignment == 'under-image' %} style="border: 4px solid {{ collection_product_border_color }}"{% endif %}>
+      <div class="grid-image-wrapper">
+        {% if alt_product %}
+          <div class="grid__image pb-[calc(212/163*100%)] !mb-[10px] sm:pb-[calc(298/224*100%)] sm:!mb-2 md:!mb-4 lg:!mb-[15px]">
+        {% else %}
+          <a href="{{ product.url | within: collection }}" class="grid__image transition-none pb-[calc(212/163*100%)] !mb-[10px] sm:pb-[calc(298/224*100%)] sm:!mb-2 md:!mb-4 lg:!mb-[15px] focus-visible:outline focus-visible:outline-light-gold focus-visible:outline-[1.5px] focus-visible:outline-offset-4">
+        {% endif %}
+
+        <picture class="hover-image" data-image="{{ hoverImage.alt }}">
+          <source data-srcset="{{ hoverImage | img_url: '500x' }}" media="(min-width: 1200px)" />
+          <source data-srcset="{{ hoverImage | img_url: '500x' }}" media="(min-width: 769px)" />
+          <source data-srcset="{{ hoverImage | img_url: '400x' }}" media="(min-width: 500px)" />
+          <source data-srcset="{{ hoverImage | img_url: '300x' }}" media="(min-width: 320px)" />
+          <img
+            loading="lazy"
+            data-src="{{ hoverImage | img_url: '500x560' }}"
+            alt="{% if product.metafields.accessibility.description %}{{ product.metafields.accessibility.description }}{% else %}{{ product.title | escape }}{% endif %}"
+            class="grid__variant-hover lazyload absolute top-0 left-0 w-full h-full object-cover rounded-[4px] md:rounded-[8px]"
+          />
+          <input type="hidden" class="default-hover-image" value="{{ hoverImage | img_url: '500x' }}" />
+        </picture>
+
+        {{ product_image }}
+
+        {% if alt_product %}
+          </div>
+        {% else %}
+          </a>
+        {% endif %}
+        <div class="wish-list-button-wrapper absolute left-auto top-1 right-1 z-[1] sm:top-2 sm:right-2 md:top-3 md:right-3 lg:top-4 lg:right-4 hover:transform-none">
+          <status-save-button product-id="{{ product.id }}" class="product-card-save-button"></status-save-button>
+        </div>
+      </div>
+
+      <select name="id" data-productid="{{ product.id }}" id="productSelect-{{ product.id }}" class="product-single__variants">
+        {% for variant in product.variants %}
+          {% if variant.available %}
+            {% comment %}
+            Note: if you use option_selection.js, your <select> tag will be overwritten, meaning what you have inside <option> will not reflect what you coded below.
+            {% endcomment %}
+            <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} data-sku="{{ variant.sku }}" value="{{ variant.id }}">
+              {{ variant.title }} - {{ variant.price | money_with_currency }}
+            </option>
+          {% else %}
+            <option disabled="disabled">
+              {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+            </option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+    <div class="grid__product-content flex grow flex-col">
+      <div class="grid__product-wrapper">
+        <h6 aria-level="3" class="grid__product layout-{{ text_layout }}">
+        {% if alt_product %}
+          <p class="p1 !block !text-black normal-case !mt-0 mb-[2px] sm:max-w-[164px] md:mb-0 md:max-w-none">{{ product_title }}</p>
+        {% else %}
+          <a class="p1 !block !text-black normal-case transition-none !mt-0 mb-[2px] sm:max-w-[164px] md:mb-0 md:max-w-none focus-visible:outline focus-visible:outline-light-gold focus-visible:outline-[1.5px]" href="{{ product.url | within: collection }}" title="{{product_title}}">{{ product_title }}</a>
+        {% endif %}
+        {% if product_subtext != blank %}
+          {% unless template contains 'collection' %}
+            <p class="product-subtext">{{ product_subtext }}</p>
+          {% endunless %}
+        {% endif %}
+        {{ product_price }}
+        </h6>
+        {% if sold_out %}
+          <p class="p1">Sold Out</p>
+        {% endif %}
+      </div>
+      <div class="flex align-items-start">
+        {{ color_selector }}
+      </div>
+      <div class="mt-auto">
+        <div class="md:relative">
+          <button
+            {% if sold_out %}disabled {% endif %}
+            id="quick-add-{{ product.id }}"
+            type="button"
+            class="quick-add reserve-btn reserve-btn--outline-black !flex justify-center items-center w-full py-2 mt-[14px] sm:mt-[11px] md:mt-5 md:py-[10px]"
+            data-reserve-quick-add="true"
+            data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+            onClick="handleClickQuickAdd(this, {{ product.id }});"
+          >
+            {% if sold_out %}Sold Out{% else %}Add to Bag{% endif %}
+          </button>
+          {% for option in product.options_with_values %}
+            {% if option.values.size == 1 %}
+              {% continue %}
+            {% endif %}
+            {% if option.name == 'Color' %}
+              {% continue %}
+            {% endif %}
+            <div>
+              <div
+                id="ajax-swatch-wrapper-{{ product.id }}"
+                aria-hidden aria-modal="true"
+                aria-labelledby="ajax-swatch-label-{{ product.id }}"
+                role="dialog"
+                class="hidden"
+              >
+                <div class="reserve-product-card__swatch">
+                  <div class="reserve-product-card__swatch-inner">
+                    <div class="md:hidden">
+                      <button class="absolute top-4 right-4 flex sm:right-8" type="button" data-close-quick-add>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                          <path d="M1 1L18.9999 18.9999" stroke="black" stroke-width="1.5"/>
+                          <path d="M19 1L1.00003 18.9999" stroke="black" stroke-width="1.5"/>
+                        </svg>
+                      </button>
+                      <div class="flex items-center mb-4">
+                        <div class="w-[100px] !mb-0 h-[130px] grid__image">
+                          {{ product_image }}
+                        </div>
+                        <div class="w-[calc(100%-100px)] pl-4">
+                          <p class="h3-reserve text-black mb-[6px]">{{ product_title }}</p>
+                          <p class="p2 text-grey-400">{{ product_price }}</p>
+                        </div>
+                      </div>
+                      <p class="label mb-2 reserve-color-meta">
+                        {{ option_color_default }}
+                      </p>
+                      <div class="mb-4">
+                        {{ color_selector_quick_add }}
+                      </div>
+                      <p class="label mb-2">{{ option.name }}</p>
+                    </div>
+                    <div class="swatch {{ option.name | downcase }}-swatch" data-position="{{ option.position }}">
+                      <h4 class="sr-only" id="ajax-swatch-label-{{ product.id }}">{{ option.name }}</h4>
+                      <div class="ajax-swatches" id="ajax-swatches-{{ product.id }}">
+                        {% for value in option.values %}
+                          <div class="swatch-element">
+                            <input
+                              id="swatch-{{ forloop.index0 }}-{{ value | handle }}-{{ product.id }}"
+                              type="radio"
+                              name="option-{{ option.name | downcase }}-{{ product.id }}"
+                              value="{{ value }}"
+                              data-position="{{ option.position }}"
+                              data-variant-id="{{ value_variants[0].id | string }}"
+                              data-product-id="{{ product.id }}"
+                              data-reserve-size-select="true"
+                              {% if forloop.index0 == 0 %}checked{% endif %}
+                            />
+                            <label for="swatch-{{ forloop.index0 }}-{{ value | handle }}-{{ product.id }}">
+                              <span class="{% if value.size > 2 %}small-swatch{% endif %}">{{ value }}</span>
+                            </label>
+                          </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                    {% if product_size_guide_sizes or customer.metafields.info.last_purchased_size_top != blank or customer.metafields.info.last_purchased_size_bottom != blank %}
+                      <div class="mt-4 flex flex-col md:flex-row justify-between">
+                        {%- if product_size_guide_sizes -%}
+                          <a tabindex="0" data-remodal-target="product-size-chart-{{ product.id }}" class="p2 size-chart-popup-link">Size Guide</a>
+                        {%- endif -%}
+                        {% if product.tags contains 'tops' and customer.metafields.info.last_purchased_size_top != blank %}
+                          <div class="p2">
+                            Last purchased:
+                            <span>{{ customer.metafields.info.last_purchased_size_top }}</span>
+                          </div>
+                        {% endif %}
+                        {% if product.tags contains 'bottoms' and customer.metafields.info.last_purchased_size_bottom != blank %}
+                          <div class="p2">
+                            Last purchased:
+                            <span>{{ customer.metafields.info.last_purchased_size_bottom }}</span>
+                          </div>
+                        {% endif %}
+                      </div>
+                    {% endif %}
+                    <div class="md:hidden">
+                      <div class="flex items-center mt-[19px]">
+                        {{ add_to_cart_button }}
+                        <status-save-button product-id="{{ product.id }}" class="ml-2 popup-save-button shrink-0 sm:ml-3 md:hidden hidden"></status-save-button>
+                      </div>
+                      <div class="text-center mt-4">
+                        <a href="{{ product.url | within: collection }}" class="inline-block p2 underline transition-none">View Full Details</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="remodal size-guide" data-remodal-id="product-size-chart-{{ product.id }}" data-remodal-options="hashTracking: false">
+    <button data-remodal-action="close" class="remodal-close"></button>
+    <p class="product-size-chart-title">Size Guide</p>
+    <div class="size-guide-content">
+      <div class="fit-details-info">
+      {% if product_size_guide_image %}
+        <img src="{{ product_size_guide_image.src }}" alt="{{ product_size_guide_image.alt }}" />
+      {% endif %}
+      <div class="fit-details-info__description">
+        {% if product_size_guide_title %}
+          <p class="fit-details-info__description-label">{{ product_size_guide_title }}</p>
+        {% endif %}
+        {% if product_size_guide_description %}
+          <p class="fit-details-info__description-content">{{ product_size_guide_description }}</p>
+        {% endif %}
+      </div>
+      </div>
+      <div class="table-wrapper">
+        {{ product_size_guide_sizes }}
+      </div>
+      <img class="mobile-fit-details-image" src="{{ product_size_guide_image.src }}" alt="{{ product_size_guide_image.alt }}" />
+    </div>
+  </div>
+</div>

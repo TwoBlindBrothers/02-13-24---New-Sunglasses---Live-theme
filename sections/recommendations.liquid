@@ -1,0 +1,44 @@
+<recommendations class="block text-black bg-white recommendations">
+  <div class="mx-auto max-w-[1440px] px-[15px] py-[32px] min-[390px]:pb-[56px] sm:px-[32px] sm:pt-[48px] md:px-[40px] md:pt-[40px] lg:px-[56px] lg:pt-[56px]">
+    {%- if section.settings.tagline != blank -%}
+      <div class="p3 px-[7px] h-[22px] bg-grey-200 rounded-[50px] inline-flex items-center justify-center mb-2 md:mb-3">{{- section.settings.tagline -}}</div>
+    {%- endif -%}
+    {%- if section.settings.title != blank -%}
+      <h2 class="mb-4 h2-reserve md:mb-6 lg:mb-8">{{- section.settings.title -}}</h2>
+    {%- endif -%}
+    {%- if section.settings.widget_id != blank -%}
+      {%- render 'rebuy-recommended-template', widget_id: section.settings.widget_id -%}
+    {%- endif -%}
+  </div>
+</recommendations>
+
+{% schema %}
+{
+  "name": "Recommendations",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Exclusive"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "More Products You’ll Love"
+    },
+    {
+      "type": "text",
+      "id": "widget_id",
+      "label": "Rebuy Widget ID",
+      "default": "112907"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Recommendations"
+    }
+  ]
+}
+{% endschema %}

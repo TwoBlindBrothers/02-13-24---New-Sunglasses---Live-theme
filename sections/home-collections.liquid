@@ -1,0 +1,77 @@
+{% for block in section.blocks %}
+
+<div class="home-collection-item" style="background-image: url({{ block.settings.bg_image | img_url: 'master' }});">
+
+  <div class="home-collection-item__inner">
+    <h1 style="color:{{block.settings.textcolor}}">{{ block.settings.title }}</h1>
+    <div style="color:{{block.settings.textcolor}}">{{ block.settings.description }}</div>
+
+    <a href="{{ block.settings.cta_url }}" class="btn-cta">{{ block.settings.cta }}</a>
+  </div>
+
+</div>
+
+{% endfor %}
+
+ {% schema %}
+  {
+    "name": "Home Collections (Mobile)",
+    "class": "home-collections--mobile",
+    "blocks": [
+      {
+        "type": "collection",
+        "name": "Collections (Mobile)",
+        "settings": [
+          {
+            "id": "bg_image",
+            "type": "image_picker",
+            "label": "Background Image"
+          },
+          {
+            "id": "title",
+            "type": "text",
+         	  "label": "Title"
+          },
+          {
+            "id": "description",
+            "type": "richtext",
+         	  "label": "Description"
+          },
+          {
+            "id": "cta",
+            "type": "text",
+            "label": "CTA (text)"
+          },
+          {
+            "id": "cta_url",
+            "type": "url",
+            "label": "CTA (url)"
+          },
+          {
+              "type": "select",
+              "id": "textcolor",
+              "label": "Text color",
+              "options": [
+                { "value": "#fff", "label": "White"},
+                { "value": "#231F20", "label": "Black"},
+                { "value": "#F0D83D", "label": "Yellow"},
+                { "value": "#ebebeb", "label": "Grey"}
+             ],
+             "default":   "#fff"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Collections (Mobile)",
+        "category": "Collections",
+        "blocks": [
+          {
+              "type": "collection"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

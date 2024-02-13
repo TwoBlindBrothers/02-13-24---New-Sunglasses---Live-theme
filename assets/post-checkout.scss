@@ -1,0 +1,283 @@
+.text-center {
+    text-align: center;
+  }
+  .text-uppercase {
+    text-transform: uppercase;
+  }
+  
+  $canada: 'canada-type-gibson',HelveticaNeue,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  
+  #post-checkout-wrapper {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 101;
+    pointer-events: none;
+    display: none;
+    &.default_dialog {
+      display: block;
+    }
+    & * {
+      box-sizing: border-box;
+    }
+    &.active {
+      display: block;
+    }
+    #sb-options-wrapper {
+      pointer-events: auto;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: rgba(0,0,0,.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      #sb-options-container {
+        width: 100%;
+        max-width: 750px;
+        padding: 1rem;
+        position: relative;
+        #sb-options-form {
+          background-color: white;
+          position: relative;
+          height: 75vh;
+          max-height: 600px;
+          #sb-options-scroll {
+            height: 100%;
+            overflow: auto;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            padding: 2rem;
+            padding-bottom: 65px;
+          }
+          #sb-options {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            #sb-options-header {
+              margin-bottom: 2rem;
+              p {
+                font-size: 1rem;
+                color: black;
+                letter-spacing: normal;
+              }
+            }
+            h1, h2, h3, h4 {
+              font-family: $canada;
+              color: black;
+              font-weight: 900;
+              letter-spacing: normal;
+            }
+            h2 {
+              font-size: 1.5rem;
+              margin-bottom: .25rem;
+              letter-spacing: normal;
+              span {
+                text-decoration: underline;
+              }
+            }
+            h3 {
+              font-size: 1.15rem;
+              margin-bottom: .5rem;
+            }
+            h4 {
+              font-size: .8rem;
+              margin: .5rem 0;
+              text-decoration: underline;
+            }
+            #sb-items-wrapper {
+              margin: 0 auto;
+              width: 80%;
+              .sb-item {
+                display: flex;
+                margin: 0 -.5rem 2rem;
+                padding-right: 3rem;
+                @media (max-width: 500px){
+                  flex-direction: column;
+                  padding-right: 0;
+                }
+                &:not(:last-of-type) {
+                  border-bottom: 1px solid rgba(0,0,0,.2);
+                }
+                .item-image-wrapper {
+                  padding: 0 .5rem;
+                  .item-image {
+                    width: 100px;
+                    height: 100px;
+                    position: relative;
+                    @media (max-width: 650px){
+                      width: 180px;
+                      height: auto;
+                      margin: 0 auto .5rem;
+                    }
+                    img {
+                      width: 100%;
+                      height: 100%;
+                      object-fit: cover;
+                      object-position: center;
+                      overflow: hidden;
+                    }
+                  }
+                }
+                .item-options {
+                  padding: 0 .5rem;
+                  .options-item {
+                    margin: 0 -.75rem 1.5rem;
+                    .error {
+                        display: none;
+                        color: red;
+                        font-size: .8rem;
+                        letter-spacing: normal;
+                        font-weight: 400;
+                        margin-bottom: 0;
+                    }
+                    .options-group {
+                      margin-bottom: .5rem;
+                      padding: 0 .75rem;
+                      display: block;
+                      .variant-options {
+                        &.disabled {
+                            pointer-events: none;
+                            opacity: .3;
+                          }
+                      }
+                      .option-buttons {
+                        list-style-type: none;
+                        margin: 25px 0 0 0;
+                        padding: 0;
+                        display: flex;
+                        margin: 0 -.25rem;
+                        @media (max-width: 650px){
+                          flex-wrap: wrap;
+                        }
+                        li {
+                          padding: 0 .25rem;
+                          position: relative;
+                          @media (max-width: 650px){
+                            margin-bottom: .5rem;
+                          }
+                          div {
+                            position: relative;
+                          }
+                          label {
+                            padding: .5rem 1.5rem;
+                            min-width: 60px;
+                            text-align: center;
+                            display: block;
+                            text-transform: uppercase;
+                            font-weight: 900;
+                            font-size: 14px;
+                            line-height: 1.3em;
+                          }
+                          input {
+                            width: 100%;
+                            height: 100%;
+                            display: block;
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            cursor: pointer;
+                          }
+                          input[type="radio"] {
+                            opacity: 0.01;
+                            z-index: 100;
+                            -webkit-appearance: none;
+                            &:checked + label {
+                              background: black;
+                              color: white;
+                            }
+                            &:hover {
+                              & + label {
+                                color: white;
+                                background: black;
+                              }
+                            }
+                          }
+                          label {
+                            padding: 5px 8px;
+                            border: 3px solid black;
+                            cursor: pointer;
+                            z-index: 90;
+                            transition: all .2s linear;
+                            font-family: $canada;
+                            font-weight: 900;
+                            letter-spacing: .1rem;
+                            color: black;
+                          }
+                        }
+                      }
+                    }
+                    .product-single__variants {
+                      display: none;
+                    
+                      .no-js & {
+                        display: block;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        .no-thanks {
+          position: absolute;
+          bottom: 70px;
+          right: 1rem;
+          text-decoration: underline;
+          color: black;
+          letter-spacing: normal;
+          font-weight: 500;
+        }
+        .close-modal {
+          position: absolute;
+          top: .5rem;
+          right: .5rem;
+          padding: .5rem;
+        }
+        #submit-sb-order {
+          color: white;
+          background-color: black;
+          text-transform: uppercase;
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          text-align: center;
+          padding: .5rem;
+          font-weight: 900;
+          font-size: 1rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 60px;
+          letter-spacing: .2rem;
+          font-family: $canada;
+          z-index: 101;
+          &.loading {
+            pointer-events: none;
+          }
+        }
+      }
+      &.loading {
+        #sb-options-container {
+          #sb-options-scroll, .close-modal, .no-thanks {
+            opacity: .5;
+            pointer-events: none;
+          }
+        }
+      }
+    }
+  }
+  

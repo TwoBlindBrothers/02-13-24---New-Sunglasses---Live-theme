@@ -1,0 +1,6 @@
+{%- if settings.bundle_save_widget_id != blank -%}
+  <bundle-save class="bundle-save {{ class }}" data-product-id="{{- product.id -}}">
+    <div data-rebuy-id="{{- settings.bundle_save_widget_id -}}" data-rebuy-shopify-product-ids="{{ product.id }}"></div>
+  </bundle-save>
+  {%- render 'vite-tag' with 'reserve-bundle-save.js' -%}
+{%- endif -%}

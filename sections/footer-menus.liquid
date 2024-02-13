@@ -1,0 +1,40 @@
+{% if section.blocks %}
+  <div class="grid__item large--one-half">
+    <div class="grid" id="footer-navigation">
+      {% for block in section.blocks %}
+        {% assign menu_object = block.settings.link_list %}
+        <div class="grid__item one-third">
+          <h2>{{ menu_object.title }}</h2>
+          <nav aria-labelledby="shop-menu" class="footer-menu-container">
+            <ul class="no-bullets">
+              {% for link in menu_object.links %}
+                <li {% if link.active %}class="site-nav--active"{% endif %}>
+                  <a href="{{ link.url }}">{{ link.title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </nav>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="clearfix"></div>
+{% endif %}
+
+{% schema %}
+{
+ "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        {
+          "type": "link_list",
+          "id": "link_list",
+          "label": "Menu"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

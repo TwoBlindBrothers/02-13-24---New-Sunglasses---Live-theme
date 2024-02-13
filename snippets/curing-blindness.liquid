@@ -1,0 +1,32 @@
+<div id="cure-blindness-container" class="bg-white{% if settings.easter_enabled and settings.hunt_type == 'easter' or settings.easter_enabled and settings.hunt_type == 'v-day' %} easter-egg-spot cure-blindness-egg{% endif %}">
+
+  <div id="cure-blindness" class="medium-down--hide">
+    <a href="/pages/about-us">
+      {% include 'svg_copy_were-in-business-to-cure-blindness-2'
+        classes: 'cure-blindness__header'
+      %}
+      <p>Two Blind Brothers makes ultra-soft designer clothing from natural fibers for
+the sole purpose of funding blindness research. <strong><i>You can help us find a cure.</i></strong></p>
+
+      {% include 'svg_timeline-mini' %}
+    </a>
+  </div>
+
+  <div class="scaling-container large--hide" style="width:100%; padding-top:100%">
+    <a href="/pages/curing-blindness-mobile">
+      {% include 'svg_badge_a-cure-for-blindness'%}
+    </a>
+  </div>
+
+  {% if settings.easter_enabled and settings.hunt_type == 'easter' %}
+    <a class="easter-link" href="{{ settings.easter_url | append: 'pink' }}">
+      <img src="{{ '2bb-egg-pink.png' | asset_url }}" class="easter-egg"/>
+    </a>
+  {% endif %}
+  {% if settings.easter_enabled and settings.hunt_type == 'v-day' %}
+    <a class="easter-link v-day-link" href="{{ settings.easter_url | append: '?i-heart-2bb' }}">
+      <img src="{{ 'heart.png' | asset_url }}" class="easter-egg"/>
+    </a>
+  {% endif %}
+
+</div>

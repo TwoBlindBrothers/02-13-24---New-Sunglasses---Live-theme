@@ -1,0 +1,607 @@
+<div itemscope class="product-info-container remodal-bg" itemtype="http://schema.org/Product">
+
+  <meta itemprop="url" content="{{ shop.url }}{{ product.url }}">
+  <meta itemprop="image" content="{{ product.featured_image.src | img_url: 'grande' }}">
+
+  {% comment %}
+    Get first variant, or deep linked one
+  {% endcomment %}
+  {% assign current_variant = product.selected_or_first_available_variant %}
+
+  {% comment %}{% include 'breadcrumb' %}{% endcomment %}
+
+  <div class="grid product-single">
+    <div class="grid__item large--two-thirds text-center product-images">
+      {% if product.images.size > 1 %}
+        <div class="grid product-images" aria-hidden="true">
+          <div class="grid__item large--three-tenths medium-down--hide product-images-thumbnails">
+            <div id="product-thumbs-gallery-wrapper">
+              <div class="product-thumbs-nav-button product-thumbs-prev">
+                {% include 'svg_arrow-solid' %}
+              </div>
+              <div id="product-thumbs-gallery">
+                {% for image in product.images %}
+                  {% if product.options.first == 'Title' %}
+                    {% assign dataColor = 'all' %}
+                  {% else %}
+                    {% assign dataColor = image.alt | split: ' - ' | last | remove: ' Hover' | replace: ' ', '-' | replace: '/', '-' | replace: '-&-', '-' %}
+                  {% endif %}
+                  {% capture imgAlt %}{{ shop.name }} - {{product.type }} {{ product.title }} {{ dataColor }}{% endcapture %}
+
+                  <div id="product-thumb-{{ image.id }}" class="mthumb filter-{{ dataColor }}">
+                    <img
+                        class="lazyload"
+                        sizes="auto"
+                        src="{{ image | product_img_url: '600x600', crop: 'top' | split:'?' | first }}"
+                        srcset="{{ image | product_img_url:  '400x400', crop: 'top' | split:'?' | first }} 400w,
+                                {{ image | product_img_url:  '600x600', crop: 'top' | split:'?' | first }} 600w,
+                                {{ image | product_img_url:  '700x700', crop: 'top' | split:'?' | first  }} 700w"
+                        alt="{{ imgAlt | escape }}" />
+                  </div>
+                {% endfor %}
+              </div>
+              <div class="product-thumbs-nav-button product-thumbs-next">
+                {% include 'svg_arrow-solid' %}
+              </div>
+            </div>
+          </div>
+          <div class="grid__item large--seven-tenths product-image-wrapper" style="position: relative;">
+
+            <div id="price-mobile" class="large--hide">
+              {% if current_variant.compare_at_price > current_variant.price %}
+                <span id="ComparePrice" style="text-decoration: line-through; margin-right: .5rem;">
+                  {{ current_variant.compare_at_price | money_without_trailing_zeros }}
+                </span>
+              {% endif %}
+              <span id="ProductPrice" style="margin-bottom: 0;" itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}"  class="h2">
+                {{ current_variant.price | money_without_trailing_zeros }}
+              </span>
+              {% if product.tags contains 'FINAL SALE' %}
+                <strong class="final-sale mobile"><span>*Final Sale</span></strong>
+              {% endif %}
+            </div>
+            <div id="product-images-gallery-wrapper">
+              <div id="product-images-gallery" class="product-single__photos">
+                {% for image in product.images %}
+                  {% if product.options.first == 'Title' %}
+                    {% assign dataColor = 'all' %}
+                  {% else %}
+                    {% assign dataColor = image.alt | split: ' - ' | last | remove: ' Hover' | replace: ' ', '-' | replace: '/', '-' | replace: '-&-', '-' %}
+                  {% endif %}
+                  <div class="filter-{{ dataColor }}">
+                    <img 
+                      class="lazyload product-gal-img{% if product_zoom_enabled %} zoom-image{% endif %}" 
+                      data-image-id="{{ product.featured_image.id }}" 
+                      src="{{ image | product_img_url: '1200x' }}"
+                      srcset="{{ image | product_img_url:  '600x' | split:'?' | first }} 400w,
+                              {{ image | product_img_url:  '800x' | split:'?' | first }} 800w,
+                              {{ image | product_img_url:  '1250x' | split:'?' | first  }} 800w"
+                      alt="{{ imgAlt | escape }}">
+                  </div>
+                {% endfor %}
+              </div>
+              <button class="product-images-prev product-images-nav-button">{% render 'icon-arrow' %}</button>
+              <button class="product-images-next product-images-nav-button">{% render 'icon-arrow' %}</button>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="product-single__photos single-photo" id="ProductPhoto">
+          {% assign featured_image = current_variant.featured_image | default: product.featured_image %}
+          <img src="{{ featured_image | img_url: '1000x' | split:'?' | first }}" alt="{{ imgAlt }}" id="ProductPhotoImg" class="lazyload zoom-image">
+        </div>
+      {% endif %}
+
+    </div>
+
+    <div class="grid__item large--one-third product-info">
+      <div class="medium-down--hide">
+        {% unless product.type == 'Gift' %}
+            <h1 class="product-title" itemprop="name" id="variantTitle"></h1>
+            <span class="h5">{{ product.title }}</span>
+        {% else %}
+            <h1 class="product-title" itemprop="name"><div style="position:relative;"> {{ product.title }} <div name="secomapp-fg-image-{{ product.id }}" style="display: none;"> {{ "icon-freegift.png" | asset_url | img_tag: "", "sca-fg-img-collect" }} </div> </div></h1>
+        {% endunless %}
+        <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
+        <div id="product-price">
+         <span id="ProductPrice_d" itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}" class="h2">
+            {{ current_variant.price | money_without_trailing_zeros }}
+        </span>
+          {% if sca_compare_at_price_max > sca_price %}
+          <span class="visually-hidden">{{ 'products.general.sale_price' | t }}</span>
+          <span id="ComparePrice">
+            {% comment %}{{ 'products.product.compare_at' | t }}{% endcomment %}{{ current_variant.compare_at_price | money_without_trailing_zeros }}
+          </span>
+          {% endif %}
+        </div>
+
+        <div class="product-description rte" itemprop="description">
+          {{ product.description }}
+        </div>
+      </div>
+
+      <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+        <meta itemprop="priceCurrency" content="{{ shop.currency }}">
+
+        <link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
+
+        {% comment %}
+          ID addToCartForm is a selector for the ajax cart plugin
+        {% endcomment %}
+        <form action="/cart/add" data-productid="{{ product.id }}" method="post" enctype="multipart/form-data" id="AddToCartForm" class="form-vertical">
+
+          {% comment %}
+            Add product variants as a dropdown.
+              - By default, each variant (or combination of variants) will display as its own <option>
+              - To separate these into multiple steps, which we suggest, use option_selection.js (see below)
+
+            You can leverage jQuery to add a callback on page load and each time the select element changes:
+              - Include option_selection.js (as seen at the bottom of this file)
+              - This allows you to use JavaScript anytime the variant dropdown changes
+              - This also separates out your variant options (ie. size, color, etc.) to separate select elements
+
+            For more information on products with multiple options, visit:
+              - http://docs.shopify.com/support/your-website/themes/can-i-make-my-theme-use-products-with-multiple-options#update-product-liquid
+          {% endcomment %}
+          <select name="id" data-productid="{{ product.id }}" id="productSelect" class="product-single__variants">
+            {% for variant in product.variants %}
+              {% if variant.available %}
+                {% comment %}
+                  Note: if you use option_selection.js, your <select> tag will be overwritten, meaning what you have inside <option> will not reflect what you coded below.
+                {% endcomment %}
+                <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} data-sku="{{ variant.sku }}" value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+              {% else %}
+                <option disabled="disabled">
+                  {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+                </option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          {% if product.available %}
+
+            {% for option in product.options %}
+              {% include 'swatch' with option %}
+            {% endfor %}
+
+          {% endif %}
+
+          {% comment %}
+          <label for="Quantity" class="quantity-selector">{{ 'products.product.quantity' | t }}</label>
+          <input type="number" id="Quantity" name="quantity" value="1" min="1" class="quantity-selector">
+          {% endcomment %}
+          <button onclick="obApi('track', 'Add To Cart');"
+
+type="submit" name="add" id="AddToCart" class="btn">
+            <span id="AddToCartText">{{ 'products.product.add_to_cart' | t }}</span>
+          </button>
+        </form>
+        <div class="sca-fg-cat-list" style="display:none;" name="secomapp-fg-data-{{ product.id }}"> </div>
+
+        <div class="large--hide">
+        {% unless product.type == 'Gift' %}
+            <h1 class="product-title" itemprop="name" id="variantTitle_m"></h1>
+            <span class="h4">{{ product.title }}</span>
+        {% else %}
+            <h1 class="product-title" itemprop="name">{{ product.title }}</h1>
+        {% endunless %}
+          <div class="product-description rte">
+            {{ product.description }}
+          </div>
+        </div>
+
+        {% if product.metafields.c_f.model_info %}
+           <div class="product-meta">
+            {{ product.metafields.c_f.model_info }}
+            </div>
+        {% endif %}
+
+        {% if product.type == "Mens" %}
+          <a data-remodal-target="mens-size-chart" class="size-chart-link">View Sizing Chart</a>
+          {% endif %}
+        {% if product.type == "Womens" %}
+          <a data-remodal-target="womens-size-chart" class="size-chart-link">View Sizing Chart</a>
+        {% endif %}
+      </div>
+      {% if product.type == "Mens" %}
+      <div class="remodal" data-remodal-id="mens-size-chart">
+        <button data-remodal-action="close" class="remodal-close"></button>
+        <div class="wrapper size-chart">
+          <h2>Men's Size Chart</h2>
+          <table>
+            <thead>
+              <th></th>
+              <th><h4>S</h4></th>
+              <th><h4>M</h4></th>
+              <th><h4>L</h4></th>
+              <th><h4>XL</h4></th>
+            </thead>
+            <tr>
+              <td><strong>Neck</strong></td>
+              <td>14 - 14.5"</td>
+              <td>15 - 15.5"</td>
+              <td>16 - 16.5"</td>
+              <td>17 - 17.5"</td>
+            </tr>
+            <tr>
+              <td><strong>Chest</strong></td>
+              <td>34 - 36"</td>
+              <td>38 - 40"</td>
+              <td>42 - 44"</td>
+              <td>46 - 48"</td>
+            </tr>
+            <tr>
+              <td><strong>Sleeve</strong></td>
+              <td>32 - 33"</td>
+              <td>33 - 34"</td>
+              <td>34 - 35"</td>
+              <td>35 - 36"</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      {% endif %}
+      {% if product.type == "Womens" %}
+      <div class="remodal" data-remodal-id="womens-size-chart">
+        <button data-remodal-action="close" class="remodal-close"></button>
+        <div class="wrapper size-chart">
+          <h2>Women's Size Chart</h2>
+          <table>
+            <thead>
+              <th></th>
+              <th><h4>XS</h4></th>
+              <th><h4>S</h4></th>
+              <th><h4>M</h4></th>
+              <th><h4>L</h4></th>
+            </thead>
+            <tr>
+              <td><strong>Bust</strong></td>
+              <td>32.5 - 33.5"</td>
+              <td>34.5 - 35.5"</td>
+              <td>36.5 - 37.5"</td>
+              <td>39 - 40.5"</td>
+            </tr>
+            <tr>
+              <td><strong>Waist</strong></td>
+              <td>34 - 36"</td>
+              <td>38 - 40"</td>
+              <td>42 - 44"</td>
+              <td>46 - 48"</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      {% endif %}
+      {% comment %}
+        If the user is on a collection product page (ie with /collections/collection-handle/products/product-handle)
+        in the URL, we can show next/previous links to other products in the collection.
+
+      {% if collection %}
+        {% if collection.previous_product or collection.next_product %}
+          <p>
+            {% if collection.previous_product %}
+              <span class="left">
+                {{ 'products.general.previous_product_html' | t | link_to: collection.previous_product }}
+              </span>
+            {% endif %}
+            {% if collection.next_product %}
+              <span class="right">
+                {{ 'products.general.next_product_html' | t | link_to: collection.next_product }}
+              </span>
+            {% endif %}
+          </p>
+        {% endif %}
+      {% endif %}
+ {% endcomment %}
+    </div>
+  </div>
+
+</div>
+
+{% if collection.handle == 'mens' and section.settings.show_curing_men %}
+    {% include 'curing-blindness' %}
+
+{% endif %}
+{% if collection.handle == 'womens' and section.settings.show_curing_women %}
+    {% include 'curing-blindness' %}
+
+{% endif %}
+<div class="video-block full" style="background-image: url({{ 'video-soft-shirt.jpg' | asset_url }});">
+  <div class="center-text text-center">
+    <div class="wrapper">
+      <h2 class="text-center">Feel the Difference</h2>
+      <p>Trust us, we're blind. It's the softest shirt you'll ever feel.</p>
+      <a class="play-btn big" href="#" data-remodal-target="soft-shirt-video">
+        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 160 160" role="img" aria-labelledby="play-btn-title">
+          <title id="play-btn-title">Play Video</title>
+          <path d="M80 10C41.4 10 10 41.4 10 80c0 38.6 31.4 70 70 70s70-31.4 70-70C150 41.4 118.6 10 80 10zM58.9 127.3V97.7 64.1 34.5l61.9 46.4L58.9 127.3z" fill="none"/><polygon points="58.9 64.1 58.9 97.7 58.9 127.3 120.8 80.9 58.9 34.5 " class="a"/><path d="M80 0C35.9 0 0 35.9 0 80s35.9 80 80 80c44.1 0 80-35.9 80-80S124.1 0 80 0zM80 150C41.4 150 10 118.6 10 80 10 41.4 41.4 10 80 10s70 31.4 70 70C150 118.6 118.6 150 80 150z" />
+        </svg>
+      </a>
+    </div>
+  </div>
+  <div class="remodal video" data-remodal-id="soft-shirt-video">
+    <button data-remodal-action="close" class="remodal-close"></button>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/Fkgb6aAHyCQ" frameborder="0" allowfullscreen></iframe>
+  </div>
+</div>
+<div id="seal-container" class="bg-white">
+  {% include 'seal',
+  side: 'seal-right',
+  arrowloc: 'bottom',
+  thumb: 'https://cdn.shopify.com/s/files/1/1330/8707/files/soft-shirt.jpg?12506695379011691007',
+  title: 'product_why-so-soft',
+  alt: 'Why so soft?',
+  text: "Our signature touch comes down to natural textures and tested materials. For example, our tri-blend of premium bamboo (66%), cotton (28%) and spandex (6%).",
+  subtext: "This is the stuff behind what we call the WOW effect.",
+  sealimg: 'seal-blind-tested' %}
+</div>
+
+{% assign feature_count = section.blocks.size %}
+{% assign featureIndex = 0 %}
+
+{% if feature_count == 0 %}
+  {% assign feature_count = 6 %}
+{% endif %}
+
+<section
+  class="grid-masonry
+    grid-masonry-feature-count-{{ feature_count }}
+    grid-masonry-layout-{{ section.settings.layout }}"
+  data-masonry
+  data-masonry-layout="{{ section.settings.layout }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="grid-masonry"
+  >
+  {% unless section.blocks.size == 0 %}
+    {% for block in section.blocks %}
+
+        {% assign featureIndex = featureIndex | plus: 1 %}
+        {% assign collectionImage = 'collection-' | append: featureIndex %}
+        {% assign heading = block.settings.heading | escape %}
+        {% assign subheading = block.settings.subheading | escape %}
+        {% assign button = block.settings.button | escape %}
+        {% assign url = block.settings.url | escape%}
+        {% assign video = block.settings.video | escape%}
+        {% assign mobile = block.settings.mobile %}
+        {% assign hasimage = block.settings.image %}
+        {% capture image %}{{ block.settings.image | img_url: '1440x640' }} {% endcapture %}
+        {% assign color = block.settings.color %}
+        {% assign bgcolor = block.settings.bgcolor %}
+
+        {% include 'grid-feature' %}
+
+    {% endfor %}
+  {% endunless %}
+</section>
+
+{% include 'related-products' %}
+
+{% comment %}
+  To take advantage of a callback on the select dropdown, add option_selection.js
+  and customize the JS in timber.productPage as needed.
+
+  Currently, timber.productPage does the following:
+    - Hides your <select> tag from above
+    - Breaks out the product variants into separate product options, if more than one exists
+    - Generates a <select> tag for each product option
+    - Enables/disables elements based on variant availability
+
+  Callback notes:
+    - Keep the callback available to the global scope (window.selectCallback) so that advanced
+      addons can override it.
+      * E.g. multiple currencies http://docs.shopify.com/manual/configuration/store-customization/currencies-and-translations/currencies/how-to-toggle-between-two-currencies
+{% endcomment %}
+{{ 'option_selection.js' | shopify_asset_url | script_tag }}
+
+<script>
+  let $thumbsCarousel, $imagesCarousel = null;
+  $(document).ready( function() {
+    if ( $('.zoom-image').length ) {
+      $zoomImages = $('.zoom-image')
+      $($zoomImages).each( function() {
+        $(this).imageZoom({ 
+          zoom: 200
+        });
+      });
+    }
+
+    if ( $('#product-images-gallery').length ) {
+      
+      const featuredCarouselOptions = {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        mouseDrag: false,
+        fade: true,
+        prevArrow: '.product-images-prev',
+        nextArrow: '.product-images-next',
+      }
+
+      $imagesCarousel = $('#product-images-gallery').on('reInit', function() {
+        $imagesCarousel.slick('slickGoTo', 0)
+        $thumbsCarousel.slick('refresh')
+      }).slick(featuredCarouselOptions);
+
+      var options = {
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        vertical: true,
+        focusOnSelect: true,
+        asNavFor: '#product-images-gallery',
+        prevArrow: '.product-thumbs-prev',
+        nextArrow: '.product-thumbs-next',
+        swipe: false
+      };
+
+      $thumbsCarousel = $('#product-thumbs-gallery').slick(options);
+    }
+
+  });
+ 
+</script>
+
+<script>
+  let selectedColor = '';
+  var selectCallback = function(variant, selector) {
+    var filterColor = variant.option1.replace(/ /g, '-').replace('/', ' ').replace(/-&-/g,'-').replace('$', '');
+    if ( variant ) {
+      var form = jQuery('#' + selector.domIdPrefix).closest('form');
+      const length = variant.options.length;
+      for ( var i = 0; i < length; i++ ) {
+        var radioButton = form.find('.swatch[data-option-index="' + i + '"] :radio[value="' + variant.options[i] +'"]');
+        if ( radioButton.length ) {
+          radioButton[0].checked = true;
+        }
+      }
+    }
+    if ( selectedColor === filterColor ) {
+      return
+    }
+
+    let shouldFilter = true
+
+    $thumbsCarousel.slick('slickUnfilter');
+    $imagesCarousel.slick('slickUnfilter');
+
+    if ( filterColor == 'Default-Title' ) {
+      shouldFilter = false
+    }
+    
+    if ( !$(`.filter-${filterColor}`).length ) {
+      shouldFilter = false
+    }
+
+    selectedColor = filterColor
+
+    if ( shouldFilter ) {
+      //console.log('selected', selectedColor, 'filter color: ', filterColor, 'length: ', $(`.filter-${filterColor}`).length)
+      $thumbsCarousel.slick('slickFilter', `.filter-${filterColor}`);
+      $imagesCarousel.slick('slickFilter', `.filter-${filterColor}`)
+    }
+
+    // BEGIN SWATCHES
+    
+    // END SWATCHES
+    timber.productPage({
+      money_format: "{{ shop.money_format }}",
+      variant: variant,
+      selector: selector
+    });
+  };
+
+  jQuery(function($) {
+    "undefined"==typeof freegifts_product_json&&(window.freegifts_product_json=function(e){if(e){for(var i=0;i<e.options.length;i++)if(option=e.options[i],option.values)for(var r=0;r<option.values.length;r++)(option.values[r].endsWith("(Freegifts)")||option.values[r].endsWith("% off)"))&&(option.values.splice(r,1),r--);for(var a=function(e){for(var i in e)if(e.hasOwnProperty(i))return!1;return!0},p=e.price,t=e.price_max,o=e.price_min,n=e.compare_at_price,_=e.compare_at_price_max,c=e.compare_at_price_min,i=0;i<e.variants.length;i++){var r=e.variants[i],s=r.option3?r.option3:r.option2?r.option2:r.option1;"undefined"!=typeof SECOMAPP&&"undefined"!=typeof SECOMAPP.gifts_list_avai&&!a(SECOMAPP.gifts_list_avai)&&"undefined"!=typeof SECOMAPP.gifts_list_avai[r.id]||s.endsWith("(Freegifts)")||s.endsWith("% off)")?(e.variants.splice(i,1),i-=1):(t>=r.price&&(t=r.price,p=r.price),o<=r.price&&(o=r.price),r.compare_at_price&&(_>=r.compare_at_price&&(_=r.compare_at_price,n=r.compare_at_price),c<=r.compare_at_price&&(c=r.compare_at_price)),1==r.available&&(e.available=!0))}e.price=p,e.price_max=o,e.price_min=t,e.compare_at_price=n,e.compare_at_price_max=c,e.compare_at_price_min=_,e.price_varies=o>t?!0:!1,e.compare_at_price_varies=c>_?!0:!1}return e});
+    var sca_product_info = freegifts_product_json ({{ product | json }});
+    new Shopify.OptionSelectors('productSelect', {
+      product:sca_product_info,
+      onVariantSelected: selectCallback,
+      enableHistoryState: true
+    });
+
+    // Add label if only one product option and it isn't 'Title'. Could be 'Size'.
+    {% if product.options.first == 'Title' %}
+      $('.selector-wrapper:eq(0)').prepend('<label for="productSelect-option-0">{{ product.options.first | escape }}</label>');
+    {% endif %}
+
+    // Hide selectors if we only have 1 variant and its title contains 'Default'.
+    {% if product.variants.size == 1 and product.variants.first.title contains 'Default' %}
+      $('.selector-wrapper').hide();
+    {% endif %}
+  });
+</script>
+
+
+{% schema %}
+ {
+    "name": "Product pages",
+    "settings": [
+      {
+        "type": "text",
+        "id": "video_title",
+        "label": "Video Title",
+        "default": "Feel the Difference"
+      },
+      {
+         "type": "textarea",
+         "label": "Video Text",
+         "id": "video_text",
+         "default": "Trust us, we're blind. It's the softest shirt you'll ever feel."
+      },
+      {
+         "type": "text",
+         "label": "YouTube Video ID",
+         "id": "video_url"
+      }
+    ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Men's Grid item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+           "type":      "select",
+           "id":        "bgcolor",
+           "label":     "Or select background color",
+           "options": [
+              { "value": "#fff", "label": "White"},
+              { "value": "#231F20", "label": "Black"},
+              { "value": "#F0D83D", "label": "Yellow"},
+              { "value": "#ebebeb", "label": "Grey"}
+           ],
+           "default":   "#fff"
+        },
+         {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading"
+        },
+        {
+           "type":      "select",
+           "id":        "color",
+           "label":     "Text color",
+           "options": [
+              { "value": "#fff", "label": "White"},
+              { "value": "#231F20", "label": "Black"},
+              { "value": "#F0D83D", "label": "Yellow"},
+              { "value": "#ebebeb", "label": "Grey"}
+           ],
+           "default": "#F0D83D"
+        },
+        {
+          "type": "text",
+          "id": "button",
+          "label": "Button text"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "video",
+          "label": "YouTube video id example Fkgb6aAHyCQ"
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile",
+          "label": "Show on mobile",
+          "default": false
+        }
+      ]
+    }
+  ]
+}
+
+{% endschema %}
+
+<div id="cbb-frequently-bought-box"></div>
+<div id="cbb-also-bought-box"></div>

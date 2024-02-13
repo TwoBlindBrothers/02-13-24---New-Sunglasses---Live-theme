@@ -1,0 +1,10 @@
+{%- if settings.tolstoy_id != blank -%}
+  <div class="tolstoy">
+    <tolstoy-stories
+      data-tags="{% for tag in product.tags -%}{{ tag }},{%- endfor %}"
+      class="tolstoy-stories"
+      data-publish-id="{{- settings.tolstoy_id -}}"
+      data-product-id="{{ product.id }}">
+    </tolstoy-stories>
+  </div>
+{%- endif -%}

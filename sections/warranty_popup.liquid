@@ -1,0 +1,41 @@
+<div class="w-popup">
+    <div class="w-popup-container">
+
+        <div class="w-popup-close" onclick="warrantyClose()"><i class="fa fa-times"></i></div>
+
+        <div class="w-popup-inner">
+            {% if section.settings.title != blank %}
+                <h1>{{ section.settings.title }}</h1>
+            {% endif %}
+            {{ section.settings.body }}
+        </div>
+
+    </div>
+</div>
+
+<script>
+function warrantyClose() {
+    $(".w-popup").hide();
+}
+function warrantyOpen() {
+    $(".w-popup").fadeIn();
+}
+</script>
+
+{% schema %}
+  {
+    "name": "Warranty Popup",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "richtext",
+        "id": "body",
+        "label": "Body"
+      }
+    ]
+  }
+{% endschema %}

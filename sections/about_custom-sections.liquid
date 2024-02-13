@@ -1,0 +1,133 @@
+{% for block in section.blocks %}
+    {% case block.type %}
+     
+      {% when 'hero' %}
+      {% include 'hero' %}
+
+      {% when 'seal' %}
+      {% include 'seal2' %}
+      
+      {% when 'curing' %}
+      {% include 'curing-blindness' %}
+
+    {% endcase %}
+  {% endfor %}
+
+
+{% schema %}
+  {
+    "blocks": [
+          {
+        "type": "hero",
+        "name": "Banner image",
+        "settings": [
+            {
+                "type": "image_picker",
+                "id": "banner",
+                "label": "Select image"
+            },
+            {
+                "type": "text",
+                "id": "title",
+                "label": "Title"
+            },
+            {
+                "type": "select",
+                "id": "textcolor",
+                "label": "Text color",
+                "options": [
+                  { "value": "#fff", "label": "White"},
+                  { "value": "#231F20", "label": "Black"},
+                  { "value": "#F0D83D", "label": "Yellow"},
+                  { "value": "#ebebeb", "label": "Grey"}
+               ],
+               "default":   "#fff"
+            },
+            {
+               "type": "text",
+               "id": "bannervideo",
+               "label": "YouTube Video id (if video)"
+            }
+        ]
+       },
+       {
+        "type": "seal",
+        "name": "Seal grid",
+        "settings": [
+              {
+               "type": "select",
+               "id": "side",
+               "options": [
+                  { "value": "seal-left", "label": "Left"},
+                  { "value": "seal-right", "label": "Right"}
+               ],
+               "label": "Seal side"
+            },
+            {
+               "type": "select",
+               "id": "arrowloc",
+               "options": [
+                  { "value": "top", "label": "Top"},
+                  { "value": "middle", "label": "Middle"},
+                  { "value": "bottom", "label": "Bottom"}
+               ],
+               "label": "Arrow position"
+            },
+            {
+               "type": "image_picker",
+               "id": "thumb",
+               "label": "Thumbnail image"
+            },
+            {
+               "type": "text",
+               "id": "gif",
+               "label": "GIF image"
+            },
+            {
+               "type": "text",
+               "id": "sealvideo",
+               "label": "YouTube Video id (if video)"
+            },
+            {
+               "type": "text",
+               "id": "titletext1",
+               "label": "Title text 1",
+               "info": "First line of title"
+            },
+            {
+               "type": "text",
+               "id": "titletext2",
+               "label": "Title text 2",
+               "info": "Second line of title"
+            },
+            {
+               "type": "textarea",
+               "id": "text",
+               "label": "Copy"
+            },
+            {
+               "type": "text",
+               "id": "subtext",
+               "label": "Callout text"
+            },
+            {
+               "type": "text",
+               "id": "sealimg",
+               "label": "Badge SVG handle"
+            }
+        ]
+      },
+      {
+        "type": "curing",
+        "name": "Curing blindness module",
+        "settings": [
+          {
+           "type": "checkbox",
+           "id": "curingmodule",
+           "label": "Show curing blindness module?"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

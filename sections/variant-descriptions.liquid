@@ -1,0 +1,20 @@
+{% for variant in product.variants %}
+
+  {% comment %}
+  {{ variant.metafields.global.description }}
+  {% endcomment %}
+
+{% endfor %}
+
+{% schema %}
+  {
+    "name": "Variant Descriptions",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Variant Descriptions",
+        "info": "Enter your [variant description here.](/admin/bulk?resource_name=ProductVariant&edit=metafields.global.description:string)"
+      }
+    ]
+  }
+{% endschema %}

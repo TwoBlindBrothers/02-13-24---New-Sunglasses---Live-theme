@@ -1,0 +1,12 @@
+{% if product != blank %}
+  {% capture product_data_attribute %}data-oke-reviews-product-id="shopify-{{ product.id }}"{% endcapture %}
+{% endif %}
+{% if shop.metafields.okendo.WidgetPreRenderBodyStyleTags != blank %}
+{{- shop.metafields.okendo.WidgetPreRenderBodyStyleTags }}
+{% endif %}
+<div class="okendo-reviews-widget">
+  <div class="relative">
+    <h2 class="h3-reserve mb-[47px] pr-[130px] xs:pr-[160px] md:-mb-[84px] md:pr-[320px]">Ratings + Reviews</h2>
+    <div data-oke-widget {{ product_data_attribute }}>{{ product.metafields.okendo.ReviewsWidgetSnippet }}</div>
+  </div>
+</div>

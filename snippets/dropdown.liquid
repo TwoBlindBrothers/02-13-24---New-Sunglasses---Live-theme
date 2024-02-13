@@ -1,0 +1,15 @@
+{% assign passed_opt = option | downcase %}
+{% for product_option in product.options_with_values %}
+{% assign prod_opt = product_option.name | downcase %}
+{% if prod_opt ==  passed_opt %}
+  <label>
+    <select id="{{product.title | replace: ' ', ''}}-{{passed_opt}}">
+      {% for value in product_option.values %}
+        <option {% if product_option.selected_value == value %}selected{% endif %}>
+          {{ value }}
+        </option>
+      {% endfor %}
+    </select>
+  </label>
+  {% endif %}
+{% endfor %}

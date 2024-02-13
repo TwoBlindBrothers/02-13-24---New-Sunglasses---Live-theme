@@ -1,0 +1,208 @@
+{% unless grid_item_width %}
+  {% assign grid_item_width = 'large--one-half medium--one-half' %}
+{% endunless %}
+
+{% assign on_sale = false %}
+{% if sca_compare_at_price > sca_price %}
+  {% assign on_sale = true %}
+{% endif %}
+
+{% assign sold_out = true %}
+{% if product.available %}
+  {% assign sold_out = false %}
+{% endif %}
+
+{% assign product_title = product.title %}
+
+{% if product_title contains collection.title %}
+  {% assign product_title = product_title | replace: collection.title, '' | strip %}
+{% endif %}
+
+{% for tag in product.tags %}
+   {% if tag contains 'Solid' %}
+       {% assign filterType = 'filter-solid' %}
+   {% elsif tag contains 'Stripe' %}
+       {% assign filterType = 'filter-stripe' %}
+   {% elsif tag contains 'Graphic' %}
+        {% assign filterType = 'filter-graphic' %}
+ 	{% endif %}
+    {% if tag contains 'Short' %}
+        {% assign filterSleeve = 'filter-short-sleeve' %}
+    {% elsif tag contains 'Long' %}
+        {% assign filterSleeve = 'filter-long-sleeve' %}
+     {% elsif tag contains 'Hoodie' %}
+        {% assign filterSleeve = 'filter-hoodies' %}
+    {% endif %}
+{% endfor %}
+
+<div class="grid__item {{ grid_item_width }} {% for tag in product.tags %} filter-{{ tag }} {% endfor %}" id="product-{{ variant.id }}">
+
+  <div class="grid__product-container">
+   
+    <div class="top-wrapper" style="{% if collection_is_able_to_show_button == "true" %}border: 4px solid {{ collection_product_border_color }} {% endif %}">
+      <div class="grid-image-wrapper">
+        <a href="{{ variant.url | within: collection }}" class="grid__image" title="{{ product.title }} in {{variant.option1 }}">
+          <picture>
+              <source data-srcset="{{ variant.image.src | img_url: '700x' }}" media="(min-width: 1200px)" />
+              <source data-srcset="{{variant.image.src | img_url: '500x' }}" media="(min-width: 769px)" />
+              <source data-srcset="{{variant.image.src | img_url: '300x' }}" media="(min-width: 500px)" />
+              <source data-srcset="{{variant.image.src | img_url: '200x' }}" media="(min-width: 320px)" />
+              <img data-src="{{variant.image.src | img_url: '700x' }}"
+              alt="{{ product_title }} in {{variant.option1 }}" class="lazyload"/>
+            </picture>
+
+            {% if product.options.size > 1 %}
+              {% assign grabCurrentColor = variant.option1 %}
+              {% assign currentColor = grabCurrentColor | append: ' Hover' %}
+          {% else %}
+              {% assign currentColor = 'Hover' %}
+          {% endif %}
+          {% for image in product.images %}
+            {% if image.alt contains currentColor %}
+              <picture>
+                  <source data-srcset="{{ image | img_url: '700x' }}" media="(min-width: 1200px)" />
+                  <source data-srcset="{{ image | img_url: '500x' }}" media="(min-width: 769px)" />
+                  <source data-srcset="{{ image | img_url: '300x' }}" media="(min-width: 500px)" />
+                  <source data-srcset="{{ image | img_url: '200x' }}" media="(min-width: 320px)" />
+                  <img data-src="{{ image | img_url: '700x' }}"
+                  alt="{{ image.alt | escape }}" class="grid__variant-hover lazyload"/>
+              </picture>
+            {% endif %}
+          {% endfor %}
+        </a>
+        <button {% if sold_out %}disabled {% endif %}id="quick-add-{{ variant.id }}" class="quick-add" data-variant-id="{{ variant.id }}" onClick="handleClickQuickAdd(this, {{ variant.id }});">{% if sold_out %}Sold Out{% else %}Quick Add{% endif %}</button>
+        {% for option in product.options_with_values %}
+          {% if option.values.size == 1 %}
+            {% continue %}
+          {% endif %}
+          {% if option.name == 'Color' %}
+            {% continue %}
+          {% endif %}
+          <div>
+            <div 
+              id="ajax-swatch-wrapper-{{ variant.id }}"
+              aria-hidden aria-modal="true" 
+              aria-labelledby="ajax-swatch-label-{{ variant.id }}" 
+              role="dialog">
+              <div 
+                class="swatch {{ option.name | downcase }}-swatch" 
+                data-position="{{ option.position }}">
+                <h4 class="sr-only" id="ajax-swatch-label-{{ variant.id }}">{{ option.name }}</h4>
+                <div class="ajax-swatches" id="ajax-swatches-{{ variant.id }}">
+                  {% for value in option.values %}
+                    <div class="swatch-element">
+                      <input 
+                        id="swatch-{{ forloop.index0 }}-{{ value | handle }}-{{ variant.id }}" 
+                        type="radio" 
+                        name="option-{{ option.name | downcase }}-{{ variant.id }}" 
+                        value="{{ value }}"
+                        data-position="{{ option.position }}"
+                        data-variant-id="{{ value_variants[0].id | string }}"
+                        data-product-id="{{ variant.id }}"/>
+                      <label for="swatch-{{ forloop.index0 }}-{{ value | handle }}-{{ variant.id }}">
+                        <span class="{% if value.size > 2 %}small-swatch{% endif %}">{{ value }}</span>
+                      </label>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+        <select name="id" id="productSelect-{{ variant.id }}" class="product-single__variants">
+          {% for p_var in product.variants %}
+            {% if p_var.available %}
+              {% comment %}
+              Note: if you use option_selection.js, your <select> tag will be overwritten, meaning what you have inside <option> will not reflect what you coded below.
+              {% endcomment %}
+              <option {% if p_var == variant %} selected="selected" {% endif %} data-sku="{{ p_var.sku }}" value="{{ p_var.id }}">{{ p_var.title }} - {{ p_var.price | money_with_currency }}</option>
+  
+            {% else %}
+              <option disabled="disabled">
+                {{ p_var.title }} - {{ 'products.product.sold_out' | t }}
+              </option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    {% if product.options.size > 1 %}
+        {% assign grabCurrentColor = variant.option1 %}
+        {% assign currentColor = grabCurrentColor | append: ' Hover' %}
+    {% else %}
+        {% assign currentColor = 'Hover' %}
+    {% endif %}
+    {% for image in product.images %}
+      {% if image.alt contains currentColor %}
+          <picture>
+            <source data-srcset="{{ image | img_url: '700x' }}" media="(min-width: 1200px)" />
+            <source data-srcset="{{ image | img_url: '500x' }}" media="(min-width: 769px)" />
+            <source data-srcset="{{ image | img_url: '300x' }}" media="(min-width: 500px)" />
+            <source data-srcset="{{ image | img_url: '200x' }}" media="(min-width: 320px)" />
+            <img data-src="{{ image | img_url: '700x' }}"
+            alt="{{ image.alt | escape }}" class="grid__variant-hover lazyload"/>
+          </picture>
+      {% endif %}
+    {% endfor %}
+
+    <span class="grid__product">
+
+      <a class="h2" href="{{ variant.url | within: collection }}" title="{{ variant.option1 }}">
+        {% unless product.type == 'Gift' %}
+          {% if collection.handle == "kids" %}{{ product.title }}{% endif %}
+        {% else %}
+          {{ variant.option1 }} {{ product.title }}
+        {% endunless %}
+      </a>
+
+      {% if on_sale %}
+        {% if sca_price_varies %}
+          {% assign sale_price = variant.price | money_without_trailing_zeros %}
+          {{ 'products.product.on_sale_from_html' | t: price: sale_price }}
+        {% else %}
+          <strong>{{ 'products.product.on_sale' | t }}</strong>
+          {{ variant.price | money_without_trailing_zeros }}
+        {% endif %}
+      {% else %}
+        {% if variant.price_varies %}
+          {% assign price = variant.price | money_without_trailing_zeros %}
+          {{ 'products.general.from_text_html' | t: price: price }}
+        {% else %}
+          <span class="h2 price">{{ variant.price | money_without_trailing_zeros }}</span>
+        {% endif %}
+      {% endif %}
+      {% if on_sale %}
+        <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
+        <s>{{ variant.compare_at_price | money_without_trailing_zeros }}</s>
+      {% endif %}
+    </span>
+    
+    {% if sold_out %}
+      <p class="h4" style="opacity: .4; margin-top: .5rem;">Sold Out</p>
+    {% endif %}
+
+    {% assign values = null %}
+    {% assign options = product.options_with_values %}
+    {% for value in options[0].values %}
+      {% if value == variant.option1 %}
+        <input 
+          id="swatch-{{ forloop.index0 }}-{{ options[0].name | downcase }}-{{ value | handle }}-{{ variant.id }}" 
+          type="radio" 
+          onChange="handleColorSwatchChange(this)"
+          class="swatch-element-single"
+          name="option-color-{{ variant.id }}" 
+          style="display: none;"
+          value="{{ value }}"
+          data-variant-id="{{ variant.id }}"
+          data-product-id="{{ variant.id }}"
+          checked/>
+        {% endif %}
+    {% endfor %}
+  </div>
+</div>
+<script>
+  function testProduct() {
+    var myProductVariable = {{ product | json }};
+  }
+</script>

@@ -1,0 +1,92 @@
+{{ 'jquery.waypoints.min.js' | asset_url | script_tag }}
+{{ 'inview.min.js' | asset_url | script_tag }}
+
+<h1 class="visually-hidden">{{ page.title }}</h1>
+{% section 'contact_hero' %}
+
+<div class="visually-hidden">
+  {{ page.content | strip_html }}
+</div>
+<div class="wrapper thinner">
+  <div class="grid contact">
+
+    <div class="grid__item large--three-quarters contact__sections">
+      {{ page.content }}
+    </div>
+    <div class="grid__item large--one-quarter faq-sidebar contact__menu__wrap">
+      <ul class="contact__menu" id="contact-side">
+        <li class="contact__menu__item"><a href="#about">About</a></li>
+        <li class="contact__menu__item"><a href="#orders">Orders</a></li>
+        <li class="contact__menu__item"><a href="#shipping">Shipping</a></li>
+        <li class="contact__menu__item"><a href="#returns">Returns</a></li>
+        <li class="contact__menu__item"><a href="#payments">Payments</a></li>
+        <li class="contact__menu__item"><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(".contact__menu__item").click(function (e) {
+    e.preventDefault();
+    $(".contact__menu__item").removeClass("is-active")
+    $(this).addClass("is-active");
+  });
+
+  $(".contact_toggle").click(function () {
+
+    $(this).siblings(".desc-body").slideToggle("medium");
+    $(this).attr('aria-expanded', !$(this).hasClass('is-active'));
+    $(this).toggleClass("is-active");
+  });
+
+  $(".desc-title").click(function () {
+    $(this).siblings(".contact_toggle").toggleClass("is-active");
+    $(this).siblings(".contact_toggle").attr('aria-expanded', !$(this).siblings(".contact_toggle").hasClass('is-active'));
+    $(this).siblings(".desc-body").slideToggle("medium");
+  });
+
+  //   var waypoint = new Waypoint({
+  //   element: document.getElementById('contact-side'),
+  //   handler: function(down) {
+  //     console.log('down');
+  //     $('.contact').removeClass('stick');
+  //   },
+  //     handler: function(up) {
+  //     console.log('up');
+  //     $('.contact').addClass('stick');
+  //   },
+  //    offset: 105
+  // })
+
+  var inview = new Waypoint.Inview({
+    element: $('.contact')[0],
+    enter: function (direction) {
+      $('.contact').removeClass('stick');
+    },
+    entered: function (direction) {
+      if (direction === 'down') {
+        $('.contact').addClass('bottomed');
+        $('.contact').removeClass('stick');
+      } else {
+        $('.contact').removeClass('stick');
+      }
+    },
+    exit: function (direction) {
+      if (direction === 'down') {
+        $('.contact').addClass('stick');
+      } else {
+        $('.contact').removeClass('bottomed');
+        $('.contact').addClass('stick');
+      }
+
+    }
+  })
+
+
+  $(window).on('load resize', function () {
+    if ($(window).width() < 768) {
+      inview.disable()
+    };
+  });
+</script>

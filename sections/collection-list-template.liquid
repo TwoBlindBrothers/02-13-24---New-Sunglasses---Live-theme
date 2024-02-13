@@ -1,0 +1,74 @@
+{% assign collection_background_color = '#FFF' %}
+{% assign collection_product_border_color = '#000' %}
+{% assign collection_is_able_to_show_button = collection.metafields.style.show_add_to_cart_button %}
+{% if collection.metafields.style.collection_background %}
+{%  assign collection_background_color = collection.metafields.style.collection_background %}
+{% endif %}
+{% if collection.metafields.style.products_border_color %}
+{%  assign collection_product_border_color = collection.metafields.style.products_border_color %}
+{% endif %}
+<div class="wide" style="background-color: {{ collection_background_color }};">
+  <div class="wrapper" style="padding-top: 4rem;">
+    {% for block in section.blocks %}
+      {% assign collection = collections[block.settings.collections] %}
+      {% capture collection_title %}{{ collection.title | escape }}{% endcapture %}
+  
+      <div class="section-header">
+        <p class="h1 section-header__left">{{ collection_title }}</p>
+        <div class="section-header__right">
+          <a href="{{ collection.url }}" title="{{ 'collections.general.link_title' | t: title: collection_title }}">More {{ collection_title }} &rsaquo;</a>
+        </div>
+      </div>
+  
+      <div class="grid-uniform products-grid">
+        {% for product in collection.products limit:4 %}
+          {% assign grid_item_width = 'one-half medium--one-third large--one-quarter' %}
+          {% include 'product-grid-item', grid_item_width: grid_item_width %}
+        {% endfor %}
+      </div>
+  
+      {% unless forloop.last %}<hr>{% endunless %}
+  
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Collection list page",
+    "settings": [
+      {
+        "type": "select",
+        "id": "collection_products_per_row",
+        "label": "Products per row",
+        "options": [
+          {
+            "value": "2",
+            "label": "2"
+          },
+          {
+            "value": "3",
+            "label": "3"
+          },
+          {
+            "value": "4",
+            "label": "4"
+          }
+        ]
+      }
+    ],
+    "blocks": [
+      {
+        "type": "collections",
+        "name": "Collections",
+        "settings": [
+          {
+            "type": "collection",
+            "id": "collections",
+            "label": "Collection"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,30 @@
+{%- comment -%}
+  Available in:
+  - icon
+  - title
+  - description
+  - is_show
+{%- endcomment -%}
+{%- assign is_show = is_show | default: false -%}
+
+{%- if is_show -%}
+  <reserve-information class="block {{ class }}">
+    <div class="w-full p-4 border border-solid bg-white-1 border-grey-200 rounded-[8px] overflow-hidden sm:max-w-[332px] md:max-w-[276px] {{ block_class }}">
+      <div class="flex flex-row items-center gap-2">
+        {%- if icon != blank -%}
+          <div class="relative w-4 h-4 aspect-square">
+            {{- icon | image_url: width: 32 | image_tag: class: 'absolute inset-0 w-full h-full object-contain', alt: title -}}
+          </div>
+        {%- endif -%}
+        {%- if title != blank -%}
+          <h3 class="font-medium tracking-normal text-black capitalize text-label font-base md:text-p2">{{- title -}}</h3>
+        {%- endif -%}
+      </div>
+        {%- if description != blank -%}
+          <div class="mt-2 wysiwyg--information">
+            {{- description -}}
+          </div>
+        {%- endif -%}
+    </div>
+  </reserve-information>
+{%- endif -%}

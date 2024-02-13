@@ -1,0 +1,82 @@
+<div class="gd_hero">
+  <div class="gd_hero__image">
+    {% if section.settings.image %}
+      {% render 'image', image: section.settings.image %}
+    {% endif %}
+  </div>
+  <div class="gd_hero__text">
+    <div class="wrapper"> 
+        {% if section.settings.show_paw %}
+          {% render 'icon-paw' %}
+        {% endif %}
+        {%- unless section.settings.title == blank -%}
+          <h2 class="h1 text-center">{{ section.settings.title }}</h2>
+        {%- endunless -%}
+        {%- unless section.settings.text == blank -%}
+          <p class="text-center">{{ section.settings.text }}</p>
+        {%- endunless -%}
+        {%- if section.settings.show_arrow -%}
+          <a href="{{ section.settings.button_link }}" aria-label="{{ section.settings.button_text }}">
+            <svg width="47" height="37" viewBox="0 0 47 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M23.5492 36.4486L3.24023 18.8752L43.8582 18.8752L23.5492 36.4486Z" fill="#BE92C5"/>
+              <rect x="15.7324" width="15.6339" height="19.526" fill="#BE92C5"/>
+            </svg>
+          </a>
+        {%- else -%}
+          <a href="{{ section.settings.button_link }}" class="btn btn--blue" title="take a look">{{ section.settings.button_text }}</a>
+        {%- endif -%}
+
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Guide Dog Hero",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_paw",
+      "default": true,
+      "label": "Show Paw?"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrow",
+      "default": false,
+      "label": "Show arrow for the button?"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Image",
+      "name":"Guide Dog Hero"
+    }
+  ]
+}
+{% endschema %}

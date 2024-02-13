@@ -1,0 +1,23 @@
+{% layout 'theme.shopblind' %}
+<!-- /templates/page.liquid -->
+<div class="wrapper">
+<div class="grid">
+  <style> ol { display: none; } .contact__sections__block { background: transparent; padding: .5rem 0; } .contact_toggle { top: 10px; } .desc-title { cursor: pointer; } </style>
+  <div class="grid__item large--two-thirds push--large--one-sixth">
+
+    <h1>{{ page.title }}</h1>
+
+    {% comment %}
+      Regular page content goes here.
+    {% endcomment %}
+    <div class="rte">
+      {{ page.content }}
+      <div style="margin-top: 3rem;">
+        {% section 'faq_shop_blind' %}
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</div>

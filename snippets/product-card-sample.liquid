@@ -1,0 +1,157 @@
+{%- comment -%}
+  Parameters
+  * product
+{%- endcomment -%}
+<div class="product-card-sample" id="product-{{ product.id }}">
+  <div class="product-card-sample__inner relative flex md:flex-col gap-4">
+    <div class="grid__image product-card-sample__media relative shrink-0 w-[164px] md:w-full m-0
+      before:content-[''] before:block before:pb-[calc(212/164*100%)] before:md:pb-[calc(290/218*100%)]">
+      {% if product.options contains 'Color' %}
+        {% assign values = product.variants.first | map: "option1" | uniq %}
+      {% endif %}
+      {% assign variantColor = values[0] | downcase %}
+
+      {% assign found = false %}
+      {% assign variant = product.variants.first %}
+      {% assign images = product.images %}
+      {% for image in images %}
+        {% assign alt_downcase = image.alt | downcase %}
+        {% if alt_downcase contains variantColor and found == false %}
+          <picture class="default-image" data-image="{{ image.alt }}">
+            <source data-srcset="{{ image.src | img_url: '800x' }}" media="(min-width: 1200px)" />
+            <source data-srcset="{{ image.src | img_url: '700x' }}" media="(min-width: 769px)" />
+            <source data-srcset="{{ image.src | img_url: '600x' }}" media="(min-width: 320px)" />
+            <img data-src="{{ image.src | img_url: '500x' }}"
+                 alt="{{ product.title | escape }} in {{ variant.option1 }}" class="absolute top-0 left-0 object-cover w-full h-full rounded-lg lazyload"/>
+          </picture>
+          {% assign found = true %}
+        {% endif %}
+      {% endfor %}
+
+      {% if found == false %}
+        <picture class="default-image">
+          <source data-srcset="{{ product.featured_image.src | img_url: '800x' }}" media="(min-width: 1200px)" />
+          <source data-srcset="{{ product.featured_image.src | img_url: '700x' }}" media="(min-width: 769px)" />
+          <source data-srcset="{{ product.featured_image.src | img_url: '600x' }}" media="(min-width: 320px)" />
+          <img data-src="{{ product.featured_image.src | img_url: '700x' }}" alt="{{ product.title }}" class="absolute top-0 left-0 object-cover w-full h-full rounded-lg lazyload"/>
+        </picture>
+      {% endif %}
+      <div class="save-button-wrapper absolute top-3 right-3 left-auto z-[4]">
+        <status-save-button product-id="{{ product.id }}" class="product-card-save-button"></status-save-button>
+      </div>
+
+      <select name="id" data-productid="{{ product.id }}" id="productSelect-{{ product.id }}" class="product-single__variants" hidden>
+        {% for variant in product.variants %}
+          {% if variant.available %}
+            <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} data-sku="{{ variant.sku }}" value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+            {% else %}
+            <option disabled="disabled">
+              {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+            </option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+    <div class="product-card-sample__header">
+      <h3 class="p1"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+      <p class="p1 text-grey">
+        {{ product.price | money_without_trailing_zeros }}
+      </p>
+      <div class="product-card-sample__swatch ml-1">
+        {% assign file_extension = 'jpg' %}
+        {% assign values = null %}
+        {% assign option = product.options_with_values[0] %}
+        <div class="flex align-items-start">
+          {% if option.name == 'Color' and option.values.size > 1 %}
+            {% assign swatch_colors = shop.metafields.swatch %}
+            <div class="{{ option.name | downcase }}-swatch-wrapper swatch-wrapper">
+              <h4 class="sr-only">{{ option.name }}</h4>
+              <div class="{{ option.name | downcase }}-swatches swatch" id="{{ option.name | downcase }}-swatches-{{ product.id }}">
+                {% assign counting = 0 %}
+                {% for value in option.values %}
+                  {% assign value_lower = value | downcase %}
+                  {% assign value_variants = product.variants | where: "option1", value %}
+                  {% assign foundImageSrc = false %}
+                  {% assign foundHoverImageSrc = false %}
+                  {% assign valueDownCase = value | downcase %}
+
+                  {% assign currentColor = valueDownCase %}
+                  {% assign imageSrc = '' %}
+                  {% assign hoverImageSrc = '' %}
+                  {% for image in product.images %}
+                    {% assign dataColor = image.alt | downcase | split: 'caption:' | first %}
+                    {% assign dataColor = dataColor | split: ' - ' | first %}
+                    {% if dataColor == valueDownCase and foundImageSrc == false %}
+                      {% assign imageSrc = image | img_url: '500x' %}
+                      {% assign foundImageSrc = true %}
+                    {% endif %}
+                    {% assign image_alt = image.alt | downcase %}
+                    {% if image_alt contains currentColor and image_alt contains 'hover' and foundHoverImageSrc == false %}
+                      {% assign hoverImageSrc = image | img_url: '500x' %}
+                      {% assign foundHoverImageSrc = true %}
+                    {% endif %}
+                    {% if foundImageSrc == true and foundHoverImageSrc == true %}
+                      {% break %}
+                    {% endif %}
+                  {% endfor %}
+                  {% if foundHoverImageSrc == false %}
+                    {% assign hoverImageSrc = imageSrc %}
+                  {% endif %}
+                  {% assign color_value = value | replace: '%20+%20', '-' | replace: ' + ', '-' | replace: ' ', '-' | replace: '%20', '-' %}
+                  {% assign color_bg = color_value | prepend: 'color-' | handle | append: '.' | append: file_extension | file_url %}
+                  {% assign has_swatch = false %}
+                  {% comment %} {% for swatch_name in swatch_colors.name %}
+                    {% if has_swatch %}
+                      {% continue %}
+                    {% endif %}
+                    {% assign swatch_name_lower = swatch_name | downcase %}
+                    {% if value_lower == swatch_name_lower %}
+                      {% assign has_swatch = true %}
+                      {% assign color_bg = swatch_colors.image[forloop.index0][0].cloudinary_src %}
+                    {% endif %}
+                  {% endfor %} {% endcomment %}
+
+                  {% if counting < 6 %}
+                    {% assign counting = counting | plus: 1 %}
+                    <div data-value="{{ value }}" data-type="" class="swatch-element {{ option.name | downcase }} black available">
+                      {% if option.name == 'Color' %}
+                        <div class="tooltip"><div class="tooltip-content">{{ value }}<div class="tooltip-point"></div></div></div>
+                      {% endif %}
+                      <input
+                        id="swatch-{{ forloop.index0 }}-{{ option.name | downcase }}-{{ value | handle }}-{{ product.id }}"
+                        type="radio"
+                        onChange="handleColorSwatchChange(this)"
+                        class="swatch-element-single"
+                        name="option-color-{{ product.id }}"
+                        value="{{ value }}"
+                        {% if imageSrc %}
+                          data-img-src="{{ imageSrc }}"
+                        {% endif %}
+                        {% if hoverImageSrc %}
+                          data-img-src-hover="{{ hoverImageSrc }}"
+                        {% endif %}
+                        data-variant-id="{{ value_variants[0].id | string }}"
+                        data-product-id="{{ product.id }}"
+                        {% if forloop.index0 == 0 %}checked{% endif %}>
+                      <label
+                        for="swatch-{{ forloop.index0 }}-{{ option.name | downcase }}-{{ value | handle }}-{{ product.id }}"
+                        style="background-color: {{ value | split: ' ' | last | handle }}; background-image: url({{ color_bg }})">
+                        <span class="{% if option.name == 'Color' %}visually-hidden{% endif %}">{{ value }}</span>
+                      </label>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+              {% if values.size > 6 %}
+                {% assign leftSize = values.size | minus: 6 %}
+                <a href="{{ product.url | within: collection }}" class="more-item"> +{{ leftSize }} More</a>
+              {% endif %}
+            </div>
+          {% else %}
+            <div class="color-swatch-empty"></div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

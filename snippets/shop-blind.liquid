@@ -1,0 +1,81 @@
+<script type="text/javascript">
+
+//   function shopBlind() {
+//     window.location.href = "https://shopblind.twoblindbrothers.com/";
+//   }
+
+  function getUrlParams( prop ) {
+    var params = {};
+    var search = decodeURIComponent( window.location.href.slice( window.location.href.indexOf( '?' ) + 1 ) );
+    var definitions = search.split( '&' );
+
+    definitions.forEach( function( val, key ) {
+      var parts = val.split( '=', 2 );
+      params[ parts[ 0 ] ] = parts[ 1 ];
+    } );
+
+    return ( prop && prop in params ) ? params[ prop ] : params;
+  }
+
+
+  var status = getUrlParams('utm_source');
+  var cookie = Cookies.get('status');
+
+  if ((status.includes("2018+Shop+Blind")) || (cookie == "revealed")) {
+
+    Cookies.set("status", "revealed", { sameSite: true });
+    // Set all the links
+
+    /* ==========
+     Variables
+   ========== */
+    var url = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+
+    /* ==========
+      Utilities
+    ========== */
+    function beginsWith(needle, haystack){
+      return (haystack.substr(0, needle.length) == needle);
+    };
+
+
+    /* ==========
+     Anchors open in new tab/window
+   ========== */
+    $('a').each(function(){
+
+      if(typeof $(this).attr('href') != "undefined") {
+        var test = beginsWith( url, $(this).attr('href') );
+        //if it's an external link then open in a new tab
+
+        if( test == false){
+
+          var href = $(this).attr('href');
+
+          if(window.location.href.indexOf("/cart") > -1) {
+
+          } else {
+            $(this).attr('href', href + '?utm_source=2018+Shop+Blind');
+          }
+        }
+      }
+    });
+
+    $(".shop-blind-banner").show();
+
+  } else {
+
+
+    var w = window.location.href;
+
+    if (w.includes("shop-blind-faq")) {
+
+    } else {
+		window.location.href = "https://shopblind.twoblindbrothers.com/";
+    }
+
+
+  }
+
+
+</script>

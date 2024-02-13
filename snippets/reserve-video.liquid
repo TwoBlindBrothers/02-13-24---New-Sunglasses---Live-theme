@@ -1,0 +1,110 @@
+{%- comment -%}
+  Available in:
+  - video: mp4
+  - video_url: youtube/vimeo
+  - autoplay: true/false
+  - muted: true/false
+  - show_muted: true/false
+  - overlay: 0-100
+{%- endcomment -%}
+
+{%- liquid
+  assign video_id = video.id | default: video_url.id
+  assign video_alt = video.alt
+  assign alt = 'sections.video.load_video' | t: description: video_alt | escape
+  assign poster = poster | default: video.preview_image
+  assign video_type = video_url.type
+  if video != blank
+    assign video_type = 'mp4'
+  endif
+
+  unless autoplay == false
+    assign autoplay = true
+  endunless
+
+  unless muted == false
+    assign muted = true
+  endunless
+-%}
+
+<reserve-video class="reserve-video relative block {{ class }}" data-autoplay="{{- autoplay -}}" data-muted="{{- muted -}}" data-video-id="{{- video_id -}}" data-video-type="{{- video_type -}}">
+  <div class="block h-full w-full absolute {{ video_type }}" data-media-id="{{ video_id }}"
+    {% if poster != null %}
+      style="--ratio-percent: {{ 1 | divided_by: poster.aspect_ratio | times: 100 }}%;"
+    {% endif %}
+  >
+    {% if overlay != blank %}
+      <div class="absolute top-0 left-0 w-full h-full z-[5] bg-black" style="opacity: {{ overlay | times: 0.01 }}"></div>
+    {% endif %}
+    <div class="absolute z-10 flex flex-row gap-2.5 bottom-4 right-4 reserve-video__btn {{ button_class }}">
+      <button
+        class="w-[26px] h-[26px]{% if autoplay %} is-play{% endif %}"
+        type="button"
+        aria-label="{{ alt }}"
+        data-btn-play-pause
+        data-play="{{- autoplay -}}"
+      >
+        {%- render 'icon-play-pause', icon: 'play', class: 'w-full h-full [.is-play_&]:hidden hover:invert' -%}
+        {%- render 'icon-play-pause', icon: 'pause', class: 'hidden w-full h-full [.is-play_&]:block hover:invert' -%}
+      </button>
+      {%- if show_muted -%}
+        <button
+          class="w-[26px] h-[26px]{% if muted %} is-muted{% endif %}"
+          type="button"
+          aria-label="{{ alt }}"
+          data-btn-muted
+          data-muted="{{- muted -}}"
+        >
+          {%- render 'icon-sound', icon: 'muted', class: 'w-full h-full [.is-muted_&]:hidden hover:invert' -%}
+          {%- render 'icon-sound', icon: 'not-muted', class: 'hidden w-full h-full [.is-muted_&]:block hover:invert' -%}
+        </button>
+      {%- endif -%}
+    </div>
+    {%- if video != blank -%}
+      <video
+        {% if muted %}
+          muted
+        {% endif %}
+        {% if autoplay %}
+          autoplay
+        {% endif %}
+        loop
+        playsinline
+        class="js-video absolute inset-0 !w-full !h-full object-cover"
+        {% if poster != blank %}
+          poster="{{ poster }}"
+        {% endif %}
+      >
+        {% for source in video.sources %}
+          <source src="{{ source.url }}" type="video/{{ source.format }}">
+        {% endfor %}
+      </video>
+    {%- else -%}
+      {%- if video_url.type == 'youtube' -%}
+        <div class="video-wrapper pb-[calc(9/16*100%)]">
+          <div class="absolute inset-0 w-full h-full pointer-events-none js-video"></div>
+        </div>
+      {%- else -%}
+        {%-liquid
+          assign attr = 'loop=1&controls=0&playlist=' | append: video_id
+          if muted
+            assign attr = attr | append: '&muted=1'
+          endif
+          if autoplay
+            assign attr = attr | append: '&autoplay=1'
+          endif
+        -%}
+
+        <iframe
+          src="https://player.vimeo.com/video/{{ video_id }}?{{ attr }}"
+          class="absolute inset-0 w-full h-full pointer-events-none js-video"
+          allow="autoplay; encrypted-media"
+          allowfullscreen
+          webkitallowfullscreen
+          mozallowfullscreen
+        ></iframe>
+        <script src="https://player.vimeo.com/api/player.js"></script>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</reserve-video>

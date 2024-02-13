@@ -1,0 +1,159 @@
+{%- liquid
+  assign button_text = section.settings.button_text
+  assign button_link = section.settings.button_link
+  assign show_cta = section.settings.show_cta
+-%}
+{%- if section.blocks.size > 0 -%}
+<reserve-testimonials class="relative reserve-testimonials reserve-testimonials--{{ section.blocks.size }}">
+  <div class="reserve-testimonials__wrapper relative px-[30px] py-[64px] sm:px-[32px] sm:py-[32px]
+    md:pt-[90px] md:pb-[117px] md:px-[67px] lg:py-[90px] lg:px-[173px] max-w-[1440px] mx-auto">
+    <div class="reserve-testimonials__slick js-testimonials-carousel">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign image = block.settings.user_image
+          assign rating = block.settings.rating
+          assign quote = block.settings.quote
+          assign name = block.settings.user_name
+          assign info = block.settings.user_info
+          assign product = block.settings.product
+        -%}
+        <div class="reserve-testimonials__item js-carousel-item">
+          <div class="flex flex-col sm:flex-row align-center gap-5 sm:gap-6 md:gap-[53px] lg:gap-[63px] sm:px-[32px] md:px-0">
+            <div class="reserve-testimonials__content sm:max-w-[313px] md:max-w-[433px] lg:max-w-[462px] lg:mb-[90px] xl:mb-[135px]" data-aos="fade-in">
+              <div class="reserve-testimonials__rating reserve-testimonials__rating--{{ rating }} overflow-hidden mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="115" height="20" fill="none" viewBox="0 0 115 20"><path fill="#000" fill-rule="evenodd" d="m10 15-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545L10 15ZM33.75 15l-5.878 3.09 1.123-6.545-4.756-4.635 6.572-.955L33.75 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545L33.75 15ZM57.5 15l-5.878 3.09 1.123-6.545-4.756-4.635 6.572-.955L57.5 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545L57.5 15ZM81.25 15l-5.878 3.09 1.123-6.545-4.756-4.635 6.572-.955L81.25 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545L81.25 15ZM105 15l-5.878 3.09 1.123-6.545-4.756-4.635 6.572-.955L105 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545L105 15Z" clip-rule="evenodd"/></svg>
+              </div>
+              {%- if quote != blank -%}
+                <h2 class="mb-4 h3-reserve">{{ quote }}</h2>
+              {%- endif -%}
+              {%- if name != blank -%}
+                <div class="reserve-testimonials__user mb-2.5 md:mb-10 lg:mb-[50px] xl:mb-[40px]">
+                  <p class="label text-black-2 reserve-testimonials__name">{{ name }}</p>
+                  <p class="label text-grey-4 reserve-testimonials__info">{{ info }}</p>
+                </div>
+              {%- endif -%}
+              {%- if product != blank -%}
+                <div class="reserve-testimonials__product flex gap-4 pl-4 relative
+                  before:absolute before:content-[''] before:w-[1px] before:h-full before:left-0 before:top-0 before:bg-yellow">
+                  <div class="relative shrink-0 w-[77px] md:w-[74px] before:content-[''] before:block before:pb-[calc(102/77)*100%] sm:before:pb-[calc(94/72)*100%] md:before:pb-[calc(96/72)*100%]">
+                    <picture>
+                      <source data-srcset="{{ product.featured_image.src | img_url: '700x' }}" media="(min-width: 1200px)" />
+                      <source data-srcset="{{ product.featured_image.src | img_url: '500x' }}" media="(min-width: 769px)" />
+                      <source data-srcset="{{ product.featured_image.src | img_url: '300x' }}" media="(min-width: 500px)" />
+                      <source data-srcset="{{ product.featured_image.src | img_url: '200x' }}" media="(min-width: 320px)" />
+                      <img data-src="{{ product.featured_image.src | img_url: '700x' }}" alt="{{ product.title }}" class="absolute top-0 left-0 object-cover w-full h-full lazyload"/>
+                    </picture>
+                  </div>
+                  <div>
+                    <a href="{{ product.url }}" class="p1 max-w-[172px] md:max-w-[188px] block hover:underline hover:underline-offset-1">{{ product.title }}</a>
+                    <button {% unless product.available %}disabled {% endunless %}id="quick-add-{{ product.id }}" type="button" class="quick-add mt-2.5 px-4 py-2.5 reserve-btn reserve-btn--outline-black" data-variant-id="{{ product.selected_or_first_available_variant.id }}" onClick="handleClickQuickAdd(this, {{ product.id }});">
+                      {% if product.available %}Add to Bag{% else %}Sold Out{% endif %}
+                      <span class="relative pl-[6px] before:absolute before:content-[''] before:w-[2px] before:h-[2px] before:rounded-full before:left-0 before:top-1/2 before:bg-black">
+                        {{ product.price | money_without_trailing_zeros }}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              {%- endif -%}
+            </div>
+            <div class="reserve-testimonials__media relative shrink-0 w-full rounded-lg sm:w-[313px] md:w-[405px] lg:w-[568px]
+              before:content-[''] before:block before:pb-[100%] md:rounded-[6px] lg:rounded-[8px] overflow-hidden" data-aos="fade-in">
+              <picture>
+                <source data-srcset="{{ image | img_url: '1024x' }}" media="(min-width: 769px)" />
+                <source data-srcset="{{ image | img_url: '700x' }}" media="(min-width: 320px)" />
+                <img class="absolute top-0 left-0 object-cover w-full h-full animation-image lazyload" data-src="{{ image | img_url: '1024x' }}" alt="{{ image.alt }}"/>
+              </picture>
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    <div class="js-progress-bar relative bg-yellow/80 w-full h-[2px] mt-6 md:hidden [.reserve-testimonials--1_&]:hidden">
+      <span class="absolute inset-0 h-full bg-black js-progress-bar-scroll transition-[width] duration-100 ease-in-out"></span>
+    </div>
+
+    {%- if button_text != blank and button_link != blank and show_cta -%}
+      <a class="[.reserve-testimonials--1_&]:mt-6 md:[.reserve-testimonials--1_&]:mt-0 md:[.reserve-testimonials--1_&]:left-[68px] lg:[.reserve-testimonials--1_&]:left-[173px] inline-flex items-center justify-center w-full md:w-auto md:min-w-[132px] h-[38px] reserve-btn reserve-btn--outline-black reserve-testimonials__cta
+        md:absolute md:bottom-[64px] md:left-[168px] lg:left-[275px] lg:bottom-[150px] xl:bottom-[135px] px-4 mt-6" href="{{ button_link }}">{{ button_text }}</a>
+    {%- endif -%}
+  </div>
+</reserve-testimonials>
+{%- render 'vite-tag' with 'reserve-testimonials.js' -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Reserve - Testimonials",
+  "class": "bg-white-1 text-black",
+  "settings": [
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Share Your Photo"
+    },
+    {
+      "type": "text",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta",
+      "label": "Show CTA",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "quote",
+      "name": "Quote",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "user_image",
+          "label": "User Image"
+        },
+        {
+          "type": "text",
+          "id": "user_name",
+          "label": "User Name",
+          "default": "Person Name"
+        },
+        {
+          "type": "text",
+          "id": "user_info",
+          "label": "User Info",
+          "default": "Attribution, if necessary"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "label": "Rating",
+          "default": 5
+        },
+        {
+          "type": "text",
+          "id": "quote",
+          "label": "Quote",
+          "default": "This is a quote Lorem ipsum dolor sit amet, consect tetur adipiscing elit. Pellentesque ullam corper tincidunt, is a quote Lorem ipsum dolor sit amet, consect tetur adipiscing el"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reserve - Testimonials"
+    }
+  ]
+}
+{% endschema %}

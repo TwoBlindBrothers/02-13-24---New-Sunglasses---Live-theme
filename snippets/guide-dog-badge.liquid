@@ -1,0 +1,56 @@
+{% assign badge_image = 'guide-dog-badge-' | append: badge | append: '.svg' %}
+
+{% case badge %}
+    {% when '2021' %}
+        {% assign badge_title = 'Circa<br/>2021' %}
+        {% assign badge_tooltip = 'This guide dog initially joined the My Guide Dog family in the year 2021.' %}
+    {% when '2022' %}
+        {% assign badge_title = 'Circa<br/>2022' %}
+        {% assign badge_tooltip = 'This guide dog initially joined the My Guide Dog family in the year 2022.' %}
+    {% when '2023' %}
+        {% assign badge_title = 'Circa<br/>2023' %}
+        {% assign badge_tooltip = 'This guide dog initially joined the My Guide Dog family in the year 2023.' %}
+    {% when 'historic' %}
+        {% assign badge_title = 'Historical Paws' %}
+        {% assign badge_tooltip = 'This guide dog represents a real life Guide Dog and an incredible moment in history.*Learn more on my page!' %}
+    {% when 'partnership' %}
+        {% assign badge_title = 'Special Partnership' %}
+        {% assign badge_tooltip = 'This guide dog is from a special partnership with another organization.*Learn more on my page!' %}
+    {% when 'ultra-rare' %}
+        {% assign badge_title = 'Ultra<br/>Rare' %}
+        {% assign badge_tooltip = 'Some guide dogs are uncommon for various reasons, like this guide dog.*Learn more on my page!' %}
+    {% when 'poodle' %}
+        {% assign badge_title = 'Standard Poodle' %}
+        {% assign badge_tooltip = 'Their non-shedding coats make them ideal for those with allergies, while their intelligence make them excellent guide dogs.' %}
+    {% when 'german-shepherd' %}
+        {% assign badge_title = 'German Shepherd' %}
+        {% assign badge_tooltip = 'Intelligent and loyal, their courage and protective instincts make them ideal for guiding the visually impaired.' %}
+    {% when 'golden-retriever' %}
+        {% assign badge_title = 'Golden Retriever' %}
+        {% assign badge_tooltip = 'Friendly and patient, they excel in their ability to interact with people and have a natural willingness to learn and serve.' %}
+    {% when 'lab' %}
+        {% assign badge_title = 'Labrador Retriever' %}
+        {% assign badge_tooltip = 'Friendly and adaptable, they possess a strong work ethic, loyalty, and ability to learn complex tasks quickly.' %}
+{% endcase %}
+
+{% assign badge_image_url = badge_image | file_url %}
+{% assign close_svg = 'close-x.svg' | asset_url %}
+{% comment %} <button type="button"><img src="' | append: close_svg | append: '" class="close-badge"/></button> {% endcomment %}
+{% assign badge_tooltip_html = '<div class="tooltip-header"><button type="button" onclick="closeTooltip(this)"><img src="' | append: close_svg | append: '" class="close-badge"/></button><img src="' | append: badge_image_url | append: '"/><h4>' | append: badge_title | append: '</h4></div><div class="tooltip-content">' | append: badge_tooltip | append: '</div>' %}
+
+{% assign in_products_carousel = true %}
+{% if section.id contains 'main-product' %}
+    {% assign in_products_carousel = false %}
+{% endif %}
+
+<a class="guide-dog-badge medium-down--hide" data-trigger="hover" data-toggle="tooltip" data-html="true" data-placement="{% if template == 'product.smakk-gd' and in_products_carousel == false %}bottom{% else %}top{% endif %}" title="{{ badge_tooltip_html | escape }}">
+    <img
+        src="{{ badge_image | file_url }}"
+        alt="{{ badge_title }}" />
+</a>
+
+<a class="guide-dog-badge large--hide" data-trigger="focus" data-toggle="tooltip" data-html="true" data-placement="{% if template == 'product.smakk-gd' and in_products_carousel == false %}bottom{% else %}top{% endif %}" title="{{ badge_tooltip_html | escape }}">
+    <img
+        src="{{ badge_image | file_url }}"
+        alt="{{ badge_title }}" />
+</a>

@@ -1,0 +1,169 @@
+{% comment %} 
+  FAQ is pulled from the ZenDesk API based on the category ID that is provided in the customizer
+{% endcomment %}
+{% assign zendesk_cat = section.settings.zendesk_cat %}
+{% assign article_count = section.settings.article_count %}
+
+<section id="shop-blind__faq" {% if section.settings.bg_color.alpha != 0.0 %}style="background-color: {{ section.settings.bg_color }}"{% endif %}>
+    <div class="container narrow">
+        <div class="section-header">
+            <h2 class="h1 light text-center" {% if section.settings.text_color.alpha != 0.0 %}style="color: {{ section.settings.text_color }}"{% endif %}>Still have questions?</h2>
+            <h3 class="h2 light text-center" {% if section.settings.text_color.alpha != 0.0 %}style="color: {{ section.settings.text_color }}"{% endif %}>We have answers!</h3>
+        </div>
+        <div class="faq-questions" style="color: {{ section.settings.text_color }}; border-color: {{ section.settings.text_color }}">
+            {% comment %} 
+                One FAQ block "template" is created which is duplicated after the API call to ZenDesk based on the number 
+                of "articles" that is set in the customizer. Leaving the number blank will pull all "articles"
+                for that category ID. Once the block is duplicated, the original block is removed (in javascript)
+            {% endcomment %}
+            {% assign text_color = blank %}
+            {% if section.settings.text_color.alpha != 0.0 %}
+                    {% assign text_color = section.settings.text_color %}
+                    <style>
+                        #shop-blind__faq .contact__sections__block .contact_toggle {
+                            border-color: {{ text_color }}
+                        }
+                        .contact_toggle-icon svg path {
+                            stroke: {{ text_color }}
+                        }
+                    </style>
+            {% endif %}
+            {% if section.blocks.size > 0 %}
+                {% for block in section.blocks %}
+                {% render 'faq-item', question: block.settings.title, answer: block.settings.answer, text_color: text_color  %}
+                {% endfor %}
+            {% else %}
+                {% render 'faq-item' %}
+            {% endif %}
+            {% comment %} End FAQ block template {% endcomment %}
+        </div>
+        {% if section.settings.button_text != blank %}
+        <div class="faq-footer text-center d-block">
+            <a
+            class="btn"
+            target="_blank"
+            href="{{ section.settings.button_url }}"
+            style="{% if section.settings.button_bg_color != blank and section.settings.button_bg_color.alpha != 0.0 %}background-color: {{ section.settings.button_bg_color }};{% endif %}{% if section.settings.button_color != blank and section.settings.button_color.alpha != 0.0 %}color: {{ section.settings.button_color }}{% endif %}"
+            >
+            {{ section.settings.button_text }}
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+  {% if zendesk_cat != blank %}
+    fetch(`https://twoblindbrothers.zendesk.com/api/v2/help_center/en-us/sections/${'{{ zendesk_cat }}'}/articles`)
+    .then( response => response.json())
+    .then( data => {
+      const faqItems = data.articles
+      const articleCount = parseInt({{ article_count }})
+      faqItems.forEach( (article, i) => {
+        if ( articleCount && i >= articleCount ) {
+          return;
+        }
+        let faqQuestion = $('.contact__sections__block:first-of-type').clone()
+        $('.desc-title', faqQuestion).html(article.name)
+        $('.contact_toggle', faqQuestion).attr('aria-label', article.name)
+        $('.desc-body', faqQuestion).html(article.body)
+        faqQuestion.appendTo('.faq-questions').show()
+      })
+      faqFunctions()
+    })
+  {% else %}
+    faqFunctions()
+  {% endif %}
+
+  function faqFunctions () {
+    $( ".contact__menu__item" ).click(function(e) {
+      e.preventDefault();
+      $( ".contact__menu__item" ).removeClass("is-active")
+      $( this ).addClass( "is-active" );
+    });
+
+    $( ".contact_toggle" ).click(function() {
+      if ($( ".contact_toggle" ).hasClass( "is-active" )) {
+        $(this).attr('aria-expanded', false)
+      } else {
+        $(this).attr('aria-expanded', true)
+      }
+  
+      $(this).siblings( ".desc-body" ).slideToggle( "fast" );
+      $( this ).toggleClass( "is-active" );
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "settings": [
+    {
+      "type": "number",
+      "id": "article_count",
+      "label": "Article Count",
+      "info": "Leave empty to show all"
+    },
+    {
+      "type": "text",
+      "id": "zendesk_cat",
+      "label": "ZenDesk Category",
+      "info": "This will override the FAQ Items added to this section. ID is after sections in ZenDesk URL sections/4405499530395-Shop-Blind"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text"
+    },
+    {
+      "type": "text",
+      "id": "button_url",
+      "label": "Button URL"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background color"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button color"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Question"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ"
+    }
+  ]
+}
+{% endschema %}

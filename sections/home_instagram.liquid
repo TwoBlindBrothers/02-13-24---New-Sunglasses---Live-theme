@@ -1,0 +1,72 @@
+<style>
+    .instagram { text-align: center;margin-top: 90px;margin-bottom: 90px;
+    }
+    .fs-slider-container {overflow: visible}
+    .fs-has-links::after { padding: 8px 12px;background-color: #fff;color: rgba(0, 0, 0, 0.8);content: "SHOP IT";
+    }
+    .fs-mobile .fs-entry-container { width: 50% !important;  padding-top: 50% !important;}
+    .fs-timeline-entry {  border: 5px solid white; outline: 10px solid {{settings.color_primary}};  }
+    .fs-wrapper {overflow: hidden}
+    .fs-wrapper div.fs-text-container .fs-entry-title, div.fs-detail-title {
+        font-family: "canada-type-gibson", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-style: normal;
+        font-weight: normal;
+    }
+    div.fs-text-container .fs-entry-date, div.fs-detail-container .fs-post-info, div.fs-wrapper div.fs-has-links::after, .fs-text-product, .fs-overlink-text {
+        font-family: "canada-type-gibson", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-style: normal;
+        font-weight: bold;
+    }
+    .fs-wrapper div.fs-text-container * { color: #fff }
+    .fs-wrapper div.fs-text-container { background-color: rgba(0, 0, 0, 0.8); margin: 0px }
+    div.fs-entry-date { display: none }
+    div.fs-entry-title { display: none }
+    .fs-wrapper div.fs-timeline-entry { margin: 15px }
+    .fs-slider-next-button, .fs-slider-prev-button { opacity: 1; top: 50%;transform: translatey(-50%); height: 40px; background:none}
+    .fs-slider-next-button { right: -40px }
+    .fs-slider-prev-button { left: -40px; transform: translateY(-50%);}
+      @media (min-width: 769px) {
+          .fs-slider-next-button{right: -60px;}
+          .fs-slider-prev-button {left:-60px}
+    }
+    .fs-slider-next-button img, .fs-slider-prev-button img { height: 30px }
+    .fs-mobile .fs-slider-prev-button, .fs-mobile .fs-slider-next-button { display: block; height: 25px }
+    .fs-mobile .fs-slider-prev-button img, .fs-mobile .fs-slider-next-button img { height: 25px }
+    .fs-mobile .fs-slider-prev-button { left: -45px }
+    .fs-mobile div.fs-entry-container { width: calc(100% / 2) !important; padding-top: calc(100% / 2) !important;
+    }
+
+     @media (max-width: 768px) {
+         .instagram { margin-top: 30px; margin-bottom: 30px }
+        .fs-wrapper div.fs-timeline-entry { outline-width: 6px; margin: 10px  }
+    }
+</style>
+
+  <!-- <div class="instagram wrapper">
+
+  <span class="h1 text-center">{{section.settings.hash_1}}
+  {%if section.settings.hash_2 != blank %}
+  <br /> {{section.settings.hash_2}}{% endif %}
+   </span>
+    <div class="wrapper thinner">
+        <script src="//foursixty.com/media/scripts/fs.slider.v2.5.js" data-feed-id="two-blind-brothers" data-open-links-in-same-page="false" data-theme="slider_v2_5" data-cell-size="25%" async></script>
+    </div>
+</div> -->
+
+{% schema %}
+{
+    "name": "Instagram",
+    "settings": [
+      {
+        "type": "text",
+        "id": "hash_1",
+        "label": "Hashtag 1"
+      },
+      {
+        "type": "text",
+        "id": "hash_2",
+        "label": "Hashtag 1"
+      }
+  ]
+}
+{% endschema %}

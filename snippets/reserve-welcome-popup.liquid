@@ -1,0 +1,66 @@
+{%- liquid
+  assign logo = settings.popup_logo
+  assign heading = settings.popup_heading
+  assign text = settings.popup_text
+  assign btn_text = settings.popup_button_text
+  assign btn_link = settings.popup_button_link
+  assign media_video = settings.popup_media_video
+  assign popup_media_video_poster = settings.popup_media_video_poster | image_url
+  assign video_url = settings.popup_video_url
+  assign btn_class = 'bg-yellow rounded-[30px] label px-8 py-2 border border-yellow border-solid hover:bg-yellow-30 h-[34px] md:h-[38px] js-cta-close'
+-%}
+{%- if customer -%}
+  <reserve-welcome-popup
+    class="reserve-welcome-popup flex items-center fixed w-screen h-screen bg-black-40 z-[999] top-0 left-0 opacity-0 invisible transition-[opacity,visibility] [&.is-active]:opacity-100 [&.is-active]:visible"
+    data-customer-id="{{ customer.id }}"
+  >
+    <dialog class="reserve-welcome-popup__inner overflow-y-auto m-auto flex flex-col items-center text-center px-4 pt-6 pb-8 w-full max-w-[343px] sm:max-w-[648px] sm:p-6 md:pb-8 md:pr-[59px] md:pl-[59px] rounded-[8px] md:rounded-[16px] bg-white text-black overflow-hidden [&::backdrop]:hidden">
+      {%- if media_video != blank or video_url != blank -%}
+        <div class="w-full mb-4 md:mb-8">
+          {%- render 'reserve-video',
+            class: 'aspect-video rounded-lg overflow-hidden bg-grey-2',
+            video: media_video,
+            video_url: video_url,
+            autoplay: false,
+            show_muted: true,
+            muted: false,
+            poster: popup_media_video_poster
+          -%}
+        </div>
+      {%- endif -%}
+      {%- if logo != blank -%}
+        <img class="mb-6 md:mb-[29px] lazy" src="{{- logo | image_url -}}" alt="{{- logo.alt | escape -}}" width="124" height="auto" loading="eager" />
+      {%- endif -%}
+      {%- if heading != blank -%}
+        <h2 class="mb-6 md:mb-2 text-center h2-reserve">{{ heading }}{% if customer.first_name != blank %},<span> {{ customer.first_name }}</span>{% endif %}</h2>
+      {%- endif -%}
+      {%- if text != blank -%}
+        <div class="p1 mb-4 sm:mb-6 md:mb-8">{{ text }}</div>
+      {%- endif -%}
+      <div>
+        {% for i in (1..3) %}
+          {% capture reason_key %}popup_reason_text_{{- i -}}{% endcapture %}
+          {%- assign reason_field = settings[reason_key] -%}
+          {%- if reason_field != blank -%}
+            <div class="flex items-center rounded-lg border border-solid border-grey-200 bg-grey-2 p-4 mb-2 [&:last-child]:mb-6 md:mb-4 [&:last-child]:md:mb-8">
+              <div class="relative flex items-center justify-center w-[42px] h-[42px] pt-[2px] pr-[2px] before:absolute before:content-[''] before:top-[2.5px] before:right-[1.5px] before:w-[35px] before:h-[35px] before:rounded-full before:border-[3px] before:border-solid before:border-yellow">
+                <span class="h4-reserve flex items-center z-[2] justify-center w-[35px] h-[35px] rounded-full border-[1.5px] border-solid border-black">
+                  {{ i }}
+                </span>
+              </div>
+              <div class="w-[calc(100%-42px)] text-left pl-2 md:pl-4">
+                <p class="p2">{{ reason_field }}</p>
+              </div>
+            </div>
+          {%- endif -%}
+        {% endfor %}
+      </div>
+      {%- if btn_link != blank -%}
+        <a autofocus class="{{ btn_class }}" href="{{ btn_link }}">{{ btn_text }}</a>
+      {%- else -%}
+        <button autofocus class="{{ btn_class }}">{{ btn_text }}</button>
+      {%- endif -%}
+    </dialog>
+  </reserve-welcome-popup>
+{%- endif -%}
+{%- render 'vite-tag' with 'reserve-welcome-popup.js' -%}

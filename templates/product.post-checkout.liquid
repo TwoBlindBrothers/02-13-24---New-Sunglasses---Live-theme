@@ -1,0 +1,87 @@
+{% layout none %}
+{% capture 'metafields' %}
+  { "metafields": "{{ product.selected_or_first_available_variant.title }}" }
+{% endcapture %}
+
+{%- assign page_url = content_for_header | split:'"pageurl":"' | last | split:'"' | first | split: request.host | last | replace:'\/','/' | replace:'%20',' ' | replace:'\u0026','&'  -%}
+{% assign item_index = blank %}
+
+{%- for i in (1..1) -%}
+
+  {%- unless page_url contains "?" -%}{% break %}{%- endunless -%}
+  {%- assign query_string = page_url | split:'?' | last -%}
+  {%- assign qry_parts= query_string | split:'&' -%}
+
+  {%- for part in qry_parts -%}
+    {%- assign key_and_value = part | split:'=' -%}
+    {%- if key_and_value.size > 1 -%}
+      {% if key_and_value[0] == 'index' %}
+        {% assign item_index = key_and_value[1] %}  
+        {% continue %}      
+      {% endif %}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}
+
+{% assign variant = product.selected_or_first_available_variant %}
+{% assign product_options = variant.metafields.shop_blind_alt %}
+{% assign product_options_length = product_options.variant | size %}
+
+{% if product_options_length > 0 %}
+    {% if product_options.if_customer_selected_gender %}
+        <div class="sb-item">
+            <div class="item-image-wrapper">
+                <div class="item-image">
+                    <img src="{{ product.featured_image | img_url: '300x'}}"/>
+                </div>
+            </div>
+            <div id="product-options-group-{{ product.id }}-{item_index}" class="item-options">
+                <h3>{{ product.title | split: '(' | first }}</h3>
+                <div id="product-options-group-{{ product.id }}-{item_index}" class="options-item">
+                    {% assign optionIndex = 0 %}
+                    
+                        {% for option in product_options %}
+                            {% if option[0] == 'default_bundle' or option[0] == 'variant' or option[0] == 'upgrade_bundle' %}
+                                {% continue %}
+                            {% endif %}
+                            <div id="product-options-{{ product.id }}-{item_index}-{{ optionIndex }}" class="options-group">
+                                {% assign usedVars = '' %}
+                                {% assign label = 'Gender' %}
+                                {% if option[0] == 'if_customer_selected_size' %}
+                                    {% assign label = 'Size' %}
+                                {% endif %}
+                                <div id="option-{{ product.id }}-{item_index}-{{ optionIndex }}" class="variant-options{% if optionIndex > 0 and product_options | size > 1 %} disabled{% endif %}">
+                                    <h4 class="text-uppercase">{{ label }}</h4>
+                                    <ul class="option-buttons">
+                                        {% for value in option[1] %}
+                                            {% assign usedVarsArr = usedVars | split: '|' %}
+                                            {% if usedVarsArr contains value %}
+                                            {% continue %}
+                                            {% endif %}
+                                            {% assign usedVars = usedVars | append: '|' | append: value %}
+                                            <li class="option-button">
+                                                <input type="radio" data-option-type="{{ label }}" data-item-index="{item_index}" data-select-index="{{ optionIndex }}" data-product="{{ product.id }}" name="radio-{{ product.id }}-{item_index}-{{ optionIndex }}" onchange="handleSelectOption(this, '{{ value }}')" value="{{ value }}">
+                                                <label for="radio-{{ product.id }}-{item_index}-{{ optionIndex }}">{{ value }}</label>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                    <p class="error" id="option-select-error-{{ optionIndex }}">Select a {{ label }}</p>
+                                </div>
+                                {% assign optionIndex = optionIndex | plus: 1 %}
+                            </div>
+                        {% endfor %}
+                        <select name="product-select-{{ product.id }}-{item_index}" id="product-select-{{ product.id }}-{item_index}" class="product-single__variants">
+                            {% for option in product_options.if_customer_selected_gender %}
+                                {% assign option_value = option %}
+                                {% if product_options.if_customer_selected_size and product_options.if_customer_selected_size[forloop.index0] %}
+                                    {% assign option_value = option_value | append: '|' | append: product_options.if_customer_selected_size[forloop.index0] %}
+                                {% endif %}
+                                <option value="{{ option_value }}">{{ option }}|{{ product_options.if_customer_selected_size[forloop.index0] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endif %}

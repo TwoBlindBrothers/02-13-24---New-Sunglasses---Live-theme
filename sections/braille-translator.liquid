@@ -1,0 +1,68 @@
+{% if section.blocks.size %}
+  {% capture 'products' %}
+    {
+      {% for block in section.blocks %}
+        {% assign translationProduct = all_products[block.settings.product] %}
+        "{{ block.settings.alt_title | default: translationProduct.title }}" : {
+          link: "https://twoblindbrothers.com{{ translationProduct.url }}",
+          image: "{{ translationProduct.featured_image | img_url: '400x400' }}",
+          pretext: "{{ block.settings.pretext | default: null }}",
+          message: "{{ block.settings.translation }}",
+          showBraille: false
+        },
+      {% endfor %}
+    }
+  {% endcapture %}
+{% endif %}
+
+<script type="text/javascript">
+  var translationProducts = {{ products }}
+  //console.log(translationProducts)
+</script>
+
+<div id="braille-app">
+</div>
+
+<script defer type="module" src="{{ 'braille-app.js' | asset_url }}"></script>
+
+{% schema %}
+  {
+    "name": "Braille Translator",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Products for translator"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "translation_info",
+        "name": "Add Product",
+        "settings": [
+          {
+            "type": "product",
+            "id": "product",
+            "label": "Product"
+          },
+          {
+            "id": "alt_title",
+            "type": "text",
+            "label": "Title for site",
+            "info": "ie. Skyline shirt"
+          },
+          {
+            "id": "pretext",
+            "type": "text",
+            "label": "Translation pretext",
+            "info": "ie. left sleeve:"
+          },
+          {
+            "id": "translation",
+            "type": "text",
+            "label": "Translation"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

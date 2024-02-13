@@ -1,0 +1,47 @@
+<div class="gd_inset_text">
+  <div class="gd_inset_text__inner">
+    <div class="wrapper text-center"> 
+      {%- unless section.settings.title == blank -%}
+        <h2 class="section-title text-center">{{ section.settings.title }}</h2>
+      {%- endunless -%}
+      {%- unless section.settings.text == blank -%}
+        <p class="">{{ section.settings.text }}</p>
+      {%- endunless -%}
+      <a href="{{ section.settings.button_link }}" class="btn--text">{{ section.settings.button_text }}</a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Guide Dog Text w/ BG",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Text",
+      "name": "Guide Dog Text w/ BG"
+    }
+  ]
+}
+{% endschema %}

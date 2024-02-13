@@ -1,0 +1,178 @@
+<div id="home-hero">    
+    <div id="home-hero__carousel" data-fade="{{ section.settings.fade }}" data-autoplay="{{ section.settings.autoplay }}" data-speed="{{ section.settings.autoplay_speed | times: 1000 }}">
+        {% if section.blocks.size > 0 %}
+            {% for block in section.blocks %}
+                {% if block.type != 'slide' %}
+                    {% continue %}
+                {% endif %}
+                <div class="hero-slide layout-{{ block.settings.hero_layout }}" {{ block.shopify_attributes }}>
+                    <div class="page-hero">
+                        {% if block.settings.hero_image %}
+                            <picture class="hero-slide__image">
+                                <source data-srcset="{{ block.settings.hero_image | img_url: '1400x' }}" media="(min-width: 1200px)" />
+                                <source data-srcset="{{ block.settings.hero_image | img_url: '900x' }}}" media="(min-width: 769px)" />
+                                <img style="object-position: {{ block.settings.hero_image.presentation.focal_point }};" data-src="{{ block.settings.hero_image | img_url: '600x' }}" class="lazyload" alt="{{  block.settings.image.alt | escape }}"/>
+                            </picture>
+                        {% endif %}
+                        {% if block.settings.hero_overlay_color %}
+                            <div class="hero-slide__overlay" style="background-color: {{ block.settings.hero_overlay_color }}; opacity: {{ block.settings.hero_overlay_opacity }}%; mix-blend-mode: {{ block.settings.hero_overlay_filter }};">
+                            </div>
+                        {% endif %}
+                        <div class="wrapper">
+                            <div class="hero-slide__text hero-slide__text--home">
+                                {% if block.settings.title != blank %}
+                                    <h1 class="slab {{ textshadow }}" style="color: {{ block.settings.hero_text_color }}">
+                                        <div class="slabtext">{{ block.settings.title | newline_to_br }}</div>
+                                    </h1>
+                                {% endif %}
+                                {% if block.settings.hero_subheading != blank %}
+                                    <div class="hero-slide__description">
+                                        <p class="{{ textshadow }}" style="color: {{ block.settings.hero_text_color }}">{{ block.settings.hero_subheading }}</p>
+                                    </div>
+                                {% endif %}
+                                {% if block.settings.link_list %}
+                                    <ul class="hero-slide__links flex-grid flex-grid-wide justify-content-center style-type-none">
+                                        {% for link in block.settings.link_list.links %}
+                                            <li class="flex-grid__item-auto"><a class="uppercase underline" style="color: {{ block.settings.hero_text_color }};" href="{{ link.url }}">{{ link.title }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% if section.blocks.size > 0 %}
+        <div class="slider-arrow hero-arrow-prev"><span></span></div>
+        <div class="slider-arrow hero-arrow-next"><span></span></div>
+    {% endif %}
+</div>
+
+{% schema %}
+    {
+        "name": "Hero",
+        "settings": [
+            {
+                "type": "checkbox",
+                "id": "autoplay",
+                "label": "Autoplay?",
+                "info": "Slides rotate automatically"
+            },
+            {
+                "type": "number",
+                "id": "autoplay_speed",
+                "label": "Slide rotation speed in seconds",
+                "default": 3
+            },
+            {
+                "type": "checkbox",
+                "id": "fade",
+                "label": "Fade?",
+                "info": "Fade transition"
+            }
+        ],
+        "blocks": [
+            {
+                "type": "slide",
+                "name": "Slide",
+                "settings": [
+                    {
+                        "type": "image_picker",
+                        "id": "hero_image",
+                        "label": "Hero image",
+                        "info": "1600px wide"
+                    },
+                    {
+                        "type": "text",
+                        "id": "title",
+                        "label": "Heading"
+                    },
+                    {
+                        "type": "textarea",
+                        "id": "hero_subheading",
+                        "label": "Subheading"
+                    },
+                    {
+                        "type": "link_list",
+                        "id": "link_list",
+                        "label": "Menu"
+                    },
+                    {
+                        "type": "color",
+                        "id": "hero_text_color",
+                        "label": "Text Color",
+                        "default": "#FFF"
+                    },
+                    {
+                        "type": "color",
+                        "id": "hero_overlay_color",
+                        "label": "Overlay Color"
+                    },
+                    {
+                        "type": "range",
+                        "id": "hero_overlay_opacity",
+                        "label": "Overlay Opacity",
+                        "default": 30,
+                        "min": 0,
+                        "max": 100,
+                        "step": 5
+                    },
+                    {
+                        "type": "select",
+                        "id": "hero_overlay_filter",
+                        "label": "Overlay Filter",
+                        "options": [
+                            { "value": "normal", "label": "Normal" },
+                            { "value": "multiply", "label": "Mulitply" },
+                            { "value": "screen", "label": "Screen" },
+                            { "value": "overlay", "label": "Overlay" },
+                            { "value": "darken", "label": "Darken" },
+                            { "value": "lighten", "label": "Lighten" }
+                       ],
+                       "default": "multiply"
+                    },
+                    {
+                        "type":      "select",
+                        "id":        "hero_layout",
+                        "label":     "Hero Layout",
+                        "options": [
+                            { 
+                                "value": "centered", 
+                                "label": "Centered"
+                            },
+                            { 
+                                "value": "left", 
+                                "label": "Left"
+                            }
+                        ],
+                        "default": "centered"
+                    }
+                ]
+            },
+            {
+                "type": "url",
+                "name": "Link",
+                "settings": [
+                    {
+                        "id": "hero_url",
+                        "type": "url",
+                        "label": "Link"
+                    },
+                    {
+                        "id": "hero_url_text",
+                        "type": "text",
+                        "label": "Link Text"
+                    }
+                ]
+            }
+        ],
+        "presets": [
+            {
+                "category": "Hero",
+                "name":"Hero Carousel"
+            }
+        ]
+    }
+{% endschema %}

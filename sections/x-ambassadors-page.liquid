@@ -1,0 +1,254 @@
+{{ 'xambassadors.scss.css' | asset_url | stylesheet_tag }}
+<!-- /templates/page.liquid -->
+<div class="wrapper">
+
+  {% comment %}
+    Regular page content goes here.
+  {% endcomment %}
+  {% capture 'header_content' %}
+    {% if section.settings.x_pre_title != blank %}
+      <p style="text-transform: uppercase; text-align: center;"><strong>{{ section.settings.x_pre_title }}</strong></p>
+    {% endif %}
+    <h1 style="text-align: center;">
+      {{ section.settings.x_header | default: page.title }}
+      {% if section.settings.x_post_title != blank %}
+        </br>
+        {{ section.settings.x_post_title }}
+      {% endif %}
+    </h1>
+  {% endcapture %}
+  <div class="flex-row x-header">
+    <div class="flex-row-item flex-1 medium-up--hide">
+      {{ header_content }}
+      {% if section.settings.x_hero_image %}
+        <img style="margin: 1rem auto 0;" class="lazyload" src="{{ section.settings.x_hero_image | img_url: '600x' }}" alt="{{ section.settings.x_hero_image.alt }}">
+      {% endif %}
+    </div>
+    <div class="flex-row-item signup-item">
+      <center><p>Register to reserve your spot!</p></center>
+      <div class="contribute">
+        {% assign contribution_product = all_products['contribution'] %}
+        <div class="contribute-header">
+          <p>Choose a contribution amount</p>
+        </div>
+        <form class="contribution-form">
+          <ul class="contributions">
+            {% for variant in contribution_product.variants %}
+              <li class="flex-button">
+                <button class="{% if forloop.index0 == 0 %}selected{% endif %}"type="button" name="contrib-button" data-variant-id="{{ variant.id }}">{{ variant.title }}</button>
+              </li>
+            {% endfor %}
+            <li><button class="no-contribution" type="button" name="contrib-button" data-variant-id="false">$0, I am not able to contribute</button></li>
+          </ul>
+          <div class="signup-fields">
+            <div class="klaviyo-form-RVHgjr"></div>
+            {% comment %}
+            <div class="signup-fields-wrapper">
+              <div class="field-container field-50">
+                <input type="text" name="first_name" oninput="setCustomValidity('')" oninvalid="this.setCustomValidity('required field')" required id="first_name" placeholder="*First Name"/>
+              </div>
+              <div class="field-container field-50">
+                <input type="text" name="last_name" oninput="setCustomValidity('')" oninvalid="this.setCustomValidity('required field')" required id="last_name" placeholder="*Last Name"/>
+              </div>
+              <div class="field-container field">
+                <input type="tel" id="tel" name="tel" placeholder="Phone #"/>
+              </div>
+              <div class="field-container field">
+                <input type="email" id="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" oninput="setCustomValidity('')" oninvalid="this.setCustomValidity('please use a valid email')" required placeholder="*Email"/>
+              </div>
+            </div>
+            {% endcomment %}
+          </div>
+          <div class="email-contributor">
+            Event updates will be sent to the email or phone number you provide.
+          </div>
+          {% comment %}
+          <label class="age-verify-label">
+            <input class="age-verified" required type="checkbox" oninput="setCustomValidity('')" oninvalid="this.setCustomValidity('Please verify that you are over the age of 13')"/>
+            <span>*I am over the age of 13</span>
+          </label>
+          <div style="display: none" class="age-error error">Please verify that you are over the age of 13</div>
+          {% endcomment %}
+          <input class="btn" style="padding-right: 5px; padding-left: 5px;" type="submit" formnovalidate="formnovalidate" value="Register Now"/>
+          <div class="errors">Something went wrong. Please contact us at <a href="mailto:hello@twoblindbrothers.com">hello@twoblindbrothers.com</a></div>
+          <p class="disclaimer">I agree to the <a href="/pages/xa-terms-conditions">terms & conditions</a></p>
+        </form>
+      </div>
+      {% if section.settings.x_amb_goal %}
+        {% assign goal = section.settings.x_amb_goal | times: 1.0 %}
+        {% assign reached = section.settings.x_amb_contribution | times: 1.0 %}
+        {% assign goal_reached = reached | divided_by: goal | times: 100 %}
+        <div class="x-amb-goal">
+          <div class="goal-header-text">
+            {% if section.settings.x_amb_goal_text %}
+              {{ section.settings.x_amb_goal_text }}
+            {% endif %}
+          </div>
+          {% comment %}
+          <div class="goal-header">
+            <span>${{ section.settings.x_amb_goal | times: 100 | money_without_currency | remove: '.00' }}</span>
+          </div>
+          {% endcomment %}
+          <div class="goal-bar">
+            <div class="goal-reached" style="width: {{ goal_reached }}%">
+              {% if goal_reached < 1 and goal_reached > 0.0 %}
+                {% assign goal_reached = 1 %}
+              {% endif %}
+              <span>{{ goal_reached | remove: '.0' | round }}%</span>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+    <div class="flex-row-item flex-1">
+      <div class="small--hide">
+        {{ header_content }}
+        {% if section.settings.x_hero_image %}
+          <img style="margin: 1rem auto 1.5rem;" class="lazyload" src="{{ section.settings.x_hero_image | img_url: '1200x' }}" alt="{{ section.settings.x_hero_image.alt }}">
+        {% endif %}
+      </div>
+      <div class="x-content">{{ page.content }}</div>
+    </div>
+    {% comment %}
+    <div class="flex-row-item col-5 x-sign-up">
+      <div class="klaviyo-form-RVHgjr klaviyo-form-pre">
+        <div class="loader">
+        </div>
+      </div>
+    </div>
+    {% endcomment %}
+  </div>
+  <div class="flex-row flex-centered video-wrapper">
+    {% if section.settings.x_amb_title or section.settings.x_amb_content %}
+      <div class="align-center video-header">
+        <h2 class="align-center">{{ section.settings.x_amb_title }}</h2>
+        <div>
+          {{ section.settings.x_amb_content }}
+        </div>
+      </div>
+    {% endif %}
+    <div class="flex-row-item video-container">
+      <div class="video-block" style="background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.4)), rgba(0,0,0,0.4) url('http://img.youtube.com/vi/1u-niluB8HI/0.jpg')">
+        <div class="video-block__content">
+          <a class="play-btn" data-fancybox href="https://www.youtube.com/watch?v=1u-niluB8HI" title="play video">
+            <svg style="width: 100%; height: auto; max-width: 125px;" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+              viewBox="0 0 160 160" style="enable-background:new 0 0 160 160;" xml:space="preserve">
+              <g>
+                <polygon style="fill: #FFFFFF;" points="72.6,72.7 72.6,85.9 72.6,97.5 99,79.3 72.6,61 	"/>
+                <path style="fill: #FFFFFF;" d="M80,0C35.9,0,0,35.9,0,80s35.9,80,80,80s80-35.9,80-80S124.1,0,80,0z M80,153.6c-40.6,0-73.6-33-73.6-73.6
+               S39.5,6.4,80,6.4s73.6,33,73.6,73.6S120.6,153.6,80,153.6z"/>
+              </g>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="remodal video" data-remodal-id="1u-niluB8HI-grid-video" aria-modal="true">
+    <button data-remodal-action="close" class="remodal-close"></button>
+    <div class="youtube-player" data-id="1u-niluB8HI"></div>
+  </div>
+
+</div>
+
+{% capture 'contribution' %}
+  [
+    {% for variant in contribution_product.variants %}
+      {
+        id: {{ variant.id }},
+        title: "{{ variant.title }}"
+      },
+    {% endfor %}
+  ]
+{% endcapture %}
+
+<script>
+  const contribution = {{ contribution }}
+</script>
+
+{{ 'contribution.js' | asset_url | script_tag }}
+
+
+{% comment %}
+<script type="text/javascript" src="//www.klaviyo.com/media/js/public/klaviyo_subscribe.js"></script>
+<script>
+  var KlaviyoSubscribe = KlaviyoSubscribe || {};
+  console.log(KlaviyoSubscribe)
+  (function() {
+    if (!KlaviyoSubscribe._loaded) {
+      alert('hi')
+    }
+})
+  window.addEventListener("klaviyoSubscribe", function(e) {
+    console.log(e)
+  });
+</script>
+{% endcomment %}
+
+{% schema %}
+  {
+    "name": "X Ambassadors Page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Contribution Goal"
+      },
+      {
+        "type": "image_picker",
+        "id": "x_hero_image",
+        "label": "Hero Image"
+      },
+      {
+        "type": "text",
+        "id": "x_pre_title",
+        "label": "Pre Title"
+      },
+      {
+        "type": "text",
+        "id": "x_header",
+        "label": "Title",
+        "default": "X Ambassadors"
+      },
+      {
+        "type": "text",
+        "id": "x_post_title",
+        "label": "Post Title"
+      },
+      {
+        "type": "richtext",
+        "id": "x_amb_goal_text",
+        "label": "Content",
+        "default": "<p>Help us reach our goal of...</p>"
+      },
+      {
+        "type": "number",
+        "id": "x_amb_goal",
+        "label": "Goal amount",
+        "default": 10000
+      },
+      {
+        "type": "number",
+        "id": "x_amb_contribution",
+        "label": "Contributed amount",
+        "default": 100
+      },
+      {
+        "type": "header",
+        "content": "Content below header"
+      },
+      {
+        "type": "text",
+        "id": "x_amb_title",
+        "label": "Title",
+        "default": "Name of organization"
+      },
+      {
+        "type": "richtext",
+        "id": "x_amb_content",
+        "label": "Content",
+        "default": "<p>Edit this in Online Store -> Themes -> X Ambassadors page</p>"
+      }
+    ]
+  }
+{% endschema %}

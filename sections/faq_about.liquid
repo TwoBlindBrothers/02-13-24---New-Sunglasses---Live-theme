@@ -1,0 +1,34 @@
+   {% for block in section.blocks %}
+    {% case block.type %}
+         {% when 'about' %}
+         <dl class="contact__sections__block" {{ block.shopify_attributes }}>
+            <button class="contact_toggle">{% include 'svg_icon_plus'  %}</button>
+             <dt>{{ block.settings.about_q }}</dt>
+             <dd>{{ block.settings.about_a }}</dd>
+         </dl>
+     {% endcase %}
+  {% endfor %}
+         
+
+{% schema %}
+  {
+    "blocks": [
+        {
+        "type": "about",
+        "name": "About FAQ",
+        "settings": [
+            {
+                "type": "text",
+                "id": "about_q",
+                "label": "About question"
+            },
+            {
+                "type": "richtext",
+                "id": "about_a",
+                "label": "About answer"
+            }
+        ]
+       }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,30 @@
+{%- if predictive_search.performed -%}
+  <div id="predictive-search-results" class="predictive-search__results">
+    {%- if predictive_search.resources.products.size > 0 -%}
+      <ul role="listbox" aria-labelledby="predictive-search-products" class="predictive-search__list">
+        {%- for product in predictive_search.resources.products -%}
+          <li role="option" class="mb-0 {% if forloop.index > 3 %}lg:hidden{% endif %}">
+            <a href="{{ product.url }}" class="predictive-search__item">
+              <div class="predictive-search__item-image">
+                <picture>
+                  <source data-srcset="{{ product.featured_image.src | img_url: '240x' }}" media="(min-width: 1200px)" />
+                  <source data-srcset="{{ product.featured_image.src | img_url: '180x' }}" media="(min-width: 320px)" />
+                  <img data-src="{{ product.featured_image.src | img_url: '180x' }}" alt="{{ product.featured_image.alt }}" class="absolute top-0 left-0 object-cover w-full h-full lazyload"/>
+                </picture>
+              </div>
+              <div class="predictive-search__item-content">
+                <p class="predictive-search__item-title">{{ product.title }}</p>
+                <span class="predictive-search__item-price">{{ product.price | money_without_trailing_zeros }}</span>
+              </div>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+      {% comment %} <div class="lg:text-center">
+        <button type="submit" class="reserve-btn predictive-search__all" data-predictive-search-all>{{ 'general.predictive_search.see_all_results' | t }}</button>
+      </div> {% endcomment %}
+    {%- else -%}
+      <p class="p2 text-black">{{ 'general.predictive_search.no_results_html' | t: terms: predictive_search.terms }}</p>
+    {%- endif -%}
+  </div>
+{%- endif -%}

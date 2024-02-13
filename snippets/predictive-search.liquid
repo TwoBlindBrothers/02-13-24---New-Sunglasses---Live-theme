@@ -1,0 +1,52 @@
+{%- comment -%}
+  Pass these variables into snippet:
+
+  Required:
+
+  Optional:
+  * form_class
+  * attrs
+{%- endcomment -%}
+
+<predictive-search>
+  <form
+    action="{{- routes.search_url -}}"
+    method="get"
+    role="search"
+    class="predictive-search {{ form_class }}"
+    id="searchForm"
+    {{ attrs }}
+  >
+    <div class="predictive-search__wrapper">
+      <div class="predictive-search__inner">
+        <div class="flex items-center">
+          <button type="submit" class="predictive-search__submit" aria-label="Search" title="{{ 'general.search.submit' | t }}">
+            {% render 'icons', icon: 'search' %}
+          </button>
+          <label for="formSearchField" class="hidden-label">{{ 'general.predictive_search.placeholder' | t }}</label>
+          <input
+            class="predictive-search__input"
+            placeholder="{{ 'general.predictive_search.placeholder' | t }}"
+            id="formSearchField"
+            type="search"
+            name="q"
+            value="{{ search.terms | escape }}"
+            role="combobox"
+            aria-expanded="false"
+            aria-owns="predictive-search-results"
+            aria-controls="predictive-search-results"
+            aria-haspopup="listbox"
+            aria-autocomplete="list"
+            aria-label="{{ 'general.predictive_search.placeholder' | t }}"
+            onkeydown="return event.key != 'Enter'"
+          />
+          <input name="options[prefix]" type="hidden" value="last">
+          <button type="button" class="predictive-search__close" aria-label="{{ 'general.predictive_search.close' | t }}" title="{{ 'general.predictive_search.close' | t }}" data-btn-close-search>
+            {% render 'icons', icon: 'close' %}
+          </button>
+        </div>
+        <div id="predictive-search" class="hidden [.predictive-search.is-open_&]:block" tabindex="-1"></div>
+      </div>
+    </div>
+  </form>
+</predictive-search>

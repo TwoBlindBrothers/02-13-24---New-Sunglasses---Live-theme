@@ -1,0 +1,82 @@
+{%- liquid
+  assign breadcrumbs_menu = linklists.reserve-breadcrumbs
+
+  capture breadcrumbs
+    render 'sub-breadcrumbs', menu: breadcrumbs_menu, active_product: product, active_collection: collection
+  endcapture
+
+  if template.name == 'collection'
+    assign is_collection = true
+    assign collection_handle = collection.handle
+  endif
+-%}
+{%- if breadcrumbs != blank -%}
+  {%- assign breadcrumbs_arr = breadcrumbs | split: '|' -%}
+  {% assign count = 0 %}
+  <nav class="breadcrumb" role="navigation" aria-label="breadcrumbs">
+    {%- for breadcrumb in breadcrumbs_arr -%}
+      {%- assign link_arr = breadcrumb | split: '::' -%}
+      {%- assign title = link_arr | first -%}
+      {%- assign url = link_arr | last -%}
+      {%- assign breadcrumb_handle = url | split: '/collections/' | last -%}
+      {%- if title and url -%}
+        {%- if count > 0 -%}
+          <span aria-hidden="true">/</span>
+        {%- endif -%}
+        {%- if collection_handle == breadcrumb_handle -%}
+          <span class="mt-[3px] !p-0 !no-underline" aria-current="page">{{ title }}</span>
+        {%- else -%}
+          <a class="reserve-link{% if forloop.last %} !no-underline{% endif %}" href="{{ url }}" title="{{ title }}">{{ title }}</a>
+        {%- endif -%}
+        {%- assign count = count | plus: 1 -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </nav>
+{%- else -%}
+  {% unless template == 'index' or template == 'cart' %}
+    <nav class="breadcrumb label" role="navigation" aria-label="breadcrumbs">
+      <a href="/" title="{{ 'general.breadcrumbs.home_link_title' | t }}" class="label">{{ 'general.breadcrumbs.home' | t }}</a>
+      {% if template contains 'product' %}
+        {% if collection %}
+          <span aria-hidden="true">/</span>
+          {% if collection.handle %}
+            {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+            {{ collection.title | link_to: url }}
+          {% endif %}
+        {% endif %}
+        <span aria-hidden="true">/</span>
+        <span class="label">{{ product.title }}</span>
+      {% elsif template contains 'collection' and collection.handle %}
+        <span aria-hidden="true">/</span>
+        {% if current_tags %}
+          {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+          {{ collection.title | link_to: url }}
+          <span aria-hidden="true">/</span>
+          <span>{{ current_tags | join: " + " }}</span>
+        {% else %}
+          <span>{{ collection.title }}</span>
+        {% endif %}
+      {% elsif template == 'blog' %}
+        <span aria-hidden="true" class="h4">/</span>
+        {% if current_tags %}
+          {{ blog.title | link_to: blog.url }}
+          <span aria-hidden="true">/</span>
+          <span>{{ current_tags | join: " + " }}</span>
+        {% else %}
+          <span class="label">{{ blog.title }}</span>
+        {% endif %}
+      {% elsif template == 'article' %}
+        <span aria-hidden="true">/</span>
+        <span class="label">{{ blog.title | link_to: blog.url }}</span>
+        <span aria-hidden="true">/</span>
+        <span class="label">{{ article.title }}</span>
+      {% elsif template contains 'page' %}
+        <span aria-hidden="true">/</span>
+        <span>{{ page.title }}</span>
+      {% else %}
+        <span aria-hidden="true">/</span>
+        <span class="label">{{ page_title }}</span>
+      {% endif %}
+    </nav>
+  {% endunless %}
+{%- endif -%}

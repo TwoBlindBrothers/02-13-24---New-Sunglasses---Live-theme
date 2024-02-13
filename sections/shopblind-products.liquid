@@ -1,0 +1,142 @@
+<div class="{% if section.settings.white_text %}text-white{% endif %}{% if section.settings.black_bg %} bg-black{% endif %}">
+    <section class="text-center">
+      {% comment %}If ACF fields, override customzer settings{% endcomment %}
+      {% assign sb_collection = section.settings.shopblind_col %}
+      {% if page.metafields.shop_blind.collection %}
+        {% assign sb_collection = page.metafields.shop_blind.collection %}
+      {% endif %}
+      {% assign collection = collections[sb_collection] %}
+  
+      {% if collection %}
+        {% assign products = collection.products | sort: 'price' %}
+        <div id="shop-blind-grid-container">
+  
+        </div>
+        
+        {% capture 'shop_blind_products' %}
+          [
+              {% if template == 'product.shop-blind' %}
+                  {
+                      id: {{ product.id }},
+                      available: {{ product.available }},
+                      title: "{{ product.title }}",
+                      product_type: "{{ product.product_type }}",
+                      html: '{{ product.content | strip_newlines | escape }}',
+                      images: {{ product.images | json }},
+                      vendor: "{{ product.vendor }}",
+                      variants: {{ product.variants | json }},
+                      options: {{ product.options | json }},
+                      price: "{{ product.price | money_without_trailing_zeros }}",
+                      special: {{ false }},
+                      product_page: true,
+                      header_text: "{{ product.metafields.shop_blind_header.alternate_title | default: product.title }}",
+                      {% if product.metafields.shop_blind_header.subtext %}
+                        header_subtext: "{{ product.metafields.shop_blind_header.subtext }}",
+                      {% endif %}
+                    }
+              {% else %}
+                  {% for product in products %}
+                      {% assign special = false %}
+                      {% if forloop.index == products.size %}
+                        {% assign special = true %}
+                      {% endif %}
+                      {
+                      id: {{ product.id }},
+                      available: {{ product.available }},
+                      title: "{{ product.title }}",
+                      product_type: "{{ product.product_type }}",
+                      product_page: false,
+                      html: '{{ product.content | strip_newlines | escape }}',
+                      images: {{ product.images | json }},
+                      vendor: "{{ product.vendor }}",
+                      variants: {{ product.variants | json }},
+                      options: {{ product.options | json }},
+                      price: "{{ product.price | money_without_trailing_zeros }}",
+                      special: {{ special }},
+                      {% if product.metafields.shop_blind_header.header %}
+                          header_text: "{{ product.metafields.shop_blind_header.header }}",
+                      {% endif %}
+                      {% if product.metafields.shop_blind_header.subtext %}
+                          header_subtext: "{{ product.metafields.shop_blind_header.subtext }}",
+                      {% endif %}
+                      },
+                  {% endfor %}
+              {% endif %}
+          ]
+        {% endcapture %}
+      {% endif %}
+    </section>
+    <div class="homepage-link-container text-center">
+      {% if template == 'product.shop-blind' %}
+          <a class="btn btn--xlarge" style="background-color: white; margin-bottom: 2rem;" href="https://twoblindbrothers.com/">See all shop blind options</a>    
+      {% endif %}
+      <a style="margin-bottom: 1rem; text-decoration: underline; display: block;" href="https://reveal.twoblindbrothers.com/">I don't want to shop blind</a>
+      {% comment %}
+      {% if template == 'index' %}
+        <span style="color: black; margin-bottom: 1rem; display: block;">
+          Are you a returning supporter? 
+          <a style="font-weight: 600; text-decoration: underline;" href="/pages/pip-shop-blind">
+            click here
+          </a>
+        </span>
+      {% endif %}
+      {% endcomment %}
+    </div>
+  </div>
+  <script>
+    var shopBlindProducts = {{ shop_blind_products }}
+    console.log('shopBlindProducts: ', shopBlindProducts);
+  </script>
+  {{ 'shop-blind-beta-app.js' | asset_url | script_tag }}
+  {% schema %}
+  {
+    "name": "Shop Blind Products",
+    "settings": [
+       {
+         "type":      "header",
+         "content":   "Main products"
+      },
+      {
+        "type": "collection",
+        "id": "shopblind_col",
+        "label": "Shop Blind Collection",
+        "info": "Set the main products on the backend in Shopify Collections"
+      },
+      {
+        "type": "text",
+        "id": "shopblind_col_button",
+        "label": "Button text"
+      },
+      {
+         "type":      "header",
+         "content":   "Special product"
+      },
+      {
+        "type": "product",
+        "id": "shopblind_prod_special",
+        "label": "Shop Blind Special Product"
+      },
+      {
+        "type": "text",
+        "id": "shopblind_prod_special_button",
+        "label": "Shop Blind Special Product button text"
+      },
+      {
+        "type": "checkbox",
+        "id": "white_text",
+        "label": "White text?"
+      },
+      {
+        "type": "checkbox",
+        "id": "black_bg",
+        "label": "Black background?"
+      }
+    ],
+    "presets": [
+      {
+        "category": "Shop Blind",
+        "name": "Shop Blind Products OLD"
+      }
+    ]
+  }
+  {% endschema %}

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 9 ]><html class="ie9 no-js"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+  <head>
+<!-- Start of Shoplift scripts -->
+{% render 'shoplift' %}
+<!-- End of Shoplift scripts -->
+
+
+    <meta name="google-site-verification" content="ttZca2KoetOEPToVJiLZw0nT_jA3cZ4ixQY5RiTjmKY" />
+    {% comment %}
+    {% include 'limespot' %}
+    {% endcomment %}
+
+    <!-- Basic page needs ================================================== -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="{{ 'favicon.png' | asset_url }}" type="image/png" />
+
+    <!-- Title and description ================================================== -->
+    <title>
+      {{ page_title }}{% if current_tags %}{% assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags }}{% endif %}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+    </title>
+
+    {% if page_description %}
+    <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+
+    <!-- Helpers ================================================== -->
+    {% include 'social-meta-tags' %}
+    <link rel="canonical" href="{{ canonical_url }}">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <meta name="theme-color" content="{{ settings.color_primary }}">
+
+    {%- render 'fonts' -%}
+
+    <!-- CSS ================================================== -->
+    {{ 'timber.scss.css' | asset_url | stylesheet_tag }}
+    {{ 'recharge.scss.css' | asset_url | stylesheet_tag }}
+    {{ 'smakk-guidedog.css' | asset_url | stylesheet_tag }}
+    {% if settings.easter_enabled %}
+      {{ '2bb-easter.css' | asset_url | stylesheet_tag }}
+    {% endif %}
+
+    <link rel="stylesheet" href="{{ 'swiper.css' | asset_url }}" media="print" onload="this.media='all'">
+    <!-- Header hook for plugins ================================================== -->
+    {%- capture header_scripts -%}
+      {{ content_for_header }}
+    {%- endcapture -%}
+
+    {%- render 'header-scripts',
+      content: header_scripts,
+      unload_apps: true,
+      remove_apps: ''
+    -%}
+
+    {%- render 'delay-load',
+      urls: '',
+      snippets: '',
+      on_delay_load: '',
+      load_apps: true,
+      delay: 0,
+      enable: true
+    -%}
+
+    {% include 'oldIE-js' %}
+
+    {{ "//use.fontawesome.com/3802097393.js" | script_tag }}
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+    {{ '//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js' | script_tag }}
+    
+    <script type="text/javascript" src="{{ 'bootstrap-tooltip.js' | asset_url }}" async defer></script>
+    
+    {{ 'modernizr.min.js' | asset_url | script_tag  }}
+    <!--[if lte IE 9]><script src="{{ 'polyfill.min.js' | asset_url }}"></script><![endif]-->
+    {{ 'ls.unveilhooks.min.js' | asset_url | script_tag   }}
+
+    {% if template contains 'customers' %}
+    {{ 'shopify_common.js' | shopify_asset_url | script_tag }}
+    {% endif %}
+
+    <script src="https://use.typekit.net/ugw7ksw.js"></script>
+    <script> try{Typekit.load({  async: true }); }catch(e){} </script>
+
+    {% if template contains 'product' %}
+      <script type="text/javascript" src="{{ 'image-zoom.min.js' | asset_url }}" defer=”defer”></script>
+  
+      {{ 'image-zoom.css' | asset_url | stylesheet_tag }}
+    {% endif %}
+
+    {{ '//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css' | stylesheet_tag }}
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+    <script type="text/javascript" src="https://addevent.com/libs/atc/1.6.1/atc.min.js" async defer></script>
+
+    {{ 'jquery.fancybox.min.css' | asset_url | stylesheet_tag }}
+    {{ 'jquery.fancybox.min.js' | asset_url | script_tag }}
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-NJTDWKD');</script>
+    <script src="https://cdn.attn.tv/2bb/dtag.js"></script>
+    <!-- End Google Tag Manager -->
+
+    <!-- Start WKND tag. Deploy at the beginning of document head. -->
+    <script>
+      (function(d) {
+        var e = d.createElement('script');
+        e.src = d.location.protocol + '//tag.wknd.ai/5456/i.js';
+        e.async = true;
+        d.getElementsByTagName("head")[0].appendChild(e);
+      }(document));
+    </script>
+    <!-- End WKND tag -->
+
+    <!-- Google Adwords Tags implemented by Brad ================================================== -->
+    {{ 'jquery.infinitescroll.2.1.0.min.js' | asset_url | script_tag }}
+    {%- render 'vite-tag' with 'custom.css' -%}
+  </head>
+
+  {% comment %}
+  Add the page template as a class for easy page or template specific styling.
+  {% endcomment %}
+  <body id="{{ page_title | handle }}" class="{% if customer %}customer-logged-in {% endif %}template-{{ template | replace: '.', ' ' | handle }} guide-dog-layout">
+
+    <div class="sr-only">
+        {{ skip_to_content_link }}
+    </div>
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NJTDWKD" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <div id="NavDrawer" class="drawer drawer--left">
+    </div>
+    {% if settings.ajax_cart_method == "drawer" %}
+    <div id="cartDrawerBackground"></div>
+    <div id="CartDrawer" class="drawer drawer--right" aria-live="polite">
+      <div class="drawer__header">
+        <div class="drawer__title h3">{{ 'cart.general.title' | t }}</div>
+        <div class="drawer__close js-drawer-close">
+          <button type="button" class="icon-fallback-text">
+            <span class="close-x" aria-hidden="true">
+              <img src="{{ 'close-x.svg' | asset_url }}" class=""/>
+            </span>
+            <span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>
+          </button>
+        </div>
+      </div>
+      <div id="CartContainer"></div>
+    </div>
+    {% endif %}
+    <div id="PageContainer">
+
+      {% section 'header' %}
+
+      <main class="main-content" role="main" id="main-content">
+
+        {% include 'loader' %}
+
+        {{ content_for_layout }}
+
+        <div id="left-side-buttons">
+            <button id="eyeball" class="content-slideInRight left-side-button" name="blindexperience" aria-label="Select this button to see how the Two Blind Brothers see that Page">
+                {% include 'svg-eye-closed' %}
+            </button>
+            {% comment %}
+            <button id="get-support-button" class="left-side-button hidden" aria-label="Get help">
+                {% include 'svg-icon-support' %}
+            </button>
+            {% endcomment %}
+        </div>
+
+      </main>
+
+      <!-- begin site-footer -->
+      <footer class="site-footer" role="contentinfo">
+        <div class="wrapper">
+          <div class="grid">
+            <div class="grid__item large--one-half">
+              <div id="footer-newsletter">
+                {% if settings.footer_newsletter_enable %}
+                {% include 'svg_copy_be-a-part-of-the-community',
+                    classes: 'medium-down--hide' %}
+
+                {% include 'svg_copy_be-a-part-of-the-community_m',
+                    classes: 'large--hide' %}
+                {% include 'active-campaign' %}
+                {% endif %}
+              </div>
+            </div>
+            {% section 'footer-menus' %}
+            <div class="grid__item large--one-half large--text-left medium-down--text-center">
+              {% if settings.footer_social_enable %}
+                {% section 'footer-social' %}
+              {% endif %}
+            </div>
+            <div class="grid__item large--one-half large--text-right medium-down--text-center">
+              <p id="legal-links" class="large--text-right medium-down--text-center">
+                <a href="/pages/privacy-policy">Privacy Policy</a> | <a href="/pages/terms-of-service">Terms of Service</a>
+              </p>
+            </div>
+          </div>
+          {% include 'accessibility-disclaimer' %}
+        </div>
+      </footer>
+      <!-- //site-footer -->
+
+      <div id="heatmap-banner" class="">
+        <p>There are lots of types of blindness. We have Stargardt's, a type of macular degeneration that means we lose vision in the center of the retina. This simulator gives you peek at what its like to peep with our peepers.</p><a class="heatmap-close" href="#" title="close banner">X</a>
+      </div>
+
+      <svg xmlns="http://www.w3.org/2000/svg" width="80%" height="80%" viewBox="10 0 50 75" id="heatmap-display">
+        <filter id="blurMe">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="1"></feGaussianBlur>
+        </filter>
+        <path d="M10,59l9,6,10,3a18,18,0,0,0,10-3h1l9-5,10-4,5-5a15,15,0,0,0,2-7h0a20,20,0,0,0-1-6l-4-6-6-5-9-5L37,14l-3-2L27,9a14,14,0,0,0-9,1,20,20,0,0,0-7,6L6,24a49,49,0,0,0-3,9,45,45,0,0,0-1,9H2a20,20,0,0,0,2,9Z" fill="rgba(0,0,0,.7)" filter="url(#blurMe)"></path>
+        <path d="M9,48l5,7,7,5h9l8-2,9-2h5a5,5,0,0,0,3-3h0l2-6a42,42,0,0,0,0-9c0-3-1-6-2-7s-4-3-7-3l-8-2-2-2-5-4-7-2-7,2-5,4-4,6L7,34H7a14,14,0,0,0,0,7A22,22,0,0,0,9,48Z" fill="#666" filter="url(#blurMe)"></path>
+        <path d="M14,52l7,4,8,2,8-2h1l7-3,7-3,3-3a10,10,0,0,0,2-5h0a13,13,0,0,0-1-4l-3-4-4-3-7-4-8-4H32l-5-2H20l-5,4-3,6L9,34a29,29,0,0,0-1,6H9a14,14,0,0,0,2,6Z" filter="url(#blurMe)"></path>
+      </svg>
+
+    </div>
+
+    {% section "collection-nav-images" %}
+
+    <!-- {% section 'popup' %} -->
+
+    {%- render 'reserve-collapsible-cart' -%}
+
+    {{ 'timber.js' | asset_url | script_tag }}
+    {{ 'scripts.js' | asset_url | script_tag }}
+
+    {{ 'nav.js' | asset_url | script_tag }}
+
+    {{ 'js.cookie.js' | asset_url | script_tag }}
+
+
+    {{ 'simpleheat.js' | asset_url | script_tag }}
+    {{ 'data.js' | asset_url | script_tag }}
+
+    {% include "heatmap" %}
+
+    <script>
+      //lazy bgs
+      document.addEventListener('lazybeforeunveil', function(e){
+        var bg = e.target.getAttribute('data-bg');
+        if(bg){ e.target.style.backgroundImage = 'url(' + bg + ')'; }
+      });
+    </script>
+
+    <script>
+      // Video modals
+      jQuery(function() {
+        $('iframe[src*="https://www.youtube.com/embed/"]').addClass("remodal-video");
+        $(document).on('closing', '.remodal', function (e) {
+          $('.remodal-video').each(function(index) {
+            $(this).attr('src', $(this).attr('src'));
+            return false;
+          });
+        });
+        jQuery('.swatch :radio').change(function() {
+          var optionIndex = jQuery(this).closest('.swatch').attr('data-option-index');
+          var optionValue = jQuery(this).val();
+          jQuery(this)
+          .closest('form')
+          .find('.single-option-selector')
+          .eq(optionIndex)
+          .val(optionValue)
+          .trigger('change');
+        });
+      });
+    </script>
+
+    <script>
+      // Smooth Scroll
+      $('a[href*="#"]')
+      .not('[href="#"]')
+      .not('[href="#0"]')
+      .click(function(event) {
+        if (
+          location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '')
+          &&
+          location.hostname == this.hostname
+        ) {
+          var target = $(this.hash);
+          target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+          if (target.length) {
+            event.preventDefault();
+            $('html, body').animate({
+              scrollTop: target.offset().top - 120
+            }, 1000, function() {
+              var $target = $(target);
+              $target.focus();
+              if ($target.is(":focus")) {
+                return false;
+              } else {
+                $target.attr('tabindex','-1');
+                $target.focus();
+              };
+            });
+          }
+        }
+      });
+    </script>
+
+    <script>
+      {% if resetPassword %}
+      $(function() {
+        timber.resetPasswordSuccess();
+      });
+      {% endif %}
+    </script>
+
+    {% if settings.ajax_cart_method == "drawer" %}
+    {{ 'handlebars.min.js' | asset_url | script_tag  }}
+    {% include 'ajax-cart-template' %}
+    {{ 'ajax-cart.js' | asset_url | script_tag }}
+
+    <script>
+      jQuery(function($) {
+        ajaxCart.init({
+          formSelector: '#AddToCartForm',
+          cartContainer: '#CartContainer',
+          addToCartSelector: '#AddToCart',
+          cartCountSelector: '.cart__item-count',
+          cartCostSelector: '#CartCost',
+          moneyFormat: {{ shop.money_format | json }}
+        });
+        });
+
+        jQuery(document.body).on('afterCartLoad.ajaxCart', function(evt, cart) {
+          // Bind to 'afterCartLoad.ajaxCart' to run any javascript after the cart has loaded in the DOM
+          timber.RightDrawer.open();
+          jQuery("body.template-product.js-drawer-open").keydown(function(e) {
+            if(e.keyCode == 27) {
+              jQuery('.js-drawer-close').click()
+            }
+          });
+        });
+    </script>
+    {% endif %}
+
+    {% if template == 'page.curingblindness' %}
+    {{ 'skrollr.js' | asset_url | script_tag  }}
+    <script type="text/javascript">
+      $(window).load(function() {
+        var s = skrollr.init(smoothScrolling=true);
+        //$("#twobbloader").fadeOut();
+      });
+    </script>
+    {% endif %}
+
+    {% if template == 'page.curingblindnessmobile' %}
+    {{ 'wow.min.js' | asset_url | script_tag }}
+    <script>
+      new WOW().init();
+    </script>
+    {% endif %}
+
+    {% if template contains 'product' %}
+    {% include 'linked-options-new' %}
+    {% endif %}
+
+    <script type="text/javascript">
+      var _learnq = _learnq || [];
+
+      _learnq.push(['account', 'HMZ6Wk']);
+
+      (function () {
+        var b = document.createElement('script'); b.type = 'text/javascript'; b.async = true;
+        b.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'a.klaviyo.com/media/js/analytics/analytics.js';
+        var a = document.getElementsByTagName('script')[0]; a.parentNode.insertBefore(b, a);
+      })();
+    </script>
+
+    {% section "product-names" %}
+
+    <input type="hidden" name="aaaformbuilder_customer_logged_id" value="{{customer.id}}" id="aaaformbuilder_customer_logged_id">{% include 'back-in-stock-helper' %}
+
+
+
+
+    {% comment %}
+    This piece of Liquid template code is injected to the layout/theme.liquid.
+    This code is rendered directly within every page.
+    {% endcomment %}
+
+    <!-- Twitter universal website tag code -->
+    <script>
+      !function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
+                                                      },s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='//static.ads-twitter.com/uwt.js',
+                                    a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
+      // Insert Twitter Pixel ID and Standard Event data below
+      twq('init','nzf97');
+      twq('track','PageView');
+    </script>
+    <!-- End Twitter universal website tag code -->
+
+      <!-- Outbrain Pixel implemented by Brad -->
+
+    <script data-obct type="text/javascript">
+      /** DO NOT MODIFY THIS CODE**/
+      !function(_window, _document) {
+        var OB_ADV_ID='00dfab9c8bb5ecb00218393d5a60382924';
+        if (_window.obApi) {var toArray = function(object) {
+          return Object.prototype.toString.call(object) === '[object Array]' ? object : [object];
+        }
+        _window.obApi.marketerId = toArray(_window.obApi.marketerId).concat(toArray(OB_ADV_ID));return;}
+        var api = _window.obApi = function() {
+          api.dispatch
+            ? api.dispatch.apply(api, arguments)
+            : api.queue.push(arguments);
+        }
+        api.version = '1.1';
+        api.loaded = true;
+        api.marketerId = OB_ADV_ID;
+        api.queue = [];
+        var tag = _document.createElement('script');
+        tag.async = true;
+        tag.src = '//amplify.outbrain.com/cp/obtp.js';
+        tag.type = 'text/javascript';
+        var script = _document.getElementsByTagName('script')[0];
+        script.parentNode.insertBefore(tag, script);
+      }(window, document);
+      obApi('track', 'PAGE_VIEW');
+    </script>
+
+    <!-- Outbrain Pixel End -->
+
+    <!-- LinkedIn website tag code -->
+
+    <script type="text/javascript">
+      _linkedin_data_partner_id = "397714";
+    </script>
+
+    <script type="text/javascript">
+      (function(){var s = document.getElementsByTagName("script")[0];
+                  var b = document.createElement("script");
+                  b.type = "text/javascript";b.async = true;
+                  b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+                  s.parentNode.insertBefore(b, s);})();
+    </script>
+    <noscript>
+      <img height="1" width="1" style="display:none;" alt="" src="https://dc.ads.linkedin.com/collect/?pid=397714&fmt=gif" />
+    </noscript>
+
+    <!-- This line added automatically by JSON-LD for SEO. -->
+    {% include 'jsonld-for-seo' %}
+    {% comment %} {% section 'upsell-popup' %} {% endcomment %}
+    <!-- Conversion Pixel for [lead]- DO NOT MODIFY -->
+      <img style="display:none;" src="https://data.adxcel-ec2.com/pixel/?ad_log=referer&action=lead&pixid=e503aefe-73f2-46f2-8010-e12740208050" width="1" height="1" border="0">
+    <!-- End of Conversion Pixel -->
+  
+  <!--Gorgias Chat Widget Start-->
+  <script id="gorgias-chat-widget-install-v3" 
+      src="https://config.gorgias.chat/bundle-loader/01H2DX32D7RHVBGVWR3EG2HXDS">
+  </script>
+  <!--Gorgias Chat Widget End-->
+  
+  <div data-rebuy-id="120361"></div>
+  <script async src="https://cdn.rebuyengine.com/onsite/js/rebuy.js?shop={{ shop.permanent_domain }}"></script>
+  <script> (function(){ var s = document.createElement('script'); var h = document.querySelector('head') || document.body; s.src = 'https://acsbapp.com/apps/app/dist/js/app.js'; s.async = true; s.onload = function(){ acsbJS.init({ statementLink : '', footerHtml : '', hideMobile : false, hideTrigger : false, disableBgProcess : false, language : 'en', position : 'left', leadColor : '#000205', triggerColor : '#000205', triggerRadius : '50%', triggerPositionX : 'right', triggerPositionY : 'bottom', triggerIcon : 'people', triggerSize : 'small', triggerOffsetX : 20, triggerOffsetY : 20, mobile : { triggerSize : 'small', triggerPositionX : 'right', triggerPositionY : 'bottom', triggerOffsetX : 10, triggerOffsetY : 10, triggerRadius : '50%' } }); }; h.appendChild(s); })(); </script>
+  </body>
+</html>

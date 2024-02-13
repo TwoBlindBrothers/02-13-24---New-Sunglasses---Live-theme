@@ -1,0 +1,13 @@
+{%- case icon -%}
+  {%- when 'play' -%}
+    <svg class="{{ class }}" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
+      <rect width="26" height="26" rx="13" fill="white"/>
+      <path d="M10 8L19 13.0857L10 18V8Z" fill="black"/>
+    </svg>
+  {%- when 'pause' -%}
+    <svg class="{{ class }}" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
+      <rect width="26" height="26" rx="13" fill="white"/>
+      <rect x="8.5" y="8.5" width="3.06899" height="10" fill="black"/>
+      <rect x="14.4312" y="8.5" width="3.06899" height="10" fill="black"/>
+    </svg>
+{%- endcase -%}

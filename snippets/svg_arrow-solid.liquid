@@ -1,0 +1,14 @@
+<svg version="1.1"
+    viewBox="0 0 159.6 164.2"
+    class="{{ classes }}"
+    aria-labelledby="{% if label %}{{ label }}{%endif%}"
+    {% if label %}tabindex="{{ tabindex }}"{%endif%}
+    role="img">
+    {%if classes == 'video-block__arrow' %}
+    {%else%}
+        <title id="arrow-title">Arrow</title>
+        <desc id="arrow-desc">Yellow arrow pointing to content</desc>
+    {%endif%}
+    <polygon fill="{{ fill }}" points="0 84.4 50.9 84.4 50.9 0 108.7 0 108.7 84.4 159.6 84.4 79.8 164.2 0 84.4" role="presentation"/>
+    <image src="{{ 'arrow-solid.png' | asset_url }}" alt="right pointing arrow" role="presentation" /> 
+</svg>

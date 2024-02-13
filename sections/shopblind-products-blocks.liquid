@@ -1,0 +1,400 @@
+<section class="sb-landing sb-landing-2">
+    <div
+        class="sb-landing__bg featured__bg"
+        {% if section.settings.bg_color.alpha != 0.0 %}
+          style="background-color: {{ section.settings.bg_color }}"
+        {% endif %}
+    ></div>
+
+    {% assign highlight_box_color = section.settings.featured_box_color %}
+    {% assign product_blocks = section.blocks | map: "settings" %}
+    {% assign carousel_products = product_blocks | where: "show_in_carousel" %}
+    {% assign featured_products = product_blocks | where: "is_feature_product" %}
+    {% assign featured_products_data = featured_products | json %}
+
+    <div id="shop-blind-grid-container" class="container">
+        <div class="shop-blind-carousel">
+            <div class="slideshow-arrow-wrapper arrow-wrapper-left">
+                <div class="slider-arrow arrow-left">
+                    {% render 'svg_bold_arrow_left' %}
+                </div>
+            </div>
+            <div id="shop-blind-products-carousel" class="slideshow-wrapper">
+                {% for carousel_product in carousel_products %}
+                    {% assign product = carousel_product.product %}
+                    {% render 'shop-blind-item',
+                        product: carousel_product.product,
+                        highlight_color: highlight_box_color,
+                        starburst_color: '#2f2a2b',
+                        highlighted_product: carousel_product.is_feature_product,
+                    %}
+                {% endfor %}
+            </div>
+            <div class="slideshow-arrow-wrapper arrow-wrapper-right">
+                <div class="slider-arrow arrow-right">
+                    {% render 'svg_bold_arrow_right' %}
+                </div>
+            </div>
+        </div>
+
+        {% if featured_products.size > 0 %}
+            <div class="feature-products-list">
+                {% for featured_product in featured_products %}
+                    {% assign featured_box_color = featured_product.featured_box_color %}
+                    {% assign featured_box_color_alpha = featured_box_color.alpha %}
+                    {% if featured_box_color == blank or featured_box_color_alpha == 0.0 %}
+                        {% assign featured_box_color = section.settings.featured_box_color %}
+                    {% endif %}
+                    {% assign featured_burst_color = featured_product.featured_burst_color %}
+                    {% assign featured_burst_color_alpha = featured_burst_color.alpha %}
+                    {% if featured_burst_color == blank or featured_burst_color_alpha == 0.0 %}
+                        {% assign featured_burst_color = section.settings.featured_starburst_color %}
+                    {% endif %}
+                    {% assign featured_burst_color_alpha = featured_burst_color.alpha %}
+                    {% if featured_burst_color == blank or featured_burst_color_alpha == 0.0 %}
+                        {% assign featured_burst_color = section.settings.bg_color %}
+                    {% endif %}
+                    
+                    {%
+                        render 'shop-blind-featured',
+                        product: featured_product.product,
+                        featured_box_color: featured_box_color,
+                        featured_starburst_color: featured_burst_color,
+                        featured_product_heading: featured_product.product.metafields.shop_blind_header.header,
+                        featured_product_content: featured_product.featured_product_description,
+                        featured_button_bg: featured_product.featured_button_bg,
+                        featured_button_text_color: featured_product.featured_button_text_color,
+                        has_multiple_featured_products: true
+                    %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="is-relative">
+            {% for block in section.blocks %}
+                {% render 'shop-blind-item-option', product: block.settings.product, option_label_1: block.settings.option_label_1, option_label_2: block.settings.option_label_2 %}
+            {% endfor %}
+        </div>
+        {% capture 'shop_blind_products' %}
+            [
+                {% for block in section.blocks %}
+                    {% assign product = block.settings.product %}
+                    {
+                    id: {{ product.id }},
+                    variants: '{{ product.variants | json }}',
+                    },
+                {% endfor %}
+            ]
+            {% endcapture %}
+    </div>
+
+    <script src="{{ 'shopblind-aria-modal.js' | asset_url }}" async></script>
+    <script src="{{ 'shopblind-page.js' | asset_url }}" async></script>
+</section>
+
+<script>
+    var shopBlindProducts = {{ shop_blind_products }}
+    let boxAnimations = {}
+    let activeAnimation = null
+
+    const playAnimation = (animation, isHighlightBox = false ) => {
+        boxAnimations[animation].goToAndPlay(
+            isHighlightBox ? 24 : 24, true
+        )
+
+        boxAnimations[animation].addEventListener('complete', function() {
+            boxAnimations[animation].playSegments(
+                isHighlightBox ? [70, 241] : [90, 241],
+                true
+            )
+        })
+    }
+
+    const stopAnimation = animation => {
+        boxAnimations[animation].resetSegments(
+            [0, 241],
+            true
+        )
+        boxAnimations[animation].goToAndStop(0, true)
+    }
+
+    const loadBoxAnimation = () => {
+        let highlightColor = `{{ featured_box_color }}`;
+        let slides = document.getElementsByClassName("shopblind_prod");
+
+        for (let i = 0; i < slides.length; i++) {
+            let isHighlightBox = slides.item(i).classList.contains('highlight_prod');
+
+            let animationContainer = slides.item(i).getElementsByClassName("box-animation")[0];
+            let boxAnimation = bodymovin.loadAnimation({
+                container: animationContainer,
+                renderer: 'svg',
+                loop: false,
+                autoplay: false,
+                path: isHighlightBox
+                ? `{{ 'product-box-stars-animation.json' | asset_url }}`
+                : `{{ 'product-box-animation.json' | asset_url }}`
+            })
+
+            if (isHighlightBox) {
+                slides.item(i).classList.add('highlight-prod');
+                animationContainer.classList.add('highlight-box');
+            }
+
+            boxAnimations[`box-animation-${i}`] = boxAnimation
+
+            $(slides.item(i)).data('box-animation', `box-animation-${i}`)
+
+            $(slides.item(i)).hover(function() {
+                const animationIndex = $(this).data('box-animation')
+                if (activeAnimation) {
+                    stopAnimation(activeAnimation)
+                }
+                activeAnimation = animationIndex
+                
+                playAnimation(animationIndex, $(this).hasClass('highlight_prod'))
+            }, function() {
+                const animationIndex = $(this).data('box-animation')
+                stopAnimation(animationIndex)
+            })
+        }
+        if ($(window).width() < 1200) {
+            const animationIndex = $('.shop-blind-carousel .slick-current').data('box-animation')
+            activeAnimation = animationIndex
+            
+            playAnimation(animationIndex, $('.shop-blind-carousel .slick-current').hasClass('highlight_prod'))
+        }
+    }
+
+    let sbSlides = document.getElementsByClassName("shopblind_prod");
+    let initialSlide = 0
+    if ( sbSlides.length > 4 ) {
+        initialSlide = $(window).width() > 1200 ? 2 : 1
+    }
+
+    let productsSlickObj = {
+        arrows: true,
+        centerMode: true,
+        dots: true,
+        slidesToShow: 4,
+        initialSlide: initialSlide,
+        slidesToScroll: 1,
+        prevArrow: $('.shop-blind-carousel .arrow-left'),
+        nextArrow: $('.shop-blind-carousel .arrow-right'),
+        responsive: [
+            {
+                breakpoint: 1200,
+                settings: {
+                slidesToShow: 3
+                }
+            }, {
+                breakpoint: 900,
+                settings: {
+                    centerPadding: '30vw',
+                    slidesToShow: 1
+                }
+            }, {
+                breakpoint: 680,
+                settings: {
+                    centerPadding: '20vw',
+                    slidesToShow: 1
+                }
+            }
+        ]
+    };
+
+    $('#shop-blind-products-carousel').on('init', function(slick) {
+        loadBoxAnimation()
+    }).slick(productsSlickObj).on('afterChange', function(slick, currentSlide) {
+        if ($(window).width() < 1200) {
+            if (activeAnimation) {
+                stopAnimation(activeAnimation)
+            }
+
+            const animationIndex = $('.shop-blind-carousel .slick-current').data('box-animation')
+            activeAnimation = animationIndex
+
+            playAnimation(animationIndex, $('.shop-blind-carousel .slick-current').hasClass('highlight_prod'))
+        }
+    });
+
+    // Featured products
+    let featuredProducts = {{ featured_products_data }}
+
+    if (featuredProducts.length > 0) {
+        let featuredBoxAnimations = {};
+
+        const playAnimationFeatured = (boxAnimation) => {
+            boxAnimation.goToAndPlay(24, true)
+            
+            boxAnimation.addEventListener('complete', function() {
+                boxAnimation.playSegments(
+                    [90, 241],
+                    true
+                )
+            })
+        }
+    
+        const stopAnimationFeatured = (boxAnimation) => {
+            boxAnimation.resetSegments(
+                [0, 241],
+                true
+            )
+            boxAnimation.goToAndStop(0, true)
+        }
+
+        featuredProducts.forEach(featuredProduct => {
+            var boxAnimationContainer = $(`#box-animation-product-featured-${featuredProduct.product }`)
+            var boxAnimationWrapper = $(`#shopblind-featured-${featuredProduct.product}`)
+            var boxAnimation = bodymovin.loadAnimation({
+                container: boxAnimationContainer[0],
+                renderer: 'svg',
+                loop: false,
+                autoplay: false,
+                path: `{{ 'product-box-animation.json' | asset_url }}`
+            })
+
+            featuredBoxAnimations[`${featuredProduct.product}`] = boxAnimation;
+        
+            boxAnimationWrapper.hover(function() {
+                playAnimationFeatured(featuredBoxAnimations[`${featuredProduct.product}`])
+            }, function() {
+                stopAnimationFeatured(featuredBoxAnimations[`${featuredProduct.product}`])
+            })
+        
+            function isVisible (ele) {
+                const { top, bottom } = ele.getBoundingClientRect();
+                const vHeight = (window.innerHeight || document.documentElement.clientHeight);
+                
+                return (
+                    (top > 0 || bottom > 0) &&
+                    top < vHeight
+                );
+            }
+        
+            if ($(window).width() < 768 ) {
+                let animationIsPlaying = false
+                const mobileAnimationBox = document.getElementById(`box-animation-product-featured-${featuredProduct.product}`)
+                addEventListener("scroll", (event) => {
+                    if ( isVisible(mobileAnimationBox) ) {
+                        if ( !animationIsPlaying ) {
+                            animationIsPlaying = true
+                            playAnimationFeatured(featuredBoxAnimations[`${featuredProduct.product}`])
+                        }
+                    } else {
+                        if ( animationIsPlaying ) {
+                            animationIsPlaying = false
+                            stopAnimationFeatured(featuredBoxAnimations[`${featuredProduct.product}`])
+                        }
+                    }
+                });
+            }
+        })
+    }
+
+    setTimeout(function () {
+        $('.sb-landing__bg.featured__bg').css('height', $('#shop-blind-products-carousel').height() * 0.6);
+    }, 500);
+</script>
+
+{% schema %}
+    {
+        "name": "Shop Blind Product Blocks",
+        "settings": [
+            {
+                "type": "color",
+                "id": "bg_color",
+                "label": "Section background color"
+            },
+            {
+                "type": "header",
+                "content": "Featured product"
+            },
+            {
+                "type": "color",
+                "id": "featured_box_color",
+                "label": "Featured Box color"
+            },
+            {
+                "type": "color",
+                "id": "featured_starburst_color",
+                "label": "Featured Starburst color",
+                "default": "#2f2a2b"
+            }
+        ],
+        "blocks": [
+            {
+                "type": "products",
+                "name": "Product",
+                "settings": [
+                    {
+                        "type": "product",
+                        "id": "product",
+                        "label": "Product"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "show_in_carousel",
+                        "label": "Show in carousel?",
+                        "default": true
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "is_feature_product",
+                        "label": "Feature product?"
+                    },
+                    {
+                        "type": "richtext",
+                        "id": "featured_product_description",
+                        "label": "Featured product description"
+                    },
+                    {
+                        "type": "color",
+                        "id": "featured_box_color",
+                        "label": "Featured Box color"
+                    },
+                    {
+                        "type": "color",
+                        "id": "featured_burst_color",
+                        "label": "Featured Burst color",
+                        "default": "#2f2a2b"
+                    },
+                    {
+                        "type": "color",
+                        "id": "featured_button_bg",
+                        "label": "Featured Button background",
+                        "default": "#000000"
+                    },
+                    {
+                        "type": "color",
+                        "id": "featured_button_text_color",
+                        "label": "Featured Button text color",
+                        "default": "#ffffff"
+                    },
+                    {
+                        "type": "header",
+                        "content": "Variant bundle options",
+                        "info": "Only use these fields for bundles that include variants"
+                    },
+                    {
+                        "type": "text",
+                        "id": "option_label_1",
+                        "label": "Variant Option 1 Label",
+                        "info": "ie. I'm shopping for a"
+                    },
+                    {
+                        "type": "text",
+                        "id": "option_label_2",
+                        "label": "Variant Option 2 Label",
+                        "info": "ie. Shirt size is"
+                    }
+                ]
+            }
+        ],
+        "presets": [
+            {
+                "category": "Shop Blind",
+                "name": "Shop Blind Product Blocks"
+            }
+        ]
+    }
+{% endschema %}

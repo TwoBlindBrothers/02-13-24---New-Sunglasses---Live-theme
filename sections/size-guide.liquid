@@ -1,0 +1,84 @@
+<div class="size-guide-section">
+  <div class="size-guide-section__header" id="size-guide-section__header">
+    <h1>Size Guide</h1>
+    <div class="slide-selector" id="slide-selector">
+      {% if page.metafields.size_guide.navigation_item_name %}
+        {% for size_guide_type in page.metafields.size_guide.navigation_item_name %}
+          {% assign size_guide_nav_item = size_guide_type | handleize %}
+          <label class="slide-option{% if forloop.index0 == 0 %} slide-option-active{% endif %}" data-type="{{ size_guide_nav_item }}"> {{ size_guide_type }} </label>
+        {% endfor %}
+      {% endif %}
+      <div class="slide-marker"></div>
+    </div>
+  </div>
+  <div class="size-guide-section__content">
+    {% for size_guide_type in page.metafields.size_guide.category %}
+      {% assign size_guide_image = page.metafields.size_guide.image[forloop.index0][0].cloudinary_src
+        | append: 'w_300'
+      %}
+      <div class="size-guide-item size-guide-item-{{ page.metafields.size_guide.category[forloop.index0] | handleize }}">
+        <div class="size-guide-item__header">
+          {% if page.metafields.size_guide.image[forloop.index0] != empty %}
+            <div class="image-wrapper">
+              <img loading="lazy"  src="{{ size_guide_image }}">
+            </div>
+          {% endif %}
+          <div class="heading-wrapper">
+            <h2>{{ page.metafields.size_guide.heading_title[forloop.index0] }}</h2>
+            <p>{{ page.metafields.size_guide.heading_content[forloop.index0] }}</p>
+          </div>
+        </div>
+        <div class="size-guide-item__content">
+          {{ page.metafields.size_guide.size_charts[forloop.index0] }}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  $('.size-guide-item').hide();
+  $('.size-guide-item:nth-child(1)').show();
+
+  const handleNavClick = (navButton) => {
+    var size_guide_type = $(navButton).data('type');
+    var markerPosOffset = $(navButton).position().left;
+    var markerWidth = $(navButton).outerWidth()
+    var markerHeight = $(navButton).outerHeight()
+    console.log(markerPosOffset, markerWidth)
+    {% comment %} if (size_guide_type === 'Men') markerPosOffset = 110;
+    else if (size_guide_type === 'Unisex') markerPosOffset = 220;
+    else if (size_guide_type === 'Accessories') markerPosOffset = 330; {% endcomment %}
+    $('.slide-selector .slide-marker').css({ left: markerPosOffset, width: markerWidth, height: markerHeight });
+    $('.slide-selector label').css('color', '#231f20');
+    $(navButton).css('color', '#fff');
+    $('.size-guide-item').hide();
+    $('.slide-option').removeClass('slide-option-active')
+    $(navButton).addClass('slide-option-active')
+    $(`.size-guide-item-${size_guide_type.toLowerCase()}`).show();
+  }
+
+  handleNavClick($('.slide-option.slide-option-active'))
+
+  $('.slide-selector label').on('click', function (event) {
+    handleNavClick(this)
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Size Guide",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Size Guide"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Text",
+      "name": "Size Guide"
+    }
+  ]
+}
+{% endschema %}

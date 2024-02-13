@@ -1,0 +1,77 @@
+<div data-rebuy-id="{{ rebuy_id }}"></div>
+<script id="rebuy-widget-{{ rebuy_id }}" type="text/template">
+  <div class="rebuy-widget" v-cloak v-on:click="stopPropagation($event)" v-bind:id="'rebuy-widget-' + id"
+       v-bind:class="['widget-type-' + config.type.replace('_','-'), 'widget-display-' + config.display_type, products.length > 0 ? 'is-visible' : 'is-hidden', 'widget-layout-' + currentLayout()]">
+
+    <div class="rebuy-widget-container" v-cloak
+         v-bind:class="['widget-display-' + config.display_type, visible ? 'is-visible' : 'is-hidden' ]"
+         v-on:click.self="hide()">
+
+      <div class="rebuy-widget-content">
+        <div class="rebuy-product-grid" v-bind:class="layoutClasses" tabindex="0" role="list">
+          <div v-for="(product, product_index) in products"
+               v-bind:class="[product.handle, 'product-id-' + product.id, cartHasProduct(product) ? 'cart-has-item' : '', productTagClasses(product)]"
+               aria-label="product" class="rebuy-product-block" role="listitem">
+
+            <div class="rebuy-product-media">
+              <a class="rebuy-product-image" tabindex="-1" v-bind:href="learnMoreURL(product)"
+                 v-bind:style="imageStyles"
+                 v-on:click="learnMore(product);" v-bind:class="[hasLearnMore() ? 'clickable' : '']">
+                <img v-bind:loading="product_index > 1 ? 'lazy' : 'eager'"
+                     v-bind:src="itemImage(product, product.selected_variant, '400x400')"
+                     v-bind:alt="itemImageAlt(product, product.selected_variant)">
+              </a>
+            </div>
+            <div class="rebuy-product-info text-left">
+              <a role="heading" aria-level="3" class="rebuy-product-title p1 !text-black !mt-2.5 md:!mt-4" v-bind:href="learnMoreURL(product)"
+                 v-on:click="learnMore(product);" v-html="product.title"
+                 v-bind:class="[hasLearnMore() ? 'clickable' : '']"
+                 v-bind:aria-label="'View ' + product.title"></a>
+              <div class="rebuy-variant-title" v-if="showVariantTitle(product)" v-html="product.selected_variant.title">
+              </div>
+
+              <div class="rebuy-product-price p1">
+                <div v-if="variantOnSale(product, product.selected_variant)">
+                  <span class="rebuy-money !text-grey-400 sale">
+                    <span class="sr-only">Sale price</span>
+                    <span v-html="formatMoney(variantPrice(product, product.selected_variant))"></span>
+                  </span>
+                  <span class="rebuy-money !text-grey-400 compare-at">
+                    <span class="sr-only">Original price</span>
+                    <span v-html="formatMoney(variantCompareAtPrice(product, product.selected_variant))"></span>
+                  </span>
+                </div>
+                <div v-if="!(variantOnSale(product, product.selected_variant))">
+                  <span class="rebuy-money !text-grey-400">
+                    <span class="sr-only">Price</span>
+                    <span v-html="formatMoney(variantPrice(product, product.selected_variant))"></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</script>
+<script>
+  document.addEventListener('rebuy.init', function(event){
+    if (window.Rebuy) {
+      window.Rebuy.widgets.forEach(widget => {
+        if (widget.View?.carousel) {
+          widget.View.carousel.on('dragStart', () => {
+            widget.View.carousel.slider.childNodes.forEach(slide => {
+              slide.querySelector('a').classList.add('!pointer-events-none')
+            })
+          });
+          widget.View.carousel.on('dragEnd', () => {
+            widget.View.carousel.slider.childNodes.forEach(slide => {
+              slide.querySelector('a').classList.remove('!pointer-events-none')
+            })
+          });
+        }
+      })
+    }
+  });
+</script>

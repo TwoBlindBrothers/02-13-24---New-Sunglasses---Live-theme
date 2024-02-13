@@ -1,0 +1,228 @@
+{% assign grid_item_width = 'one-half' %}
+{% assign product_rows = section.settings.collection_rows_per_page %}
+{% assign products_per_row = section.settings.collection_products_per_row %}
+{% assign products_per_page = product_rows | times: products_per_row %}
+{% assign collection_background_color = '#FFF' %}
+{% assign collection_product_border_color = '#000' %}
+{% assign collection_is_able_to_show_button = "false" %}
+{% if collection.metafields.style.show_add_to_cart_button %}
+  {% assign collection_is_able_to_show_button = "true" %}
+{% endif %}
+{% if collection.metafields.style.collection_background %}
+  {% assign collection_background_color = collection.metafields.style.collection_background %}
+{% endif %}
+{% if collection.metafields.style.products_border_color %}
+  {% assign collection_product_border_color = collection.metafields.style.products_border_color %}
+{% endif %}
+
+
+<div class="hero-default collection{% unless collection.description %} no-desc{% endunless %}" {% if collection.image %}style="background-image: url({{ collection.image | img_url: '2880x' }});"{% endif %}>
+  <div class="wrapper" style="padding-top: 4rem;">
+    <div class="hero-text">
+      {% if collection.handle == 'gifts' %}
+      <h1 class="slab">
+        <span class="slabtext" style="display: block;">GIVE GOODS</span>
+        <span class="slabtext" style="display: block;">THAT DO GOOD</span>
+      </h1>
+      {% else %}
+      <h1 class="slab">
+        <span class="slabtext">{{ collection.title }}</span>
+        </h1>
+      {% endif %}
+      <div class="hero-description medium-down--hide">
+          <p>{{ collection.description }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% if collection.description != blank %}
+    <div class="hero-description large--hide">
+        <p>{{ collection.description }}</p>
+    </div>
+{% endif %}
+{% if collection.metafields.extra_collection.collection %}
+  <div class="text-center">
+    <a class="btn alt-collection-anchor" style="width: 100%; background-color: {{ collection_product_border_color }};" href="#{{collection.metafields.extra_collection.collection}}">{{ collection.metafields.extra_collection.anchor_button_text | default: 'Shop Blind' }} {% include 'svg_arrow-solid' %}<a>
+  </div>
+{% endif %}
+
+<div class="text-black bg-white reserve-collection custom-reserve">
+  <div class="wrapper">
+    <div class="collection-heading max-w-[1440px] mx-auto px-[16px] sm:px-8 md:px-10 xl:px-[56px]">
+      {% render 'reserve-breadcrumb' %}
+    </div>
+    {%- render 'reserve-collection-nav' -%}
+  </div>
+</div>
+
+{% paginate collection.products by products_per_page %}
+  {% comment %}{% include 'breadcrumb' %}{% endcomment %}
+  <div class="wide" style="background-color: {{ collection_background_color }};">
+    <div class="wrapper">
+      {% render 'collections-filter' %}
+      <div class="grid-uniform products-grid" id="collection-container">
+
+        {% comment %}
+          Loop through our products in the current collection.
+          See the snippet 'product-grid-item' for the layout.
+        {% endcomment %}
+        {% for product in collection.products %}
+          {% if product.type == 'Sock Promo' %}
+            {% continue %}
+          {% endif %}
+          {% assign grid_item_width = 'one-half large--one-third' %}
+          {% include 'product-grid-item', product: product, collection_is_able_to_show_button: collection_is_able_to_show_button, grid_item_width: grid_item_width %}
+
+        {% else %}
+
+          {% if collection.handle == 'all' and current_tags == '' %}
+
+            {% comment %}
+              Add default products to help with onboarding for collections/all only
+            {% endcomment %}
+            {% unless emptyState %}
+              {{ 'theme-onboarding.css' | global_asset_url | stylesheet_tag }}
+              {% assign emptyState = true %}
+            {% endunless %}
+            {% include 'onboarding-empty-collection' %}
+
+          {% else %}
+
+            {% comment %}
+              If collection exists but is empty, display message
+            {% endcomment %}
+            <div class="grid__item">
+              <p>{{ 'collections.general.no_matches' | t }}</p>
+            </div>
+
+          {% endif %}
+
+        {% endfor %}
+
+      </div>
+      {% if paginate.pages > 1 %}
+        <hr>
+        <div class="pagination">
+          {{ paginate | default_pagination | replace: '&laquo; Previous', '&larr;' | replace: 'Next &raquo;', '&rarr;' }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+{% endpaginate %}
+
+{% if collection.metafields.extra_collection.collection %}
+  {% assign alt_collection = collections[collection.metafields.extra_collection.collection] %}
+  {% assign alt_header = collection.metafields.extra_collection.section_header %}
+  {% assign alt_text = collection.metafields.extra_collection.section_text %}
+  {% if alt_collection.metafields.style.collection_background %}
+    {%  assign collection_background_color = alt_collection.metafields.style.collection_background %}
+  {% endif %}
+  {% if alt_collection.metafields.style.products_border_color %}
+    {%  assign collection_product_border_color = alt_collection.metafields.style.products_border_color %}
+  {% endif %}
+  <div id="{{collection.metafields.extra_collection.collection}}" class="wide alt-collection" style="background-color: {{ collection_background_color }};">
+    <div class="wrapper products-grid">
+      {% if alt_header or alt_text %}
+        <section class="grid text-center">
+          <div class="grid__item large--six-eighths push--large--one-eighth">
+            <div>
+              {% if alt_header %}
+                <h2 class="h1 text-center">{{ alt_header }}</h2>
+              {% endif %}
+              {% if alt_text %}
+                <p>{{ alt_text }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </section>
+      {% endif %}
+      <div class="grid-uniform">
+        {% for product in alt_collection.products %}
+          {% assign grid_item_width = 'one-half large--one-quarter' %}
+          {% include 'product-grid-item', grid_item_width: grid_item_width, alt_product: true %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Collection page",
+    "settings": [
+      {
+        "type": "select",
+        "id": "collection_products_per_row",
+        "label": "Products per row",
+        "options": [
+          {
+            "value": "2",
+            "label": "2"
+          },
+          {
+            "value": "3",
+            "label": "3"
+          },
+          {
+            "value": "4",
+            "label": "4"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "collection_rows_per_page",
+        "label": "Rows per page",
+        "options": [
+          {
+            "value": "8",
+            "label": "8"
+          },
+          {
+            "value": "12",
+            "label": "12"
+          },
+          {
+            "value": "16",
+            "label": "16"
+          },
+          {
+            "value": "24",
+            "label": "24"
+          }
+        ]
+      },
+      {
+        "type": "checkbox",
+        "id": "collection_tags_enable",
+        "label": "Enable tag filtering"
+      },
+      {
+        "type": "checkbox",
+        "id": "collection_sort_enable",
+        "label": "Enable collection sorting"
+      },
+      {
+        "type": "checkbox",
+        "id": "collection_filter_enable",
+        "label": "Enable collection filtering"
+      },
+      {
+        "type": "select",
+        "id": "product_details_display_method",
+        "label": "Show product title and price",
+        "options": [
+          {
+            "value": "always",
+            "label": "Always"
+          },
+          {
+            "value": "hover",
+            "label": "On hover"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

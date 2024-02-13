@@ -1,0 +1,20 @@
+{%- case icon -%}
+  {%- when 'muted' -%}
+  <svg class="{{ class }}" width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="26" height="26" rx="13" fill="white"/>
+    <g clip-path="url(#clip0_213_57431)">
+      <path d="M6.5 10.1016V15.0234H9.61111L13.5 19.125V6L9.61111 10.1016H6.5Z" fill="black"/>
+      <path d="M17.0443 12.6377C17.0443 11.3258 16.3077 10.1993 15.2388 9.65081V15.6172C16.3077 15.0761 17.0443 13.9496 17.0443 12.6377ZM15.2388 6.1377V7.66449C17.326 8.30189 18.8499 10.2882 18.8499 12.6377C18.8499 14.9872 17.326 16.9735 15.2388 17.6109V19.1377C18.1349 18.4632 20.2943 15.8099 20.2943 12.6377C20.2943 9.46552 18.1349 6.81215 15.2388 6.1377Z" fill="black"/>
+    </g>
+    <defs>
+      <clipPath id="clip0_213_57431">
+        <rect width="15" height="15" fill="white" transform="translate(5.5 5.5)"/>
+      </clipPath>
+    </defs>
+  </svg>
+  {%- when 'not-muted' -%}
+  <svg class="{{ class }}" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
+    <rect width="26" height="26" rx="13" fill="white"/>
+    <path d="M9 10.1016V15.0234H12.1111L16 19.125V6L12.1111 10.1016H9Z" fill="black"/>
+  </svg>
+{%- endcase -%}

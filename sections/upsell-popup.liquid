@@ -1,0 +1,152 @@
+{% if section.blocks.size > 0 %}
+  <section class="upsell-2bb upsell-popup-wrapper" tabindex="0" role="dialog" aria-modal="true">
+    <div class="upsell-popup-container">
+      <div class="upsell-popup">
+        {% if section.settings.title %}
+          <h2 tabindex="0">{{ section.settings.title }}</h2>
+        {% endif %}
+        {% if section.settings.text %}
+          <p>{{ section.settings.text }}</p>
+        {% endif %}
+        {% assign blocks = section.blocks %}
+        <div class="upsell-content">
+          {% for block in blocks %}
+            {% assign product = all_products[block.settings.product] %}
+            {% assign variant = product.selected_or_first_available_variant %}
+            <div class="upsell-product-id" data-upsell-variant-id="{{ variant.id }}" data-upsell-product-id="{{ product.id }}" aria-hidden="true" style="display:none;"></div>
+          {% endfor %}
+          <div class="upsell-images" aria-hidden="true">
+            {% for block in blocks %}
+              {% assign product = all_products[block.settings.product] %}
+              {% assign variant = product.selected_or_first_available_variant %}
+              {% assign image = product.featured_image %}
+              {% if block.settings.image %}
+                {% assign image = block.settings.image %}
+              {% endif %}
+              <div id="image-{{ product.id }}" class="upsell-image upsell-product-element upsell-product-{{ variant.id }}">
+                <img src="{{ image | img_url: '600x600' }}" class="lazyload product-image">
+              </div>
+            {% endfor %}
+          </div>
+          <div class="upsell-description">
+            <div class="upsell-body">
+              {% for block in blocks %}
+                {% assign product = all_products[block.settings.product] %}
+                {% assign variant = product.selected_or_first_available_variant %}
+                <div class="upsell-product-element upsell-product-{{ variant.id }}">
+                  <div class="details-header">
+                    <h3 tabindex="0" style="margin-bottom: 0;" class="h3 uppercase">
+                      {{ block.settings.title | default: product.title }}
+                    </h3>
+                    <p><strong>{{ variant.price | money_without_trailing_zeros }}</strong></p>
+                  </div>
+                  <div class="upsell-details upsell-product-{{ variant.id }}">
+                    <a href="#" class="details-toggle">+ Show Details</a>
+                    <div class="details-content">
+                      {% if block.settings.details != empty %}
+                        {{ block.settings.details }}
+                      {% else %}
+                        {{ product.content }}
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+              {% if blocks.size > 1 %}
+                <div class="upsell-selector" tabIndex="-1">
+                  {% for block in blocks %}
+                    {% assign product = all_products[block.settings.product] %}
+                    {% assign variant = product.selected_or_first_available_variant %}
+                    {% assign default_radio_label = 'Add ' | append: product.title %}
+                    {% assign label = block.settings.radio_text | default: default_radio_label %}
+                    <label for="primary">
+                      <input type="radio"{% if forloop.index0 == 0 %} checked{% endif %} name="upsell-select" value="{{ variant.id }}"/>
+                      <span></span>
+                      {{ label }} - {{ variant.price | money_without_trailing_zeros }}
+                    </label>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="buy-buttons">
+              <a class="add-to-cart btn primary-product" href="/checkout">Add to cart</a>
+              <!-- <a class="add-to-cart btn primary-product" data-product="19715488415840" href="/checkout">Add One Pair | $10</a>
+              <a class="add-to-cart btn secondary-product" data-product="31076190388320" href="/checkout">Add Bundle | $32</a> -->
+            </div>
+            <a class="btn no-thanks" href="/checkout?2bb_us=0">No Thanks - continue to checkout</a>
+            <div class="disclaimer"><span>*If you don't like it, return it for a full refund</span></div>
+          </div>
+        </div>
+        <div tabIndex="0" class="close-popup" role="button" aria-pressed="false">
+          <img src="{{ 'close-x.svg' | asset_url }}" class=""/>
+        </div>
+        <div id="popup-loader">
+          <div id="popup-loader__wrapper">
+            <div id="popup-loader__content">
+              <p class="uppercase">Redirecting to checkout</p>
+              {% include 'loader' %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  {{ 'popup-upsell.scss.css' | asset_url | stylesheet_tag }}
+  {{ 'popup-upsell.js' | asset_url | script_tag }}
+{% endif %}
+
+{% schema %}
+{
+  "name": "Checkout Upsell Popup",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "subtext",
+      "label": "Text"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "If no image is selected, the first product image will be displayed"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "info": "If no title is set, the product title will be displayed"
+        },
+        {
+          "type": "html",
+          "id": "details",
+          "label": "Product Details",
+          "info": "If no details are set, the product description will be displayed"
+        },
+        {
+          "type": "text",
+          "id": "radio_text",
+          "label": "Radio select text",
+          "info": "ie. Add 4 Pairs"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

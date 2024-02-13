@@ -1,0 +1,15 @@
+{% if article.image %}   
+<picture class="blog-article__featured-image">
+  <source data-srcset="{{article.image | img_url: '600x800', crop:'center' }}" media="(min-width: 1200px)" />
+  <source data-srcset="{{article.image | img_url: '400x800', crop:'center' }}}" media="(min-width: 769px)" />
+  <source data-srcset="{{article.image | img_url: '768x768', crop:'center' }}}" media="(max-width: 768px)" />
+  <img data-src="{{article.image | img_url: '1000x600', crop:'center' }}" 
+       class="lazyload" alt="{{ article.image.alt | escape }}"/>
+</picture>
+{% endif %}
+<div class="blog-article__title">
+    <h2 class="h1 h1--blog"><a href="{{ article.url }}">{{ article.title  | truncate: 45  }}</a></h2>
+</div>
+{% capture author %}<strong>{{ article.author }}</strong>{% endcapture %}
+{% capture date %}<time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>{% endcapture %}
+<p class="visually-hidden">{{ 'blogs.article.author_on_date_html' | t: author: author, date: date }}</p>

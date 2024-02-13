@@ -1,0 +1,66 @@
+{% assign rejectReason = "It looks like you don't have a warranty for your Cavaliers." %}
+{% assign twoWeeksAgo = "now" | date: "%s" | minus: 1209600 | date: "%s" %}
+{% assign oneYearAgo = "now" | date: "%s" | minus: 31536000 | date: "%s" %}
+{% assign blackReplacementCount = 0 %}
+{% assign tortReplacementCount = 0 %}
+{% assign customerTags = customer.tags | join:',' %}
+{% assign blackReplacement = false %}
+{% if customerTags contains 'has-warranty-blk' %}
+  {% assign blackReplacement = true %}
+{% endif %}
+{% assign tortReplacement = false %}
+{% if customerTags contains 'has-warranty-tort' %}
+  {% assign tortReplacement = true %}
+{% endif %}
+
+{% if blackReplacement or tortReplacement %}
+  {% for order in customer.orders %}
+    <!-- {{ order.line_items | json }} -->
+    {% assign orderDate = order.created_at | date: "%s" %}
+    {% if orderDate > oneYearAgo %}
+      {% for line_item in order.line_items %}
+        {% assign itemSKU = line_item.sku %}
+        <!-- if sku equals original purchase or replacement (Black) -->
+        {% assign blackSKUs = "910309925149998, 910309925149996, 30397042524256, 30397042458720, 30397042491488" | split: ','%}
+        {% if blackSKUs contains itemSKU %}
+          {% if orderDate > twoWeeksAgo %}
+            {% assign blackReplacement = false %}
+            {% assign rejectReason = 'It looks like your Cavaliers or a replacement was within the past two weeks' %}
+          {% endif %}
+          {% comment %}
+            Check if 4 replacements have been purchased in the past year
+          {% endcomment %}
+          {% if itemSKU == '910309925149998' %}
+            {% assign blackReplacementCount = blackReplacementCount | plus: 1 %}
+          {% endif %}
+        {% endif %}
+        {% assign tortSKUs = "910309925148508, 910309925148506, 30397042622560, 30397042557024, 30397042589792" | split: ','%}
+        {% if tortSKUs contains itemSKU %}
+          {% if orderDate > twoWeeksAgo %}
+            {% assign tortReplacement = false %}
+            {% assign rejectReason = 'It looks like your Cavaliers or a replacement was within the past two weeks' %}
+          {% endif %}
+          {% comment %}
+            Check if 4 have been purchased in the past year
+          {% endcomment %}
+          {% if itemSKU == '910309925148508' %}
+            {% assign tortReplacementCount = tortReplacementCount | plus: 1 %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% endfor %}
+
+
+  {% if blackReplacementCount == 4 %}
+    {% assign blackReplacement = false %}
+  {% endif %}
+
+  {% if tortReplacementCount == 4 %}
+    {% assign tortReplacement = false %}
+  {% endif %}
+
+  {% if tortReplacementCount == 4 or blackReplacementCount == 4 %}
+    {% assign rejectReason = "It looks like you've purchased 4 replacements within the past year" %}
+  {% endif %}
+{% endif %}

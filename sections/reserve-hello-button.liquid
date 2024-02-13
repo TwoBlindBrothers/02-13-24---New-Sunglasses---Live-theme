@@ -1,0 +1,87 @@
+{%- liquid
+  assign message = section.settings.message
+  assign message_2 = section.settings.message_2
+  assign thankyou_image = section.settings.thankyou_image
+  assign thankyou_image_blind = section.settings.thankyou_image_blind
+  assign total_spent = customer.total_spent
+  assign customer_name = customer.first_name
+  assign now = 'now' | date: '%s'
+  assign created_at = now
+  if customer.metafields.info.created_at != blank
+    assign created_at = customer.metafields.info.created_at | date: '%s'
+  endif
+  assign member_for = now | minus: created_at | divided_by: 3600 | divided_by: 24 | round
+-%}
+
+{% if customer and message != blank and message_2 != blank %}
+  <reserve-hello-button
+    class="hello-button py-2.5 md:py-3 px-[15px] md:px-4 w-full mx-auto max-w-[345px] sm:max-w-[520px]
+    text-black block relative border border-grey-200 bg-white-1 rounded-[8px] md:rounded-[16px]
+    js-reserve-cart-hello-button"
+    data-total-spent="{{ total_spent | money_without_trailing_zeros }}"
+    data-customer-name="{{ customer_name }}"
+    data-member-for="{{ member_for }}"
+  >
+    <button type="button" class="hello-button-trigger flex justify-between gap-2.5 w-full items-center"
+            id="hello-button-trigger" aria-expanded="false" aria-controls="hello-button-content">
+      <span class="w-[8px] h-[8px] rounded-full bg-yellow shrink-0"></span>
+      <div class="js-hello-button-trigger-text">{{ message }}</div>
+      <span class="w-[13px] shrink-0">
+        <svg class="[.is-active_&]:rotate-180" xmlns="http://www.w3.org/2000/svg" width="13" height="8"
+             fill="none" viewBox="0 0 13 8"><path stroke="#000" stroke-width="1.5" d="m1 1 5.5 5L12 1"/></svg>
+      </span>
+    </button>
+    <div class="hello-button-content [.is-active_&]:mt-5 md:[.is-active_&]:mt-6 overflow-hidden [.is-active_&]:overflow-visible transition-all h-0 text-grey-400"
+         id="hello-button-content" role="region"
+         aria-labelledby="hello-button-trigger">
+      {%- if thankyou_image != blank or thankyou_image_blind != blank -%}
+        <div class="hello-button-content__image relative mb-5 md:mb-6">
+          {%- render 'image',
+            class: 'thank-you-image__blind transition-opacity'
+            image: thankyou_image_blind
+          -%}
+
+          {%- render 'image',
+            class: 'thank-you-image absolute top-0 left-0 opacity-5 transition-opacity w-[calc(100%+6px)] -ml-[3px] sm:w-[calc(100%+10px)] sm:-ml-[5px]'
+            image: thankyou_image
+          -%}
+        </div>
+      {%- endif -%}
+      {{ message_2 }}
+    </div>
+  </reserve-hello-button>
+  {%- render 'vite-tag' with 'reserve-hello-button.js' -%}
+{% endif %}
+
+{% schema %}
+{
+  "name": "Reserve - Hello Button",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "message",
+      "label": "Message"
+    },
+    {
+      "type": "image_picker",
+      "id": "thankyou_image_blind",
+      "label": "Thank You Image (Blind Code)"
+    },
+    {
+      "type": "image_picker",
+      "id": "thankyou_image",
+      "label": "Thank You Image"
+    },
+    {
+      "type": "richtext",
+      "id": "message_2",
+      "label": "Message 2"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reserve - Hello Button"
+    }
+  ]
+}
+{% endschema %}

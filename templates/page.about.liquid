@@ -1,0 +1,24 @@
+<!-- /templates/page.liquid -->
+<h1 class="visually-hidden">{{ page.title }}</h1>
+{% section 'about_hero' %}
+    {% comment %}
+    
+     <svg version="1.1" height="80%" width="100%" class="spot medium-down--hide">
+        <filter id="blurMe">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" />
+        </filter>
+        <circle cx="50%" cy="50%" r="1%" fill="#231E1F" filter="url(#blurMe)" >
+          <animate attributeName="r" begin="0s" dur="3s" repeatCount="1" from="0%" to="28%" fill="freeze"/>
+         </circle>
+    </svg>
+
+    <h1 class="about-header content-fadeIn slower slab">
+        <span class="slabtext">but We </span>
+        <span class="slabtext">have a </span>
+        <span class="slabtext">Vision</span>
+    </h1>
+
+    {% endcomment %}
+
+{% section 'about_custom-sections' %}
+{% section 'about_custom-grid' %}

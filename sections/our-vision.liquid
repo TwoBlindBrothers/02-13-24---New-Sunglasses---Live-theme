@@ -1,0 +1,98 @@
+{% assign product = all_products[section.settings.product] %}
+<div class="our-vision-section">
+  <div class="our-vision-section-wrapper">
+    <div class="our-vision-row">
+      <div class="our-vision">
+        {% if section.settings.img != blank %}
+          <img src="{{ section.settings.img |  img_url: 'master' }}" alt="">
+        {% endif %}
+        <div class="our-vision-content">
+          {% if section.settings.heading != blank %}
+            <h3>{{ section.settings.heading }}</h3>
+          {% endif %}
+          {% if section.settings.content != blank %}
+            {{ section.settings.content }}
+          {% endif %}
+          {% if section.settings.btn != blank %}
+            <a href="{{ section.settings.url }}">{{ section.settings.btn }}</a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="our-vision-product-col">
+          <div class="our-vision-product">
+            <a href="{{ product.url }}">
+            {% if product.featured_image != blank %}
+                <img src="{{ product.featured_image |  img_url: 'master' }}" alt="">
+            {% endif %}
+            <h3>{{ product.title }}</h3>
+            <span>{{ product.price |  money }}</span>
+              </a>
+          </div>
+          <div class="image-content our-vision-product-content">
+            {% if section.settings.subtitle != blank %}
+                <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M6.00065 13.9999C6.00065 14.3666 6.30065 14.6666 6.66732 14.6666H9.33398C9.70065 14.6666 10.0007 14.3666 10.0007 13.9999V13.3333H6.00065V13.9999ZM8.00065 1.33325C5.42732 1.33325 3.33398 3.42659 3.33398 5.99992C3.33398 7.58659 4.12732 8.97992 5.33398 9.82658V11.3333C5.33398 11.6999 5.63398 11.9999 6.00065 11.9999H10.0007C10.3673 11.9999 10.6673 11.6999 10.6673 11.3333V9.82658C11.874 8.97992 12.6673 7.58659 12.6673 5.99992C12.6673 3.42659 10.574 1.33325 8.00065 1.33325ZM9.33398 9.13325V10.6666H6.66732V9.13325C5.65398 8.41992 4.66732 7.68658 4.66732 5.99992C4.66732 4.15992 6.16065 2.66659 8.00065 2.66659C9.84065 2.66659 11.334 4.15992 11.334 5.99992C11.334 7.65992 10.3273 8.43325 9.33398 9.13325Z" fill="black"/>
+                </svg>
+                {{ section.settings.subtitle }}</h3>
+            {% endif %}
+            {% if section.settings.imgtext != blank %}
+                {{ section.settings.imgtext }}
+            {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+    {
+        "name": "Our Vision",
+        "settings": [
+            {
+                "type": "text",
+                "id": "heading",
+                "label": "Title"
+            },
+            {
+                "type": "richtext",
+                "id": "content",
+                "label": "Content"
+            },
+            {
+                "type": "text",
+                "id": "btn",
+                "label": "Button"
+            },
+            {
+                "type": "url",
+                "id": "url",
+                "label": "Button Url"
+            },
+            {
+                "type": "image_picker",
+                "id": "img",
+                "label": "Image"
+            },
+            {
+                "type": "text",
+                "id": "subtitle",
+                "label": "Image Content Title"
+            },
+            {
+                "type": "richtext",
+                "id": "imgtext",
+                "label": "Image Content"
+            },
+            {
+                "type": "product",
+                "id": "product",
+                "label": "Select Product"
+            }
+        ],
+        "presets": [
+            {
+                "name": "Our Vision"
+            }
+        ]
+    }
+{% endschema %}

@@ -1,0 +1,142 @@
+{%-liquid
+  assign on_sale = false
+  if product_card_product.compare_at_price > product_card_product.price
+    assign on_sale = true
+  endif
+
+  assign sold_out = true
+  if product_card_product.available
+    assign sold_out = false
+  endif
+
+  if product_card_product.metafields.guidedog.sold_out
+    assign sold_out = true
+  endif
+
+  assign shop_blind_only = false
+  if product_card_product.metafields.guidedog.rarity == "Ultra-Rare"
+    assign shop_blind_only = true
+  endif
+
+  assign presale = false
+  if product_card_product.selected_or_first_available_variant.metafields.accentuate.presale
+    assign today_date = 'now' | date: '%s'
+    assign four_hours = 60 | times: 60 | times: 4
+    assign today_date = today_date | times: 1
+    assign today_date = today_date | minus: four_hours
+    assign presale_start_date = product_card_product.selected_or_first_available_variant.metafields.accentuate.presale_start_date | date: '%s' | times: 1
+    assign presale_end_date = product_card_product.selected_or_first_available_variant.metafields.accentuate.presale_end_date | date: '%s' | times: 1
+    if today_date >= presale_start_date and today_date < presale_end_date
+      assign presale = true
+      assign sold_out = false
+    else 
+      assign presale = false 
+      if sold_out == true
+        assign sold_out = false
+      endif
+    endif
+  endif
+
+  assign limited_quantity = blank
+  if product_card_product.selected_or_first_available_variant.metafields.available_stock.count != blank
+    assign limited_quantity = product_card_product.selected_or_first_available_variant.metafields.available_stock.count | times: 1
+  endif 
+  if limited_quantity != blank and limited_quantity <= 0
+    assign presale = false 
+    assign sold_out = true
+  endif
+
+-%}
+
+<div class="gd_card">
+  {%- comment -%}Actual Link{%- endcomment -%}
+  <div class="gd_card__link_wrapper">
+
+    <svg class="gd_card__svg" width="82" height="44" aria-hidden="true" viewBox="0 0 82 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M23.1983 16.1183C25.2609 16.5673 27.0607 17.8173 28.2016 19.5932C29.3426 21.3692 29.7314 23.5257 29.2823 25.5883C29.1327 26.2758 29.2623 26.9946 29.6426 27.5866C30.0229 28.1786 30.6228 28.5952 31.3104 28.7449C31.9979 28.8946 32.7167 28.765 33.3087 28.3847C33.9007 28.0043 34.3173 27.4044 34.467 26.7169C34.916 24.6543 36.166 22.8546 37.9419 21.7136C39.7179 20.5726 41.8744 20.1839 43.937 20.6329C44.6245 20.7826 45.3433 20.653 45.9353 20.2726C46.5273 19.8923 46.9439 19.2924 47.0936 18.6049C47.2433 17.9173 47.1137 17.1985 46.7334 16.6065C46.3531 16.0146 45.7531 15.5979 45.0656 15.4482C43.003 14.9992 41.2033 13.7493 40.0623 11.9733C38.9213 10.1973 38.5326 8.04085 38.9816 5.97827C39.1313 5.29074 39.0017 4.57192 38.6214 3.97993C38.241 3.38794 37.6411 2.97128 36.9536 2.82162C36.2661 2.67195 35.5472 2.80153 34.9552 3.18186C34.3633 3.56218 33.9466 4.16209 33.7969 4.84962C33.3479 6.91221 32.098 8.71195 30.322 9.85292C28.546 10.9939 26.3896 11.3826 24.327 10.9336C23.6395 10.784 22.9206 10.9136 22.3286 11.2939C21.7366 11.6742 21.32 12.2741 21.1703 12.9616C21.0207 13.6492 21.1502 14.368 21.5306 14.96C21.9109 15.552 22.5108 15.9686 23.1983 16.1183ZM34.6963 13.1909C35.2106 14.3386 35.8942 15.4027 36.7243 16.3476C35.5766 16.8619 34.5125 17.5455 33.5676 18.3756C33.0533 17.2279 32.3697 16.1638 31.5396 15.2189C32.6874 14.7046 33.7514 14.021 34.6963 13.1909Z" fill="#409391"/>
+      <path d="M66.0836 35.3749L68.6759 35.9392L68.1116 38.5316C67.9619 39.2191 68.0915 39.9379 68.4718 40.5299C68.8521 41.1219 69.4521 41.5386 70.1396 41.6882C70.8271 41.8379 71.5459 41.7083 72.1379 41.328C72.7299 40.9477 73.1466 40.3477 73.2962 39.6602L73.8606 37.0679L76.4529 37.6322C77.1404 37.7819 77.8592 37.6523 78.4512 37.272C79.0432 36.8917 79.4599 36.2917 79.6095 35.6042C79.7592 34.9167 79.6296 34.1979 79.2493 33.6059C78.869 33.0139 78.2691 32.5972 77.5815 32.4476L74.9892 31.8832L75.5535 29.2909C75.7032 28.6034 75.5736 27.8846 75.1933 27.2926C74.813 26.7006 74.213 26.2839 73.5255 26.1343C72.838 25.9846 72.1192 26.1142 71.5272 26.4945C70.9352 26.8748 70.5185 27.4747 70.3689 28.1623L69.8045 30.7546L67.2122 30.1903C66.5247 30.0406 65.8059 30.1702 65.2139 30.5505C64.6219 30.9308 64.2052 31.5307 64.0556 32.2183C63.9059 32.9058 64.0355 33.6246 64.4158 34.2166C64.7961 34.8086 65.396 35.2253 66.0836 35.3749Z" fill="#409391"/>
+      <path d="M2.59234 35.5542C4.02405 35.8659 5.43733 34.9579 5.749 33.5262C6.06066 32.0945 5.15269 30.6812 3.72099 30.3696C2.28929 30.0579 0.876006 30.9659 0.564339 32.3976C0.252672 33.8293 1.16064 35.2426 2.59234 35.5542Z" fill="#409391"/>
+    </svg>
+
+
+    {%- comment -%}Image(s){%- endcomment -%}
+    <a tabindex="0" href="{{ product_card_product.url }}" class="gd_card__img_wrapper">
+      <picture>
+          <source data-srcset="{{ product_card_product.featured_image.src | img_url: '800x' }}" media="(min-width: 1200px)" />
+          <img data-src="{{ product_card_product.featured_image.src | img_url: '700x' }}" alt="{% if product_card_product.metafields.accessibility.description %}{{ product_card_product.metafields.accessibility.description }}{% else %}{{ product_card_product.title }}{% endif %}" class="lazyload guide-dog-image"/>
+      </picture>
+    </a>
+
+    {%- comment -%}Details{%- endcomment -%}
+    <div class="gd_card__details text-center">
+      <h3 class="h2 text-center" aria-hidden="true">
+        <a href="{{ product_card_product.url }}"  aria-label="{{ product_card_product.title }}">
+          {{ product_card_product.title }}
+        </a>
+      </h3>
+      
+        {% if product_card_product.metafields.guidedog.badges %}
+            <div class="text-center">
+                {% assign badges = product_card_product.metafields.guidedog.badges | split: '|' %}
+                <div class="guide-dog-badges">
+                    {% for badge in badges %}
+                        {% render 'guide-dog-badge', badge: badge %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+      
+      {%- if sold_out -%}
+        <span class="gd_card__sold_out">
+          <span class="">
+            {% assign sold_out_messaging = 'products.product.sold_out' | t %}
+            {{ product_card_product.metafields.guidedog.sold_out_button_text | default: sold_out_messaging }}
+          </span>
+        </span>
+      {%- endif -%}
+
+        <div class="save-button-wrapper">
+            <status-save-button product-id="{{ product.id }}"></status-save-button>
+        </div>
+
+      {%- if product_card_product.metafields.accentuate.new_product -%}
+        <span class="gd_card__new">
+            <span class="">
+                NEW
+            </span>
+        </span>
+      {%- endif -%}
+
+      <div style="margin-top: 8px;">
+        <a class="btn btn--purple" href="{{ product_card_product.url }}" tabindex="0">
+          {%- if sold_out -%}
+            {{ product_card_product.title | prepend: 'Meet ' }}
+          {%- else -%}
+            {%- if presale -%}
+              Pre-order Now | 
+            {%- else -%}
+              Shop Now | 
+            {%- endif -%}
+            {% if on_sale %}
+                {% if product_card_product.price_varies %}
+                  {% assign sale_price = product_card_product.price | money_without_trailing_zeros %}
+                  {{ 'products.product.on_sale_from_html' | t: price: sale_price }}
+                {% else %}
+                  <span class="h4">{{ 'products.product.on_sale' | t }}</span>
+                  {{ product_card_product.price | money_without_trailing_zeros }}
+                {% endif %}
+              {% else %}
+                {% if product_card_product.price_varies %}
+                  {% assign price = product_card_product.price | money_without_trailing_zeros %}
+                  {{ product_card_product.price_min | money_without_trailing_zeros }} - {{ product_card_product.price_max | money_without_trailing_zeros }}
+                {% else %}
+                  {{ product_card_product.price | money_without_trailing_zeros }}
+                {% endif %}
+              {% endif %}
+          {%- endif -%}
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>

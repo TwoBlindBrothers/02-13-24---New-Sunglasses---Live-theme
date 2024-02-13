@@ -1,0 +1,218 @@
+{%- liquid
+  assign media_type = section.settings.media_type
+  assign media_image_mobile = section.settings.media_image_mobile
+  assign media_video_mobile = section.settings.media_video_mobile
+  assign media_image_desktop = section.settings.media_image_desktop
+  assign media_video_desktop = section.settings.media_video_desktop
+  assign media_overlay = section.settings.media_overlay
+  assign title = section.settings.title
+  assign description = section.settings.description
+  assign button_text = section.settings.button_text
+  assign button_link = section.settings.button_link
+  assign media_type = section.settings.media_type
+  assign product = section.settings.product
+  assign information_icon = section.settings.information_icon
+  assign information_title = section.settings.information_title
+  assign information_description = section.settings.information_description
+  assign text_color = section.settings.text_color
+-%}
+<style>
+  .reserve-gifting__product status-save-button {
+    --icon-wrapper-size: 25px;
+    --icon-size: 15px;
+  }
+</style>
+<div class="relative reserve-gifting px-[15px] py-5 sm:p-8 md:pl-0 md:py-12 md:pr-10 lg:py-14 xl:pr-0">
+  <div class="reserve-gifting__inner flex flex-col gap-4 md:flex-row md:gap-6 justify-center relative xl:max-w-[1328px] mx-auto">
+    <div class="reserve-gifting__main-media reserve-mission__media w-full lg:max-h-[704px]
+      before:content-[''] before:block before:pb-[100%] before:sm:pb-[calc(345/704*100%)]
+      before:md:pb-[calc(513/752*100%)] before:lg:pb-[calc(704/1040*100%)] relative xl:static">
+
+      <div class="reserve-gifting__media">
+        {%- if media_type == 'image' -%}
+          <picture>
+            <source data-srcset="{{ media_image_desktop | img_url: '1200x' }}" media="(min-width: 1024px)" />
+            <source data-srcset="{{ media_image_desktop | img_url: '1024x' }}" media="(min-width: 500px)" />
+            <source data-srcset="{{ media_image_mobile | img_url: '500x' }}" media="(min-width: 320px)" />
+            <img class="absolute top-0 left-0 object-cover w-full h-full lazyload lg:left-auto xl:right-[332px] 2xl:right-[374px] rounded-[8px] md:rounded-[0px_16px_16px_0px] overflow-hidden" data-src="{{ media_image_desktop | img_url: '1024x' }}" alt="{{ media_image_desktop.alt }}"/>
+          </picture>
+        {%- else -%}
+          {%- render 'reserve-video',
+            class: 'md:hidden !absolute top-0 left-0 !w-full !h-full object-cover',
+            video: video_mobile,
+            video_url: media_video_mobile,
+            autoplay: true,
+            muted: true,
+            overlay: false,
+            button_class: 'bottom-[12px] right-[12px]'
+          -%}
+          {%- render 'reserve-video',
+            class: 'hidden md:block !absolute top-0 left-0 !w-full !h-full object-cover',
+            video: video,
+            video_url: media_video_desktop,
+            autoplay: true,
+            muted: true,
+            show_muted: true,
+            overlay: false,
+            button_class: 'md:bottom-[25px] md:right-[23px]'
+          -%}
+        {%- endif -%}
+      </div>
+
+      <div class="reserve-gifting__media-content absolute z-[11] max-w-[306px] md:max-w-[477px] top-4 left-4 md:top-6 md:left-10 lg:top-8 xl:left-0" style="color: {{ text_color }}">
+        {%- if title != blank -%}
+          <h2 class="h2-reserve mb-2">{{ title }}</h2>
+        {%- endif -%}
+        {%- if description != blank -%}
+          <p class="p1 mb-4">{{ description }}</p>
+        {%- endif -%}
+        {%- if button_text != blank and button_link != blank -%}
+          <a class="[.h2-reserve+&]:mt-2 inline-flex items-center reserve-btn reserve-btn--outline-black px-8 py-2 h-[34px] md:h-[38px] px-8 py-2.5 hover:!text-white" style="border-color: {{ text_color }}; color: {{ text_color }}" href="{{ button_link }}">{{ button_text }}</a>
+        {%- endif -%}
+      </div>
+
+      {%- if media_overlay > 0 -%}
+        <div class="reserve-gifting__overlay absolute w-full h-full top-0 left-0 z-10 bg-black lg:left-auto xl:right-[332px] 2xl:right-[374px] rounded-[8px] md:rounded-[0px_16px_16px_0px] overflow-hidden" style="opacity: {{ media_overlay | times: 0.01 }}"></div>
+      {%- endif -%}
+    </div>
+    <div class="reserve-gifting__products shrink-0 flex flex-col sm:flex-row sm:justify-between md:flex-col gap-4 w-full md:max-w-[218px] xl:max-w-[308px] 2xl:max-w-[350px]">
+      {%- if product != blank -%}
+        <div class="reserve-gifting__product">
+          {%- render 'product-card-sample', product: product -%}
+        </div>
+      {%- endif -%}
+
+      {%- if information_title != blank and information_description != blank -%}
+        <div class="reserve-gifting__information">
+          {% render 'reserve-information',
+            icon: information_icon,
+            title: information_title,
+            description: information_description,
+            is_show: true,
+            block_class: 'sm:max-w-[345px] md:w-full md:max-w-none'
+          %}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Reserve - Gifting",
+  "class": "bg-white text-black",
+  "settings": [
+    {
+      "type": "select",
+      "id": "media_type",
+      "label": "Media Type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image"
+    },
+    {
+      "type": "image_picker",
+      "id": "media_image_mobile",
+      "label": "Media Image Mobile"
+    },
+    {
+      "type": "image_picker",
+      "id": "media_image_desktop",
+      "label": "Media Image Desktop"
+    },
+    {
+      "type": "video_url",
+      "id": "media_video_mobile",
+      "label": "Media Video Mobile",
+      "accept": [
+        "youtube",
+        "vimeo"
+      ],
+      "info": "Link Youtube & Vimeo"
+    },
+    {
+      "type": "video_url",
+      "id": "media_video_desktop",
+      "label": "Media Video Desktop",
+      "accept": [
+        "youtube",
+        "vimeo"
+      ],
+      "info": "Link Youtube & Vimeo"
+    },
+    {
+      "type": "range",
+      "id": "media_overlay",
+      "min": 0,
+      "max": 90,
+      "step": 1,
+      "unit": "%",
+      "label": "Media Overlay",
+      "default": 10
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Gifting Like Never Before"
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop All"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Featured Product"
+    },
+    {
+      "type": "image_picker",
+      "id": "information_icon",
+      "label": "Information Icon"
+    },
+    {
+      "type": "text",
+      "id": "information_title",
+      "label": "Information Title",
+      "default": "Gifting Like Never Before"
+    },
+    {
+      "type": "richtext",
+      "id": "information_description",
+      "label": "Information Description",
+      "default": "<p>Talk here about how buying gifts helps the gifting of fighting blindness.</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reserve - Gifting"
+    }
+  ]
+}
+{% endschema %}

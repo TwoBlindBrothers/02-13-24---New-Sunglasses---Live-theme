@@ -1,0 +1,40 @@
+<section class="hero page-hero sunglasses_hero" style="background-image:url('{{ section.settings.hero_img | img_url: '1600x' }}'); background-position:top center">
+    <span class="deco sunglasses__replacement small--hide">
+        {% include 'sunglass_replacement_seal.svg' %}
+    </span>
+    <div class="wrapper"> 
+        <h1>{{ section.settings.hero_title }}</h1>
+        <p class="h2 text-center">{{ section.settings.hero_subtitle }}</p>
+        <a href="#main_prod_hero" class="btn" title="take a look">{{ section.settings.hero_button }}</a>
+    </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Sunglasses hero",
+    "settings": [
+        {
+            "type": "image_picker",
+            "id": "hero_img",
+            "label": "Hero bg image (16:9)"
+        },
+        {
+            "type": "text",
+            "id": "hero_title",
+            "label": "Hero title"
+        },
+        {
+            "type": "text",
+            "id": "hero_subtitle",
+            "label": "Hero subtitle"
+        },
+        {
+            "type": "text",
+            "id": "hero_button",
+            "label": "Hero button text"
+        }
+            
+    ]
+  }
+{% endschema %}
+

@@ -1,0 +1,112 @@
+$black: #231f20;
+$yellow: {{ settings.color_tertiary }};
+$grey: {{ settings.color_secondary }};
+$altGrey: #f1f1f1;
+$white: #fff;
+
+$small: 480px;
+$medium: 768px;
+$large: 769px;
+$large-max: 959px;
+$xlarge: 960px;
+
+$gutter: 30px;
+
+@mixin border($width:10px, $color: {{ settings.color_borders }}, $radius:0) {
+    border: $width solid $color;
+    border-radius: $radius;
+    @media (max-width: $medium) {
+        border-width: 8px
+    }
+}
+.contact-hero__links {
+    list-style: none outside;
+    margin: 0;
+    li {
+        @media (min-width:$large){
+            display: inline-block;
+            &:after {
+                content: ' | '
+            }
+            &:last-child:after {
+                content: ''
+            }
+        }
+        a {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 0.8125em;
+            text-align: justify;
+            @media (min-width: $large) {
+                font-size: 1.125em;
+            }
+        }
+    }
+}
+.contact__menu {
+    @include border();
+    margin-top: $gutter*2;
+    text-align:center;
+        margin-left: 0;
+
+    }
+.contact__menu__item{
+     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.8125em;
+    list-style-type:none;
+    margin: 0;
+    padding: $gutter;
+    border-bottom: 8px solid {{settings.color_borders}};
+    font-size: 0.8125em;
+     text-align: center;
+    @media (min-width: $large) {
+       font-size: 1.125em;
+         border-bottom: 10px solid {{settings.color_borders}};
+    }
+    &:last-child {border:none}
+    &.is-active {
+        background: $black;
+        a {color: #fff}
+    }
+}
+.contact__sections {
+     @media (min-width: $large) {
+    padding-left: 60px
+    }
+}
+.contact__section {
+    margin-top: $gutter*2
+    }
+.contact__sections__title {
+    @include border();
+    padding: $gutter;
+    margin-bottom: -10px
+}
+.contact__sections__block {
+    background: $altGrey;
+    padding: $gutter;
+    margin: 10px 0;
+    position: relative;
+    dt {
+       font-weight: 600;
+        letter-spacing: .1em;
+        @media (min-width: {{ settings.break_lg }}) {
+            font-size: 1.3rem;
+        }
+    }
+    dd {display: none; margin-top: $gutter}
+}
+.contact_toggle {
+    position: absolute;
+   top: 30px;
+    right: 15px;
+    outline: none;
+    &.is-active {
+        svg polygon {
+            transform: rotate(45deg) translate(3px, -7px)
+        }
+    }
+}

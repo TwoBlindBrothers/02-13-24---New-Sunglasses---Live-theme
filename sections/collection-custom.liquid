@@ -1,0 +1,135 @@
+{% assign collection_background_color = '#FFF' %}
+{% assign collection_product_border_color = '#000' %}
+{% assign collection_is_able_to_show_button = collection.metafields.style.show_add_to_cart_button %}
+{% if collection.metafields.style.collection_background %}
+{%  assign collection_background_color = collection.metafields.style.collection_background %}
+{% endif %}
+{% if collection.metafields.style.products_border_color %}
+{%  assign collection_product_border_color = collection.metafields.style.products_border_color %}
+{% endif %}
+{% assign grid_item_width = 'grid-cols-2' %}
+
+{% case section.settings.products_count %}
+{% when 3 %}
+    {% assign grid_item_width = 'grid-cols-3' %}
+{% when 4 %}
+    {% assign grid_item_width = 'grid-cols-4' %}
+{% endcase %}
+
+<div class="wide" style="background-color: {{ collection_background_color }};">
+  <div class="wrapper products-grid" style="padding-top: 4rem;">
+    {% for block in section.blocks %}
+      {% assign collection = collections[block.settings.collections] %}
+
+      {% unless block.settings.hide_header %}
+        {% capture collection_title %}{{ collection.title | escape }}{% endcapture %}
+        
+        <div class="section-header">
+          <p class="h1 section-header__left">{{ collection_title }}</p>
+          <div class="section-header__right">
+            <a href="{{ collection.url }}" title="{{ 'collections.general.link_title' | t: title: collection_title }}">More {{ collection_title }} &rsaquo;</a>
+          </div>
+        </div>
+      {% endunless %}
+
+      {% if block.settings.title or block.settings.subtitle %}
+        <div class="section-header text-center centered narrow">
+          {% if block.settings.title %}
+            <h2 class="text-center">{{ block.settings.title }}</h2>
+          {% endif %}
+          {% if block.settings.subtitle %}
+            {{ block.settings.subtitle }}
+          {% endif %}
+          {% if block.settings.disclaimer %}
+            <div class="disclaimer">{{ block.settings.disclaimer }}</div>
+          {% endif %}
+        </div>
+      {% endif %}
+  
+      <div class="products-grid grid-flex {{ grid_item_width }}">
+        {% for product in collection.products limit:4 %}
+          {% assign grid_item_width = 'one-half medium--one-third large--one-quarter' %}
+          {% include 'product-grid-item', collection_is_able_to_show_button: 'true', alignment: 'bottom', grid_item_width: grid_item_width, text_layout: block.settings.text_alignment, price_decimals: block.settings.price_decimals %}
+        {% endfor %}
+      </div>
+  
+      {% unless forloop.last %}<hr>{% endunless %}
+  
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Custom Collection",
+    "blocks": [
+      {
+        "type": "collections",
+        "name": "Collections",
+        "settings": [
+          {
+            "type": "collection",
+            "id": "collections",
+            "label": "Collection"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "richtext",
+            "id": "subtitle",
+            "label": "Subtitle"
+          },
+          {
+            "type": "richtext",
+            "id": "disclaimer",
+            "label": "Disclaimer"
+          },
+          {
+            "type": "range",
+            "id": "product_count",
+            "label": "Products count",
+            "default": 4,
+            "min": 1,
+            "max": 4
+          },
+          {
+            "type": "checkbox",
+            "id": "hide_header",
+            "label": "Hide Collection Header?"
+          },
+          {
+            "type": "radio",
+            "id": "text_alignment",
+            "label": "Text Alignment",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left"
+              },
+              {
+                "value": "center",
+                "label": "Center"
+              }
+            ],
+            "default": "left"
+          },
+          {
+            "type": "checkbox",
+            "id": "price_decimals",
+            "label": "Show price decimals?",
+            "default": true
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "category": "Collections",
+        "name":"Custom Collection"
+      }
+    ]
+  }
+{% endschema %}

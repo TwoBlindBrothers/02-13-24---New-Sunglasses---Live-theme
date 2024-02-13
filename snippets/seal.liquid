@@ -1,0 +1,64 @@
+{% comment %}
+THIS WAS FOR TESTING!!! USE SEAL2
+    Assign variables in the snippet include as such:
+
+    {% include 'seal',
+    side: 'seal-left|seal-right', // the side the image will be on
+    arrowloc: 'top|bottom', // the arrow on the top or bottom of the image, the seal will move automatically
+    thumb: 'http://path/to/image.png', // output the image source for use in src="", use any file extention
+    title: 'handle-of-title-svg', // THIS IS FOR NOW AN SVG, do not include .svg extension
+    alt: 'text of title', // for accessibility.
+    text: "Main body copy.", // must be in double quotes!!
+    subtext: "Callout text here", // must be in double quotes!!
+    sealimg: 'handle-of-seal-svg' // without .svg extension
+    %}
+
+{% endcomment %}
+
+{% capture grid__thumb %}
+     <div class="grid__thumb">
+            <img src="{{ thumb }}" class="grid__thumb__img" />
+            <img src="{{ 'arrow-outline.svg' | asset_url }}" class="deco arrow--4 {% if side == 'seal-left' %}arrow--left{% elsif side == 'seal-right' %}arrow--right{% endif %}"
+            style="{% if arrowloc == 'bottom' %}bottom:-10px;top:auto;{% endif %}"/>
+            <img src="{{ sealimg | append: '.svg' | asset_url }}" class="deco seal"
+            style="{% if arrowloc == 'bottom' %}top: 10px;bottom: auto;{% endif %}{% if side == 'seal-right' %}left: auto;right: 0%;{% endif %}"/>
+        </div>
+{% endcapture %}
+
+
+{% capture grid--seal %}
+   <div class="wrapper">
+    <div class="grid grid--seal {{ side }} clearfix">
+
+       {% if side == 'seal-left' %}
+        <div class="grid__item large--one-half grid__item--seal">
+          {{ grid__thumb }}
+        </div>
+        {% endif %}
+
+        <div class="grid__item large--one-half grid__item--text">
+            <img src="{{ title | append: '.svg' | asset_url }}" role="img" alt="{{ alt }}" class="grid__title">
+            <h2 class="visually-hidden">{{ alt }}</h2>
+            <div class="grid__thumb">
+                <img src="{{ thumb }}" class="grid__thumb__img" />
+
+                 {% include 'svg_arrow-outline',
+                 classes: 'arrow--4'  %}
+
+            </div>
+
+            <p class="grid__text">{{ text }}</p>
+            <p class="h3">{{ subtext }}</p>
+        </div>
+
+        {% if side == 'seal-right' %}
+         <div class="grid__item  grid__item--seal large--one-half">
+          {{ grid__thumb }}
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endcapture %}
+
+{{ grid--seal }}

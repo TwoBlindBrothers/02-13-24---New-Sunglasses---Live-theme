@@ -1,0 +1,90 @@
+{% layout 'theme.shopblind' %}
+<div class="grid-flex text-center">
+<div itemscope itemtype="http://schema.org/Product" class="shopblind__item">
+    <a href="../" class="heatmap-close icon-fallback-text">
+      <span aria-hidden="true">X</span>
+      <span class="fallback-text">"Back to selections"</span>
+    </a>
+
+  <meta itemprop="url" content="{{ shop.url }}{{ product.url }}">
+  <meta itemprop="image" content="{{ product.featured_image.src | img_url: 'grande' }}">
+
+  {% assign current_variant = product.selected_or_first_available_variant %}
+
+      <h1 itemprop="name">{{ product.price | money_without_trailing_zeros  }}</h1>
+
+      <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+        <meta itemprop="priceCurrency" content="{{ shop.currency }}">
+
+        <link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
+
+        <form action="/cart/add" data-productid="{{ product.id }}" method="post" enctype="multipart/form-data" id="AddToCartForm" class="form-vertical h2">
+
+          <select name="id" data-productid="{{ product.id }}" id="productSelect" class="product-single__variants">
+            {% for variant in product.variants %}
+              {% if variant.available %}
+                <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} data-sku="{{ variant.sku }}" value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+
+              {% else %}
+                <option disabled="disabled">
+                  {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+                </option>
+              {% endif %}
+            {% endfor %}
+          </select>
+
+          <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
+
+          <button type="submit" name="add" id="AddToCart" class="btn">
+            <span id="AddToCartText">{{ 'products.product.add_to_cart' | t }}</span>
+          </button>
+        </form>
+
+
+          <a data-remodal-target="size-charts" class="size-chart-link">View Sizing Chart</a>
+          <div class="remodal" data-remodal-id="size-charts">
+            <button data-remodal-action="close" class="remodal-close"></button>
+            <div class="wrapper size-chart">
+              {{ pages.shopblind-size-charts.content }}
+            </div>
+          </div>
+
+      </div>
+
+</div>
+</div> <!-- grid-->
+
+{{ 'option_selection.js' | shopify_asset_url | script_tag }}
+<script>
+  var selectCallback = function(variant, selector) {
+    timber.productPage({
+      money_format: "{{ shop.money_format }}",
+      variant: variant,
+      selector: selector
+    });
+  };
+
+  jQuery(function($) {
+    new Shopify.OptionSelectors('productSelect', {
+      product: {{ product | json }},
+      onVariantSelected: selectCallback,
+      enableHistoryState: true
+    });
+
+    // Add label if only one product option and it isn't 'Title'. Could be 'Size'.
+    {% if product.options.size == 1 and product.options.first != 'Title' %}
+      $('.selector-wrapper:eq(0)').prepend('<label for="productSelect-option-0">{{ product.options.first | escape }}</label>');
+    {% endif %}
+
+    // Hide selectors if we only have 1 variant and its title contains 'Default'.
+    {% if product.variants.size == 1 and product.variants.first.title contains 'Default' %}
+      $('.selector-wrapper').hide();
+    {% endif %}
+
+    //styling
+    $( ".single-option-selector" ).addClass( "h2" );
+
+  });
+
+
+</script>

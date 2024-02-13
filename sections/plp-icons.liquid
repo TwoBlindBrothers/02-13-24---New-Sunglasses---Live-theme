@@ -1,0 +1,56 @@
+{%- if section.blocks.size > 0 -%}
+<div class="plp-icons py-8 bg-white text-black">
+  <div class="plp-icons__inner reserve-container flex flex-col gap-2 sm:gap-4 md:flex-row md:gap-6 lg:gap-8">
+    {%- for block in section.blocks -%}
+      <div class="plp-icons__item flex-1 p-4 flex gap-4 bg-white-1 rounded-[8px] border border-solid border-grey-200 items-center">
+        <div class="plp-icons__item-icon min-w-[42px] shrink-0">
+          <img src="{{ block.settings.icon | image_url }}" alt="{{ block.settings.icon.alt }}" class="lazyload max-w-[48px]">
+        </div>
+        <div class="plp-icons__item-content">
+          {%- if block.settings.title != blank -%}
+            <div class="label">{{ block.settings.title }}</div>
+          {%- endif -%}
+          {%- if block.settings.description != blank -%}
+            <div class="p2 mt-2 text-grey-400">{{ block.settings.description }}</div>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+{%- endif -%}
+{% schema %}
+{
+  "name": "PLP Icons",
+  "max_blocks": 3,
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "We’re on a mission"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "PLP Icons"
+    }
+  ]
+}
+{% endschema %}

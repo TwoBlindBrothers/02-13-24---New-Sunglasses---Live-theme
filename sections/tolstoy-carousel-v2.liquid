@@ -1,0 +1,69 @@
+{% style %}
+
+.shopblind-tiktok {
+  padding-bottom: 60px;
+}
+.tolstoy-carousel-title {
+  display: none !important;
+}
+.tiktok-videos.tlsty {
+  padding: 5rem 0 1.5rem;
+}
+.tolstoy-carousel-container {
+  max-width: 1280px !important;
+}
+
+{% endstyle %}
+
+<div class="shopblind-tiktok" {% if section.settings.bg_color.alpha != 0.0 %}style="background-color: {{ section.settings.bg_color }}"{% endif %}>
+    <div class="tiktok-videos tlsty">
+      {% if section.settings.heading_line_1 %}
+        <div class="tiktok-header">
+          {% if section.settings.heading_line_1 %}
+            <h2 class="h1 light text-center" {% if section.settings.heading_color.alpha != 0.0 %}style="color: {{ section.settings.heading_color }}"{% endif %}>
+              {{ section.settings.heading_line_1 }}
+              {% if section.settings.heading_line_2 %}
+                <span class="text-center">{{ section.settings.heading_line_2 }}</span>
+              {% endif %}
+            </h2>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+
+<tolstoy-carousel data-tags="{% for tag in product.tags -%}{{ tag }},{%- endfor %}"
+class="tolstoy-carousel"
+id="{{ section.settings.publishId }}"
+data-publish-id="{{ section.settings.publishId }}"
+data-product-id="{{ product.id }}">
+</tolstoy-carousel>
+</div>
+{% schema %}
+  {
+    "name": "Tolstoy carousel v2",
+    "settings": [
+      {
+        "type": "text",
+        "id": "heading_line_1",
+        "label": "Heading Line 1"
+      }, {
+        "type": "text",
+        "id": "heading_line_2",
+        "label": "Heading Line 2"
+      },
+      {
+        "type": "text",
+        "id": "publishId",
+        "label": "Publish id",
+        "default": "publishId"
+      }
+    ],
+    "presets": [
+{
+"name": "Tolstoy carousel v2",
+"category": "Tolstoy Sections"
+}
+]
+  }
+{% endschema %}

@@ -1,0 +1,16 @@
+<div class="text-black bg-white reserve-collection">
+  <div class="collection-heading max-w-[1440px] mx-auto px-[16px] sm:px-8 md:px-10 xl:px-[56px]">
+    {% render 'reserve-breadcrumb' %}
+    <h2 class="h1-reserve mt-2 sm:mt-[6px] md:mt-4">{{- collection.title -}}</h2>
+    {%- if collection.description != blank -%}
+      <div class="mt-1 wysiwyg--collection md:mt-2 max-w-[648px]">{{- collection.description -}}</div>
+    {%- endif -%}
+  </div>
+  {%- render 'reserve-collection-nav' -%}
+</div>
+
+{% schema %}
+{
+  "name": "Collection Heading"
+}
+{% endschema %}

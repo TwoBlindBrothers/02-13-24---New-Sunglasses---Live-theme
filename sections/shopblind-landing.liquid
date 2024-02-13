@@ -1,0 +1,212 @@
+{% layout 'theme.shopblind' %}
+{{ 'option_selection.js' | shopify_asset_url | script_tag }}
+<!-- {% include 'linked-options-blind' %} -->
+<section class="grid text-center">
+
+    <div class="grid__item ten-twelfths  push--one-twelfth">
+        {% assign shop_blind_type = settings.shop_blind_type %}
+        {% case shop_blind_type %}
+          {% when 'basic' or 'alt' %}
+            {% include 'eye-closed.svg' %}
+          {% when 'valentines' %}
+            <div class="shop-blind-logo">
+              {% include 'hearts.svg' %}
+              {% include 'equals.svg' %}
+              {% include 'eye-closed.svg' %}
+            </div>
+          {% else %}
+        {% endcase %}
+        <h1 tabindex="0" class="shop-blind-title">{{ settings.shop_blind_title }}</h1>
+        <p tabindex="0" class="shop-blind-desc">{{ settings.shop_blind_desc }}</p>
+    </div>
+</section>
+<section class="text-center">
+{% assign collection = collections[settings.shopblind_col] %}
+{% assign products = collection.products | sort: 'price' %}
+  {% if collections[settings.shopblind_col] != blank %}
+    <div id="shop-blind-grid-container">
+      {% for product in products %}
+        <div class="grid__item one-whole large--one-third shopblind_prod" data-handle="{{product.handle}}">
+          <span class="h1" tabindex="0">{{ product.price | money_without_trailing_zeros  }}</span>
+          <div class="toggle-sb-options" role="button" aria-pressed="false"><span>Add To Cart</span></div>
+          <div class="product-options-wrapper" role="dialog" aria-modal="true">
+            <div class="product-options-container-background">
+            </div>
+            <div class="product-options-container">
+              <div class="product-options">
+                <span class="h1">{{ product.price | money_without_trailing_zeros  }}</span>
+                <select class="fake-select">
+                  <option disabled selected>Who are you shopping for?</option>
+                  <option>Man</option>
+                  <option>Woman</option>
+                </select>
+                <div class="close-product-options">
+                  {% include 'close-x.svg' %}
+                </div>
+                {% include 'loader' %}
+              </div>
+            </div>
+          </div>
+          {% if product.available %}
+            <div class="sb-buy-button-container"></div>
+          {% else %}
+            <a class="btn btn--xlarge {% unless product.available %}disabled{% endunless %}" data-button-text="{{ settings.shopblind_col_button }}" href="{{product.url}}">
+              <span>SOLD OUT</span>
+            </a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+    {% capture 'shop_blind_products' %}
+      [
+        {% for product in products %}
+          {% assign special = false %}
+          {% if forloop.index == products.size %}
+            {% assign special = true %}
+          {% endif  %}
+          {
+            id: {{ product.id }},
+            available: {{ product.available }},
+            title: "{{ product.title }}",
+            product_type: "{{ product.product_type }}",
+            html: "{{ product.body_html }}",
+            images: {{ product.images | json }},
+            vendor: "{{ product.vendor }}",
+            variants: {{ product.variants | json }},
+            options: {{ product.options | json }},
+            price: "{{ product.price | money_without_trailing_zeros }}",
+            special: {{ special }}
+          },
+        {% endfor %}
+      ]
+{% endcapture %}
+  {% endif %}
+  {% comment %}
+  {% assign product = all_products[settings.shopblind_prod_special] %}
+  <div class="grid-flex shopblind_prod__special shopblind_prod" data-handle="{{product.handle}}" {%comment%}style="background-image: url({{ 'special1.png' | file_img_url: 'master' }}); background-size: cover;"{%endcomment%}>
+    {% include 'svg-trust-us-circle.svg' %}
+    <div>
+      <span class="h1" tabindex="0">{{ product.price | money_without_trailing_zeros }}</span>
+      <div class="toggle-sb-options" role="button" aria-pressed="false"><span>Add To Cart</span></div>
+      <div class="product-options-wrapper" role="dialog" aria-modal="true">
+        <div class="product-options-container-background">
+        </div>
+        <div class="product-options-container">
+          <div class="product-options">
+            <span class="h1">{{ product.price | money_without_trailing_zeros }}</span>
+            <select class="fake-select">
+              <option disabled selected>Who are you shopping for?</option>
+              <option>Man</option>
+              <option>Woman</option>
+            </select>
+            <div class="close-product-options">
+              {% include 'close-x.svg' %}
+            </div>
+            {% include 'loader' %}
+          </div>
+        </div>
+      </div>
+      <div class="sb-buy-button-container"></div>
+      {% comment %}
+      <!-- {% if product.available %}
+
+      {% else %}
+        <a class="btn btn--xlarge {% unless product.available %}disabled{% endunless %}" data-button-text="{{ settings.shopblind_col_button }}" href="{{product.url}}">
+          <span>SOLD OUT</span>
+        </a>
+      {% endif %} -->
+      {% endcomment %}
+    </div>
+  </div>
+  {% endcomment %}
+
+
+</section>
+<div class="homepage-link-container text-center">
+  <a style="margin-bottom: 1rem; text-decoration: underline; display: inline-block; color: black;" href="https://reveal.twoblindbrothers.com/">I don't want to shop blind</a>
+</div>
+<div class="grid-new">
+   <div class="grid-new__item video-block" style="background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.4)), rgba(0,0,0,0.4) url('{{ settings.shop_blind_video_image | img_url: '600x' }}')">
+     <div class="video-block__content">
+       <a class="play-btn" data-fancybox href="https://www.youtube.com/watch?v={{ settings.shop_blind_video }}" title="play video">
+         <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+           viewBox="0 0 160 160" style="enable-background:new 0 0 160 160;" xml:space="preserve">
+           <g>
+             <polygon style="fill: #FFFFFF;" points="72.6,72.7 72.6,85.9 72.6,97.5 99,79.3 72.6,61 	"/>
+             <path style="fill: #FFFFFF;" d="M80,0C35.9,0,0,35.9,0,80s35.9,80,80,80s80-35.9,80-80S124.1,0,80,0z M80,153.6c-40.6,0-73.6-33-73.6-73.6
+            S39.5,6.4,80,6.4s73.6,33,73.6,73.6S120.6,153.6,80,153.6z"/>
+           </g>
+         </svg>
+       </a>
+     </div>
+   </div>
+
+   <div class="remodal video" data-remodal-id="{{ settings.shop_blind_video }}-grid-video" aria-modal="true">
+     <button data-remodal-action="close" class="remodal-close"></button>
+     <div class="youtube-player" data-id="{{ settings.shop_blind_video }}"></div>
+   </div>
+
+</div>
+<section id="shop-blind__faq">
+  <div class="container narrow">
+    {% assign faq_page = pages['faq-shop-blind'] %}
+    {% if faq_page.metafields.shop_blind_faq.question %}
+      <div class="section-header">
+        <h2 class="h1 light text-center">FAQ</h2>
+      </div>
+      {% for question in faq_page.metafields.shop_blind_faq.question %}
+        <div class="contact__sections__block">
+          <button class="contact_toggle" aria-expanded="false" tabindex="0">
+            <svg version="1.1" viewBox="0 0 14.329 14.329" aria-labelledby="title" class="role=&quot;img&quot;" width="15px" height="15px">
+              <title id="play-btn-title">Plus sign</title>
+              <polygon points="14.329,5.665 8.665,5.665 8.665,0 5.665,0 5.665,5.665 0,5.665 0,8.665 5.665,8.665 5.665,14.329 8.665,14.329 8.665,8.665 14.329,8.665 "></polygon>
+            </svg>
+          </button>
+          <div class="desc-title">{{ question }}</div>
+          <div class="desc-body">
+            <p>
+              {{ faq_page.metafields.shop_blind_faq.answer[forloop.index0] }}
+            </p>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</section>
+<div id="product-popup">
+  <div id="product-popup-wrapper">
+    <div id="product-popup-content">
+    </div>
+  </div>
+</div>
+<div class="grid-new shopblind-social">
+  <div class="grid-new__item">
+    {{ settings.sb_footer_image_1 | img_url: '400x400', crop: 'center' | img_tag: '','shopblind-social-img lazyload' }}
+  </div>
+  <div class="grid-new__item">
+    {{ settings.sb_footer_image_2 | img_url: '400x400', crop: 'center' | img_tag: '','shopblind-social-img lazyload' }}
+  </div>
+  <div class="grid-new__item">
+    {{ settings.sb_footer_image_3 | img_url: '400x400', crop: 'center' | img_tag: '','shopblind-social-img lazyload' }}
+  </div>
+</div>
+<script>
+  var shopBlindProducts = {{ shop_blind_products }}
+</script>
+
+<script>
+  $( ".contact__menu__item" ).click(function(e) {
+    e.preventDefault();
+    $( ".contact__menu__item" ).removeClass("is-active")
+    $( this ).addClass( "is-active" );
+  });
+  $( ".contact_toggle, .desc-title" ).click(function() {
+    $(this).siblings( ".desc-body" ).slideToggle( "fast" );
+    $( this ).toggleClass( "is-active" );
+    if ($( this ).hasClass( "is-active" )) {
+      $(this).siblings( ".contact_toggle" ).attr('aria-expanded', true);
+    } else {
+      $(this).siblings( ".contact_toggle" ).attr('aria-expanded', false);
+    }
+  });
+</script>

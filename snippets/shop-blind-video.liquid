@@ -1,0 +1,23 @@
+{% assign video_image = "http://img.youtube.com/vi/" | append: video | append: "/maxresdefault.jpg" %}
+{% if image != blank %}
+  {% assign video_image = image | img_url: '600px' %}
+{% endif %}
+<div class="social-video-block" style="background: url({{ video_image }})">
+  <div class="video-block__content">
+    <a class="play-btn" data-fancybox href="https://www.youtube.com/watch?v={{ video }}" title="play video">
+      <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+       viewBox="0 0 160 160" style="enable-background:new 0 0 160 160;" xml:space="preserve">
+       <g>
+         <polygon style="fill: #FFFFFF;" points="72.6,72.7 72.6,85.9 72.6,97.5 99,79.3 72.6,61 	"/>
+         <path style="fill: #FFFFFF;" d="M80,0C35.9,0,0,35.9,0,80s35.9,80,80,80s80-35.9,80-80S124.1,0,80,0z M80,153.6c-40.6,0-73.6-33-73.6-73.6
+        S39.5,6.4,80,6.4s73.6,33,73.6,73.6S120.6,153.6,80,153.6z"/>
+       </g>
+     </svg>
+   </a>
+ </div>
+</div>
+
+<div class="remodal video" data-remodal-id="{{ video }}-social-video" aria-modal="true">
+ <button data-remodal-action="close" class="remodal-close"></button>
+ <div class="youtube-player" data-id="{{ video }}"></div>
+</div>

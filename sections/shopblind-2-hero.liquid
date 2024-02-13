@@ -1,0 +1,552 @@
+{% comment %} {{ 'snowfall.js.liquid' | asset_url | script_tag }} {% endcomment %}
+<section
+  class="text-center shop-blind-hero-2"
+  id="shop-blind-hero-2"
+  {% if section.settings.bg_color.alpha != 0.0 %}
+    style="background-color: {{ section.settings.bg_color }}"
+  {% endif %}
+>
+  {% if section.settings.highlight_color != blank and section.settings.highlight_color.alpha != 0.0 %}
+    {%- assign sb_bg_rgb = section.settings.highlight_color | color_to_rgb | replace: 'rgb(', '' | replace: ')', '' -%}
+    {%- assign sb_bg_rgb = sb_bg_rgb | split: ',' -%}
+    {%- assign sb_red = sb_bg_rgb[0] | plus: 0 | times: 0.955 -%}
+    {%- assign sb_green = sb_bg_rgb[1] | plus: 0 | times: 0.915 -%}
+    {%- assign sb_blue = sb_bg_rgb[2] | plus: 0 | times: 1.01 -%}
+    <style>
+      :root {
+          --sb-color-bg: {{ section.settings.highlight_color }};
+          --sb-color-dark: rgb({{ sb_red }}, {{ sb_green }}, {{ sb_blue }});
+      }
+    </style>
+  {% endif %}
+
+  {% if template == 'page.shop-blind-returning' %}
+    {% assign is_shop_blind_returning = true %}
+  {% endif %}
+
+  <div class="container is-relative {% if is_shop_blind_returning %}shop_blind_returning{% endif %}">
+    {% comment %}If ACF fields, override customzer settings{% endcomment %}
+    {% assign display_snow = section.settings.display_snow %}
+    {% assign shop_blind_heading = settings.shop_blind_title %}
+
+    {% if section.settings.title != empty %}
+      {% assign shop_blind_heading = section.settings.title %}
+    {% endif %}
+
+    {% if page.metafields.shop_blind.shop_blind_title %}
+      {% assign shop_blind_heading = page.metafields.shop_blind.shop_blind_title %}
+    {% endif %}
+
+    {% assign hide_sub_heading = section.settings.hide_sub_title %}
+    {% unless hide_sub_heading %}
+      {% assign shop_blind_sub_heading = settings.shop_blind_sub_title %}
+    {% endunless %}
+
+    {% assign shop_blind_desc = section.settings.desc %}
+
+    {% assign shop_blind_hero_available_until = section.settings.available_until %}
+
+    {% assign shop_blind_hero_modal_button_title = section.settings.modal_button_title %}
+    {% assign shop_blind_hero_modal_title = section.settings.modal_title %}
+    {% assign shop_blind_hero_modal_content = section.settings.modal_content %}
+
+    {% if template == 'page.shop-blind-returning' %}
+      <picture class="shop-blind-hero__image">
+        <source data-srcset="{{ section.settings.image.src | image_url: width: 400 }}" media="(min-width: 769px)">
+        <source data-srcset="{{ section.settings.image.src | image_url: width: 300 }}" media="(min-width: 500px)">
+        <source data-srcset="{{ section.settings.image.src | image_url: width: 200 }}" media="(min-width: 320px)">
+        <img
+          data-src="{{ section.settings.image.src | image_url: width: 400 }}"
+          alt="{{ section.settings.image.meta }}"
+          class="lazyload"
+        >
+      </picture>
+    {% endif %}
+    {% if shop_blind_heading %}
+      <h1
+        tabindex="0"
+        class="shop-blind-title-2"
+        {% if section.settings.text_color.alpha != 0.0 %}
+          style="color: {{ section.settings.text_color }}"
+        {% endif %}
+      >
+        {{ shop_blind_heading }}
+      </h1>
+    {% endif %}
+    {% if shop_blind_sub_heading %}
+      <h3
+        tabindex="0"
+        class="shop-blind-sub-title"
+        {% if section.settings.text_color.alpha != 0.0 %}
+          style="color: {{ section.settings.text_color }}"
+        {% endif %}
+      >
+        {{ shop_blind_sub_heading }}
+      </h3>
+    {% endif %}
+    {% if shop_blind_hero_modal_button_title != empty %}
+      <button
+        type="button"
+        tabindex="0"
+        class="shop-blind-hero__modal-button"
+        style="{% if section.settings.modal_button_bg_color.bg_color.alpha != 0.0 %}background-color: {{ section.settings.modal_button_bg_color }};{% endif %}{% if section.settings.modal_button_color.alpha != 0.0 %}color: {{ section.settings.modal_button_color }}{% endif %}"
+      >
+        {{ shop_blind_hero_modal_button_title }}
+        {% include 'svg_bold_arrow_right' %}
+      </button>
+    {% endif %}
+    {% if shop_blind_hero_available_until != empty %}
+      <div
+        class="shop-blind-hero__available-until"
+        {% if section.settings.available_until_bg_color.alpha != 0.0 %}
+          style="background-color: {{ section.settings.available_until_bg_color }};"
+        {% endif %}
+      >
+        <div>
+          {{ shop_blind_hero_available_until }}
+        </div>
+        {% if section.settings.available_until_color.alpha != 0.0 %}
+          <style>
+            .shop-blind-hero__available-until p {
+                color: {{ section.settings.available_until_color }};
+            }
+          </style>
+        {% endif %}
+      </div>
+    {% endif %}
+    {% if shop_blind_desc != empty %}
+      <div class="shop-blind-hero__text">
+        {{ shop_blind_desc }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="shop-blind-hero__modal" data-section-id="{{ section.id }}">
+    <div
+      id="modal-wrapper-{{ section.id }}"
+      role="dialog"
+      labelledby="label-{{ section.id }}"
+      aria-modal="true"
+      aria-hidden="true"
+      class="modal-wrapper"
+    >
+      <div class="modal-content">
+        <div class="modal-close-button"></div>
+
+        {% if section.settings.image %}
+          <picture class="shop-blind-hero__image">
+            <source data-srcset="{{ section.settings.image.src | image_url: width: 700 }}" media="(min-width: 1200px)">
+            <source data-srcset="{{ section.settings.image.src | image_url: width: 500 }}" media="(min-width: 769px)">
+            <source data-srcset="{{ section.settings.image.src | image_url: width: 300 }}" media="(min-width: 500px)">
+            <source data-srcset="{{ section.settings.image.src | image_url: width: 200 }}" media="(min-width: 320px)">
+            <img
+              data-src="{{ section.settings.image.src | image_url: width: 700 }}"
+              alt="{{ section.settings.image.meta }}"
+              class="lazyload"
+            >
+          </picture>
+        {% else %}
+          {% if template == 'page.shopblind-template' %}
+            <img class="shop-blind-logo-alt" src="{{ 'flowers.png' | file_url }}">
+          {% else %}
+            {% assign shop_blind_type = settings.shop_blind_type %}
+            {% case shop_blind_type %}
+              {% when 'basic', 'alt' %}
+                {% include 'eye-closed.svg' %}
+              {% when 'valentines' %}
+                <div class="shop-blind-logo">
+                  {% include 'hearts.svg' %}
+                  {% include 'equals.svg' %}
+                  {% include 'eye-closed.svg' %}
+                </div>
+            {% endcase %}
+          {% endif %}
+        {% endif %}
+
+        <h3 class="modal-title">{{ shop_blind_hero_modal_title }}</h3>
+        <div class="modal-desc">{{ shop_blind_hero_modal_content }}</div>
+      </div>
+    </div>
+  </div>
+  {% comment %} <canvas id="snow-canvas"> </canvas> {% endcomment %}
+
+  <script>
+    // Hero modal
+    $('.shop-blind-hero__modal-button').click(function (e) {
+      e.preventDefault();
+      $('.shop-blind-hero__modal').addClass('active');
+    });
+
+    $('.shop-blind-hero__modal .modal-close-button').click(function (e) {
+      e.preventDefault();
+      $('.shop-blind-hero__modal').removeClass('active');
+    });
+  </script>
+
+  <script>
+
+    const displaySnow = "{{ display_snow }}" == 'true';
+
+    if (displaySnow) {
+
+      /************** SNOW EFFECTS **************/
+      console.log('*********[ start snow ]*******');
+
+      var stickCount = 0;
+      var snowflakes = [];
+      var stuckSnow = [];
+      var snowSpan = window.innerWidth
+      var snowContainer = document.getElementById('PageContainer');
+      var snowAmnt = window.innerWidth / 10;
+      var moreSnow = 0;
+      var maxSnow = 800;
+
+      const pageTitle = "{{ shop.page_title }}"
+      console.log('Page title:', pageTitle)
+
+      // Create a function to initialize the snowflakes
+      function initializeSnowflakes() {
+        if (moreSnow === 0) {
+          snowflakes = [];
+          for (var i = 0; i < snowAmnt; i++) {
+            createSnowflake(i);
+          }
+          {% comment %} console.log('snowflakes:', snowflakes) {% endcomment %}
+        } else {
+          for (var i = 0; i < moreSnow; i++) {
+            createSnowflake(snowflakes.length + i);
+          }
+        }
+        console.log('snowflake count: ',snowflakes.length,'| stuck count:',stickCount)
+      }
+
+      // Clear offscreen snow
+      const clearOffscreenSnow = () => {
+        var snows = document.querySelectorAll('.snowflake');
+        {% comment %} const frame = document.querySelectorAll('.template-index') {% endcomment %}
+        const pageTitle = "{{ page_title }}";
+        var frame;
+        console.log(`[------clear off ${pageTitle} screen snow-------]`)
+        if ( pageTitle === 'Two Blind Brothers') {
+          frame = document.getElementById('two-blind-brothers');
+        } else if ( pageTitle === 'Exclusive Shop Blind') {
+          frame = document.getElementById('exclusive-shop-blind');
+        }
+
+        snows.forEach((s) => {
+          var snowRect = s.getBoundingClientRect()
+          var contRect = frame.getBoundingClientRect()
+          if (snowRect.right >= contRect.right) { 
+            s.classList.add('hide-snow');
+            s.isVisible = false;
+            s.style.display ='none';
+          }
+        });
+
+        clearSnow();
+
+        initializeSnowflakes();
+      }
+
+      // Clear falling snow
+      const clearSnow = () => {
+        console.log('[--------clearSnow------]')
+        stickCount = 0;
+        snows = document.querySelectorAll('.snowflake');
+        snows.forEach((s) => {
+          s.parentNode.removeChild(s);
+          s.style.classList ='hide-snow';
+          s.isStuck = true;
+        });
+        snowflakes = [];
+        stuckSnow = [];
+        snowAmnt = window.innerWidth / 10;
+        moreSnow = 0;
+      }
+
+      // Function to create a snowflake
+      function createSnowflake(id) {
+
+        var snowflake = document.createElement('div');
+        snowflake.id = id;
+        snowflake.key = id;
+        snowflake.className = 'snowflake';
+        snowflake.style.left = Math.random() * snowSpan + 'px';
+        snowflake.style.top = Math.random() * window.innerHeight/8 + 'px';
+        snowflake.style.width = Math.random() * 9 + 2 + 'px';
+        snowflake.style.height = snowflake.style.width;
+        snowflake.style.zIndex = pageTitle === 'Exclusive Shop Blind'? '99999':'1';
+        snowflake.speed = Math.random() * 10 +  1;
+        snowflake.isVisible = true;
+        snowflake.isStuck = false;
+        snowContainer.appendChild(snowflake);
+        snowflakes.push(snowflake);
+
+      }
+
+      // Initialize snowflakes on page load
+      initializeSnowflakes();
+
+      // Draw the snowflakes
+      function drawSnowflakes() {
+        // Check if over heading text
+        snowflakes.forEach(function (snowflake) {
+
+          // divs for hiding snow
+          {% comment %} document.querySelectorAll('#shop-blind-gate__title')
+            .forEach(function (div) {
+
+              var divRect = div.getBoundingClientRect();
+              var snowflakeRect = snowflake.getBoundingClientRect();
+              var winWidth = window.innerWidth;
+              {% comment %} console.log('winwidth:',winWidth) {% endcomment %}
+
+              if (
+                snowflakeRect.left >= divRect.left + (winWidth <= 770 ? 150 : 200) &&
+                snowflakeRect.right <= divRect.right - (winWidth <= 770 ? 150 :200) &&
+                snowflakeRect.top >= $(div).offset().top - (parseInt(snowflake.style.height)*2) - snowflake.speed + (div.className === 'shop-blind-title-2'? 70: div.id === 'shop-blind-gate__title'? 0:70) &&
+                snowflakeRect.bottom <= $(div).offset().top + divRect.height + 70
+              ) {
+                snowflake.classList.add('hide-snow')
+                snowflake.isVisible = false;
+              }
+
+              if (
+                snowflakeRect.left < divRect.left ||
+                snowflakeRect.right > divRect.right &&
+                snowflakeRect.top < $(div).offset().top -(parseInt(snowflake.style.height)*2)  ||
+                snowflakeRect.bottom > $(div).offset().top + divRect.height
+              ) {
+                snowflake.classList.remove('hide-snow');
+                snowflake.isVisible = true;
+              }
+            }); {% endcomment %}
+
+          // Check if the snowflake is over a sticky div
+          document.querySelectorAll('.shopblind_prod, .grid__item, .slick-slide, .shop-blind-hero__available-until')
+            .forEach(function (div) {
+              {% comment %} console.log('div  info:', div) {% endcomment %}
+              var divRect = div.getBoundingClientRect();
+              var snowRect = snowflake.getBoundingClientRect();
+
+              if (!snowflake.isStuck && snowflake.isVisible) {
+                if (
+                  snowRect.left >= divRect.left + 2 &&
+                  snowRect.right <= divRect.right - 5 &&
+                  snowRect.top >= $(div).offset().top - (parseInt(snowflake.style.height)*1.25) &&
+                  snowRect.bottom <= $(div).offset().top + divRect.height - parseInt(snowflake.style.height)
+                ) {
+              
+                  snowflake.isStuck = true;
+                  snowflake.style.top = $(div).offset().top - parseInt(snowflake.style.height)  +'px';
+  
+                  if (!stuckSnow.find((s) => s.id === snowflake.id) && snowflake.isStuck) {
+                    stuckSnow.push({
+                      id: snowflake.id,
+                      initialTop: snowflake.getBoundingClientRect().top,
+                      initialLeft: snowflake.style.left,
+                      initialWindowWidth: window.innerWidth,
+                      initialWindowHeight: window.innerHeight,
+                      stuckDiv: div.DOMid
+                    });
+                    stickCount = stuckSnow.length;
+                  }
+                {% comment %} } else if (!snowflake.isStuck) { {% endcomment %}
+                } else {
+                  // Move the snowflake
+                  {% comment %} snowflake.isStuck = false; {% endcomment %}
+                  snowflake.style.top = snowflake.offsetTop + snowflake.speed + 'px';
+                }
+              }
+            });
+
+          // If the snowflake falls off the window, reset its position
+          {% comment %} if (snowflake.offsetTop > snowContainer) {
+            snowflake.style.top = '0px';
+            snowflake.isStuck = false;
+          } {% endcomment %}
+          if (snowflake.offsetTop > snowContainer) {
+            snowflake.isVisible = false;
+            snowflake.classList.add('hide-snow');
+          }
+
+        });
+      }
+
+      function addMoreSnowflakes() {
+        {% comment %} var randomSnowAmount = Math.floor( Math.random() *  (snowAmnt / 4) ) + 1; {% endcomment %}
+        var randomSnowAmount = Math.floor( Math.random() *  25 ) + 1;
+
+        if ( snowflakes.length >= maxSnow ) {
+          clearSnow();
+          initializeSnowflakes();
+        } else if ( stuckSnow.length >= snowflakes.length * .25 ) {
+          moreSnow = randomSnowAmount;
+          console.log(`!*** Makin' ${moreSnow} more snows ***!`)
+          initializeSnowflakes();
+        }
+      }
+
+      // Set an interval to draw the snowflakes
+      setInterval(drawSnowflakes, 10);
+
+      // Set an interval to draw the snowflakes
+      setInterval(addMoreSnowflakes, 1000);
+
+      // Function to handle window resize
+      function handleResize() {
+
+        clearOffscreenSnow();
+
+        snowSpan = window.innerWidth;
+
+        stuckSnow.forEach((stuck) => {
+          var snowflake = document.getElementById(stuck.id);
+          var div = document.getElementById(stuck.stuckDiv);
+          var divRect = div.getBoundingClientRect();
+
+          // Calculate the new position relative to the changed div position
+          var yOffset = stuck.initialTop - $(div).offset().top;
+          snowflake.style.top = $(div).offset().top + yOffset + 'px';
+        });
+
+        snowflakes.forEach((s) => {
+          s.isStuck = false;
+        });
+
+      }
+
+      //Function to handlr stucks snow on page scroll
+      function handleScroll () {
+          {% comment %} snowflakes.forEach((s)=>{
+          if (s.isStuck) {
+            s.style.top = s.initalTop +'px'
+            s.isStuck = false
+          }
+        }) {% endcomment %}
+
+        {% comment %} snowSpan = window.innerWidth;
+
+        stuckSnow.forEach((stuck) => {
+          console.log("stuck.stuckDiv:",stuck)
+          var snowflake = document.getElementById(stuck.id);
+          var div = document.getElementById(stuck.stuckDiv);
+          var divRect = div.getBoundingClientRect();
+
+          // Calculate the new position relative to the changed div position
+          var yOffset = stuck.initialTop - $(div).offset().top;
+          snowflake.style.top = $(div).offset().top - yOffset + 'px';
+        }); {% endcomment %}
+
+        snowflakes.forEach((s) => {
+          s.isStuck = false;
+        });
+      }
+
+      // Attach the resize event listener
+      window.addEventListener('resize', handleResize);
+      window.addEventListener('scroll', handleScroll);
+
+    }
+    
+  </script>
+
+</section>
+
+{% schema %}
+{
+  "name": "Shop Blind 2.0 Hero",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "This will replace the eye logo at the top of the section"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color"
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Highlight color",
+      "info": "Color for buttons, shop blind box animation etc."
+    },
+    {
+      "type": "checkbox",
+      "id": "display_snow",
+      "label": "Display snow?",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Hero title"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_sub_title",
+      "label": "Hide the sub title?",
+      "default": false
+    },
+    {
+      "type": "richtext",
+      "id": "desc",
+      "label": "Hero text"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color"
+    },
+    {
+      "type": "richtext",
+      "id": "available_until",
+      "label": "Hero available until"
+    },
+    {
+      "type": "color",
+      "id": "available_until_bg_color",
+      "label": "Hero available until background color"
+    },
+    {
+      "type": "color",
+      "id": "available_until_color",
+      "label": "Hero available until color"
+    },
+    {
+      "type": "text",
+      "id": "modal_button_title",
+      "label": "Hero modal button title"
+    },
+    {
+      "type": "color",
+      "id": "modal_button_bg_color",
+      "label": "Hero modal button background color"
+    },
+    {
+      "type": "color",
+      "id": "modal_button_color",
+      "label": "Hero modal button color"
+    },
+    {
+      "type": "text",
+      "id": "modal_title",
+      "label": "Hero modal title"
+    },
+    {
+      "type": "richtext",
+      "id": "modal_content",
+      "label": "Hero modal content"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Shop Blind",
+      "name": "Shop Blind 2.0 Hero"
+    }
+  ]
+}
+{% endschema %}

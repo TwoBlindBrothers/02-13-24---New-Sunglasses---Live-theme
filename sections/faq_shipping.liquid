@@ -1,0 +1,34 @@
+   {% for block in section.blocks %}
+    {% case block.type %}
+         {% when 'shipping' %}
+         <dl class="contact__sections__block" {{ block.shopify_attributes }}>
+            <button class="contact_toggle">{% include 'svg_icon_plus'  %}</button>
+             <dt>{{ block.settings.shipping_q }}</dt>
+             <dd>{{ block.settings.shipping_a }}</dd>
+         </dl>
+     {% endcase %}
+  {% endfor %}
+         
+
+{% schema %}
+  {
+    "blocks": [
+        {
+        "type": "shipping",
+        "name": "Shipping FAQ",
+        "settings": [
+            {
+                "type": "text",
+                "id": "shipping_q",
+                "label": "Shipping question"
+            },
+            {
+                "type": "richtext",
+                "id": "shipping_a",
+                "label": "Shipping answer"
+            }
+        ]
+       }
+    ]
+  }
+{% endschema %}

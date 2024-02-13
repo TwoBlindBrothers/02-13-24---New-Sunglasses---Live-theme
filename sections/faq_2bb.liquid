@@ -1,0 +1,34 @@
+   {% for block in section.blocks %}
+    {% case block.type %}
+         {% when '2bb' %}
+         <dl class="contact__sections__block" {{ block.shopify_attributes }}>
+            <button class="contact_toggle">{% include 'svg_icon_plus'  %}</button>
+             <dt>{{ block.settings.tbb_q }}</dt>
+             <dd>{{ block.settings.tbb_a }}</dd>
+         </dl>
+     {% endcase %}
+  {% endfor %}
+         
+
+{% schema %}
+  {
+    "blocks": [
+        {
+        "type": "2bb",
+        "name": "2bb FAQ",
+        "settings": [
+            {
+                "type": "text",
+                "id": "tbb_q",
+                "label": "Payments question"
+            },
+            {
+                "type": "richtext",
+                "id": "tbb_a",
+                "label": "Payments answer"
+            }
+        ]
+       }
+    ]
+  }
+{% endschema %}

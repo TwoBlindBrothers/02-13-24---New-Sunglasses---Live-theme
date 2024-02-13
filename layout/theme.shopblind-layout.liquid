@@ -1,0 +1,326 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<!--[if IE 8]> <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 9 ]> <html class="ie9 no-js"> <![endif]-->
+<!-- [if (gt IE 9)|!(IE)]><! -->
+<html class="no-js" lang="en">
+  <!-- <![endif] -->
+  <head>
+<!-- Start of Shoplift scripts -->
+{% render 'shoplift' %}
+<!-- End of Shoplift scripts -->
+
+    <meta name="google-site-verification" content="ttZca2KoetOEPToVJiLZw0nT_jA3cZ4ixQY5RiTjmKY">
+
+    <!-- Basic page needs ================================================== -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="{{ 'favicon.png' | asset_url }}" type="image/png">
+
+    <!-- Title and description ================================================== -->
+    <title>
+      {{ page_title }}
+      {% if current_tags -%}
+        {%- assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}
+      {%- endif %}
+      {% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}
+      {% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+    </title>
+
+    {% if page_description %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+
+    <!-- Helpers ================================================== -->
+    {% include 'social-meta-tags' %}
+    <link rel="canonical" href="{{ canonical_url }}">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <meta name="theme-color" content="{{ settings.color_primary }}">
+
+    {%- render 'fonts' -%}
+
+    <!-- CSS ================================================== -->
+    {{ 'timber.scss.css' | asset_url | stylesheet_tag }}
+    {{ 'shopblind.scss.css' | asset_url | stylesheet_tag }}
+
+    {% if settings.easter_enabled %}
+      {{ '2bb-easter.css' | asset_url | stylesheet_tag }}
+    {% endif %}
+
+    <!-- Header hook for plugins ================================================== -->
+    {%- capture header_scripts -%}
+    {{ content_for_header }}
+  {%- endcapture -%}
+
+    {%- render 'header-scripts', content: header_scripts, unload_apps: true, remove_apps: '' -%}
+
+    {%- render 'delay-load', urls: '', snippets: '', on_delay_load: '', load_apps: true, delay: 0, enable: true -%}
+
+    {% include 'oldIE-js' %}
+
+    {{ '//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js' | script_tag }}
+    {{ 'modernizr.min.js' | asset_url | script_tag }}
+    <!--[if lte IE 9]> <script src="{{ 'polyfill.min.js' | asset_url }}"></script> <![endif]-->
+    {{ 'ls.unveilhooks.min.js' | asset_url | script_tag }}
+
+    <script src="https://use.typekit.net/ugw7ksw.js"></script>
+    <script>
+      try {
+        Typekit.load({ async: true });
+      } catch (e) {}
+    </script>
+
+    {{ 'jquery.fancybox.min.css' | asset_url | stylesheet_tag }}
+    {{ 'jquery.fancybox.min.js' | asset_url | script_tag }}
+
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-NJTDWKD');
+    </script>
+    <!-- End Google Tag Manager -->
+
+    {{ 'jquery.infinitescroll.2.1.0.min.js' | asset_url | script_tag }}
+    {%- render 'vite-tag' with 'custom.css' -%}
+  </head>
+
+  <body
+    id="{{ page_title | handle }}"
+    class="{% if customer %}customer-logged-in {% endif %}template-{{ template | replace: '.', ' ' | handle }} shop-blind-layout"
+  >
+    <div id="NavDrawer" class="drawer drawer--left"></div>
+    {% if settings.ajax_cart_method == 'drawer' %}
+      <div id="CartDrawer" class="drawer drawer--right">
+        <div class="drawer__header">
+          <div class="drawer__title h3">{{ settings.shopblind_cart_title }}</div>
+          <div class="drawer__close js-drawer-close">
+            <button type="button" class="icon-fallback-text">
+              <span class="close-x" aria-hidden="true">
+                <img src="{{ 'close-x.svg' | asset_url }}" class="">
+              </span>
+              <span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>
+            </button>
+          </div>
+        </div>
+        <div id="CartContainer"></div>
+      </div>
+    {% endif %}
+
+    <div id="PageContainer">
+      {% section 'header' %}
+
+      <main class="main-content" role="main" id="main-content">
+        {% include 'loader' %}
+        {{ content_for_layout }}
+      </main>
+
+      <!-- begin site-footer -->
+      <footer class="site-footer" role="contentinfo">
+        <div class="wrapper">
+          <div class="grid">
+            {% if settings.footer_social_enable %}
+              <div class="grid__item one-whole text-center">
+                <h5>Share our Story</h5>
+                {% section 'footer-social' %}
+              </div>
+            {% endif %}
+            {% comment %}
+              <div class="grid__item large--one-half">
+                <div id="footer-newsletter">
+                  {% if settings.footer_newsletter_enable %}
+                  {% include 'svg_copy_be-a-part-of-the-community',
+                      classes: 'medium-down--hide' %}
+                  {% include 'svg_copy_be-a-part-of-the-community_m',
+                      classes: 'large--hide' %}
+                  {% include 'active-campaign' %}
+
+                  {% endif %}
+                </div>
+              </div>
+            {% endcomment %}
+
+            <div class="clearfix"></div>
+
+            <div class="grid__item large--one-half">
+              <p id="legal-links" class="medium-down--text-left medium-down--text-center">
+                <a href="/pages/faq-shop-blind#faq-return">Return Policy</a> | <a href="/pages/contact-us">Contact</a>
+              </p>
+            </div>
+            <div class="grid__item large--one-half">
+              <p id="legal-links" class="large--text-right medium-down--text-center">
+                <a href="/pages/privacy-policy">Privacy</a> | <a href="/pages/terms-of-service">TOS</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
+      <!-- //site-footer -->
+    </div>
+
+    {%- render 'reserve-collapsible-cart' -%}
+
+    {{ 'timber.js' | asset_url | script_tag }}
+
+    {{ 'scripts.js' | asset_url | script_tag }}
+    {{ 'nav.js' | asset_url | script_tag }}
+    {{ 'js.cookie.js' | asset_url | script_tag }}
+    <!-- {{ 'simpleheat.js' | asset_url | script_tag }} -->
+    <!-- {{ 'data.js' | asset_url | script_tag }} -->
+    <script>
+      if ($('.alert-content').length) {
+        $('.alert-content a').click(function (e) {
+          e.preventDefault();
+          $('.alert-description').slideToggle();
+        });
+      }
+    </script>
+
+    <script>
+      // Video modals
+      jQuery(function () {
+        $('iframe[src*="https://www.youtube.com/embed/"]').addClass('remodal-video');
+        $(document).on('closing', '.remodal', function (e) {
+          $('.remodal-video').each(function (index) {
+            $(this).attr('src', $(this).attr('src'));
+            return false;
+          });
+        });
+        jQuery('.swatch :radio').change(function () {
+          var optionIndex = jQuery(this).closest('.swatch').attr('data-option-index');
+          var optionValue = jQuery(this).val();
+          jQuery(this)
+            .closest('form')
+            .find('.single-option-selector')
+            .eq(optionIndex)
+            .val(optionValue)
+            .trigger('change');
+        });
+      });
+
+      jQuery.post('/cart/update.js', {
+        attributes: {
+          origin: 'Shop Blind',
+        },
+      });
+    </script>
+
+    <script>
+      // Smooth Scroll
+      $('a[href*="#"]')
+        .not('[href="#"]')
+        .not('[href="#0"]')
+        .click(function (event) {
+          if (
+            location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') &&
+            location.hostname == this.hostname
+          ) {
+            var target = $(this.hash);
+            target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+            if (target.length) {
+              event.preventDefault();
+              $('html, body').animate(
+                {
+                  scrollTop: target.offset().top - 120,
+                },
+                1000,
+                function () {
+                  var $target = $(target);
+                  $target.focus();
+                  if ($target.is(':focus')) {
+                    return false;
+                  } else {
+                    $target.attr('tabindex', '-1');
+                    $target.focus();
+                  }
+                }
+              );
+            }
+          }
+        });
+    </script>
+
+    <script>
+      {% if resetPassword %}
+      $(function() {
+        timber.resetPasswordSuccess();
+      });
+      {% endif %}
+    </script>
+
+    {% if settings.ajax_cart_method == 'drawer' %}
+      {{ 'handlebars.min.js' | asset_url | script_tag }}
+      {% include 'ajax-cart-template-shopblind' %}
+      {{ 'ajax-cart-shop-blind.js' | asset_url | script_tag }}
+      {{ 'api.jquery.js' | shopify_asset_url | script_tag }}
+      {{ 'shop-blind-app.js' | asset_url | script_tag }}
+
+      <script>
+        jQuery(function($) {
+          ajaxCart.init({
+            formSelector: '#AddToCartForm',
+            cartContainer: '#CartContainer',
+            addToCartSelector: '#AddToCart',
+            cartCountSelector: '.cart__item-count',
+            cartCostSelector: '#CartCost',
+            moneyFormat: {{ shop.money_format | json }}
+          });
+        });
+
+        jQuery(document.body).on('afterCartLoad.ajaxCart', function(evt, cart) {
+          // Bind to 'afterCartLoad.ajaxCart' to run any javascript after the cart has loaded in the DOM
+          timber.RightDrawer.open();
+        });
+      </script>
+    {% endif %}
+
+    <script type="text/javascript">
+      var _learnq = _learnq || [];
+      _learnq.push(['account', 'HMZ6Wk']);
+
+      (function () {
+        var b = document.createElement('script');
+        b.type = 'text/javascript';
+        b.async = true;
+        b.src =
+          ('https:' == document.location.protocol ? 'https://' : 'http://') +
+          'a.klaviyo.com/media/js/analytics/analytics.js';
+        var a = document.getElementsByTagName('script')[0];
+        a.parentNode.insertBefore(b, a);
+      })();
+    </script>
+
+    <script
+      async
+      type="text/javascript"
+      src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=HMZ6Wk"
+    ></script>
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-NJTDWKD"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <!-- This line added automatically by JSON-LD for SEO. -->
+    <!-- {% include 'jsonld-for-seo' %} -->
+    {% section 'upsell-popup' %}
+    {% assign show_free_product_popup = false %}
+    {% if show_free_product_popup == true %}
+      {% include 'popup-free-sock' %}
+      {{ 'option_selection.js' | shopify_asset_url | script_tag }}
+    {% endif %}
+  </body>
+</html>

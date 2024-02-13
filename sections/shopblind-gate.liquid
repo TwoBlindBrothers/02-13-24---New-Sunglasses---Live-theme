@@ -1,0 +1,101 @@
+<div id="shop-blind-gate" class="{% if section.settings.white_text %}text-white{% endif %}" role="dialog" labelledby="shop-blind-gate__title" aria-modal="true" aria-hidden="true">
+    <section class="shop-blind-gate" {% if section.settings.bg_color.alpha != 0.0 %}style="background-color: {{ section.settings.bg_color }}e6"{% endif %}>
+        <div class="shop-blind-gate__modal">
+            <div class="shop-blind-gate__wrapper">
+                <div class="shop-blind-gate__content">
+                    {% if section.settings.title or section.settings.sub_title %}
+                        <div class="shop-blind-gate__header">
+                            {% if section.settings.title %}
+                                <h2 style="margin-bottom: .5rem;" class="h1 text-center" id="shop-blind-gate__title">{{ section.settings.title }}</h2>
+                            {% endif %}
+                            {% if section.settings.sub_title %}
+                                <p class="text-center">{{ section.settings.sub_title }}</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    <form id="shop-blind-gate__header" class="text-center">
+                        <input id="shop-blind-gate__email" type="email" placeholder="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required/>
+                        <input id="shop-blind-gate__submit" class="uppercase" type="submit" value="Submit" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+{{ 'aria-modal.js' | asset_url | script_tag  }}
+
+<script>
+    if ( !sessionStorage.getItem("shop-blind-gate") ) {
+        var focusAfterClosedEle = document.getElementsByClassName('shop-blind-title')[0]
+        if (!focusAfterClosedEle) {
+            focusAfterClosedEle = document.getElementsByClassName('shop-blind-title-2')[0]
+        }
+        openDialog(`shop-blind-gate`, focusAfterClosedEle, document.getElementById('shop-blind-gate__email'))
+        $('#shop-blind-gate__header').on('submit', function (e) {
+            e.preventDefault()
+            var signupData = {
+                "g": "{{ section.settings.klaviyo_id }}",
+                "$fields": "$source",
+                "email": $('#shop-blind-gate__email').val(),
+                "$source": "Shop Blind Repeat"
+            }
+            var settings = {
+                "async": true,
+                "crossDomain": true,
+                "url": "https://manage.kmail-lists.com/ajax/subscriptions/subscribe",
+                "method": "POST",
+                "headers": {
+                "content-type": "application/x-www-form-urlencoded",
+                "cache-control": "no-cache"
+                },
+                "data": signupData
+            }
+            $.ajax(settings).done(function (response) {
+                sessionStorage.setItem("shop-blind-gate", true);
+                closeDialog(document.getElementById('shop-blind-gate__submit'));
+            })
+        })
+    }
+</script>
+
+{% schema %}
+  {
+    "name": "Shop Blind Gate",
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Heading"
+        },
+        {
+            "type": "text",
+            "id": "sub_title",
+            "label": "Sub Heading"
+        },
+        {
+            "type": "color",
+            "id": "bg_color",
+            "label": "Background color",
+            "default": "#231f20"
+        },
+        {
+            "type": "checkbox",
+            "id": "white_text",
+            "label": "White text?"
+        },
+        {
+            "type": "text",
+            "id": "klaviyo_id",
+            "label": "Klaviyo list ID"
+        }
+    ],
+    "presets": [
+      {
+        "category": "Shop Blind",
+        "name": "Shop Blind Gate"
+      }
+    ]
+  }
+{% endschema %}
+  

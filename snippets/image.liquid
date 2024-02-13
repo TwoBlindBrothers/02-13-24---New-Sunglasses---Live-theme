@@ -1,0 +1,47 @@
+{% comment %}
+    Renders an image
+{% endcomment %}
+{% assign aspect = aspect | default: image.aspect_ratio %}
+<div class="{{ class }}" style="--aspect-ratio: {{ aspect }}">
+<img
+  {% if image.cloudinary_src and image.cloudinary_src contains 'accentuate' %}
+    srcset="{%- if image.width >= 165 -%}{{ image.cloudinary_src | append: '&transform=resize=165' }} 165w,{%- endif -%}
+          {%- if image.width >= 330 -%}{{ image.cloudinary_src | append: '&transform=resize=330' }} 330w,{%- endif -%}
+          {%- if image.width >= 535 -%}{{ image.cloudinary_src | append: '&transform=resize=535' }} 535w,{%- endif -%}
+          {%- if image.width >= 750 -%}{{ image.cloudinary_src | append: '&transform=resize=750' }} 750w,{%- endif -%}
+          {%- if image.width >= 1000 -%}{{ image.cloudinary_src | append: '&transform=resize=1000' }} 1000w,{%- endif -%}
+          {%- if image.width >= 1500 -%}{{ image.cloudinary_src | append: '&transform=resize=1500' }} 1500w,{%- endif -%}
+          {%- if image.width >= 3000 -%}{{ image.cloudinary_src | append: '&transform=resize=3000' }} 3000w{%- endif -%}"
+    src="{{ image.cloudinary_src }}"
+  {% else %}
+    {% if image.src contains 'jpg' or image.src contains 'jpeg' -%}
+      srcset="{%- if image.width >= 165 -%}{{ image | img_url: '165x', format: 'pjpg' }} 165w,{%- endif -%}
+      {%- if image.width >= 330 -%}{{ image | img_url: '330x', format: 'pjpg' }} 330w,{%- endif -%}
+      {%- if image.width >= 535 -%}{{ image | img_url: '535x', format: 'pjpg' }} 535w,{%- endif -%}
+      {%- if image.width >= 750 -%}{{ image | img_url: '750x', format: 'pjpg' }} 750w,{%- endif -%}
+      {%- if image.width >= 1000 -%}{{ image | img_url: '1000x', format: 'pjpg' }} 1000w,{%- endif -%}
+      {%- if image.width >= 1500 -%}{{ image | img_url: '1500x', format: 'pjpg' }} 1500w,{%- endif -%}
+      {%- if image.width >= 3000 -%}{{ image | img_url: '3000x', format: 'pjpg' }} 3000w{%- endif -%}"
+      src="{{ image | img_url: '3000x' }}"
+    {%- else -%}
+      srcset="{%- if image.width >= 165 -%}{{ image | img_url: '165x' }} 165w,{%- endif -%}
+          {%- if image.width >= 330 -%}{{ image | img_url: '330x' }} 330w,{%- endif -%}
+          {%- if image.width >= 535 -%}{{ image | img_url: '535x' }} 535w,{%- endif -%}
+          {%- if image.width >= 750 -%}{{ image | img_url: '750x' }} 750w,{%- endif -%}
+          {%- if image.width >= 1000 -%}{{ image | img_url: '1000x' }} 1000w,{%- endif -%}
+          {%- if image.width >= 1500 -%}{{ image | img_url: '1500x' }} 1500w,{%- endif -%}
+          {%- if image.width >= 3000 -%}{{ image | img_url: '3000x' }} 3000w{%- endif -%}"
+      src="{{ image | img_url: '3000x' }}"
+    {% endif %}
+  {% endif %}
+  sizes="
+  (min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 100 }}px,
+  (min-width: 750px) calc(100vw - 10rem),
+  calc(100vw - 3rem)"
+  alt="{{ image.alt | escape }}"
+  height="{{ image.height }}"
+  width="{{ image.width }}"
+  loading="lazy"
+  class="{{ classes }}"
+>
+</div>

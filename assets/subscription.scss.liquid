@@ -1,0 +1,297 @@
+
+.subscription-section {
+  padding: 3rem 0;
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+}
+.page-hero.subscription_hero {
+  .subscription-hero-content {
+    @media (min-width: 768px) {
+      max-width: 80%;
+      display: flex;
+      text-align: left;
+      align-items: flex-end;
+      .subscription__graphic {
+        margin-right: 2rem;
+      }
+    }
+    h1 {
+      font-size: 4rem;
+      margin: 0;
+      span {
+        display: block;
+        font-size: 3rem;
+      }
+    }
+  }
+}
+
+.subscription-graphics {
+  @media (min-width: 768px) {
+    display: flex;
+    margin: 0 -4rem;
+    justify-content: center;
+  }
+  .sub-graphic {
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    @media (min-width: 768px) {
+      padding: 0 4rem;
+    }
+    svg {
+      height: 100px;
+      width: auto;
+      margin-bottom: 1rem;
+    }
+    h3 {
+      text-transform: uppercase;
+      font-size: 1.2rem;
+      max-width: 200px;
+      margin: 0 auto;
+      font-weight: 700;
+    }
+  }
+}
+
+$yellow: #f0d83d;
+$black: #221e20;
+
+#subscription-app-wrapper {
+  background-color: transparent;
+  padding: 1rem 0 1rem 0;
+  margin: 1rem 0 1rem 0;
+  h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: white;
+  }
+  h3 {
+    text-align: center;
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    color: white;
+    font-weight: bold;
+    letter-spacing: .1rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem 0;
+    margin: 2rem 0;
+  }
+}
+
+#shopify-section-subscription-page-template {
+  .wrapper {
+    text-align: center;
+  }
+}
+
+.product-options-wrapper .product-options-container-background {
+  outline: $black!important;
+  opacity: .3!important;
+}
+.product-options-form {
+  max-height: 90vh;
+  overflow-y: auto;
+  outline: 3px solid $black;
+}
+.product-options-wrapper {
+  .add-to-cart {
+    margin-bottom: 80px;
+    @media (min-width: 1000px) {
+      margin-bottom: 0;
+    }
+  }
+  .product-options {
+    .sb-option-select {
+      display: block;
+      width: 220px;
+      margin: 1rem auto 0;
+      border: 2px solid black!important;
+    }
+    .product-price {
+      font-size: 4rem;
+    }
+    .options-wrapper {
+      margin: 1rem -.75rem 0;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      .select-wrapper {
+        padding: 0 .75rem;
+        margin-bottom: 1rem;
+        text-align: center;
+        @media (min-width: 1000px) {
+          margin-bottom: 0;
+          text-align: left;
+        }
+      }
+    }
+    .sub-label {
+      color: black;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .sub-selectors {
+      display: flex;
+      margin: 0 -.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      align-items: stretch;
+      .sub-selector-wrapper {
+        padding: 0 .75rem;
+        margin-top: 1rem;
+        width: 100%;
+        @media (min-width: 530px) {
+          width: 50%;
+        }
+        @media (min-width: 1000px) {
+          width: auto;
+          flex: 1;
+        }
+        .sub-selector {
+          background-color: white;
+          color: black;
+          appearance: none;
+          padding: 1.5rem 1.5rem;
+          text-align: center;
+          height: 100%;
+          width: 100%;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all .1s ease-in-out;
+          transform-origin: center;
+          border: 2px solid black;
+          box-shadow: 0px 0px 5px rgba(0,0,0,.1);
+          position: relative;
+          // .h2 {
+          //   font-size: .9rem;
+          //   text-transform: none;
+          //   letter-spacing: normal;
+          // }
+          @media (min-width: 1000px) {
+            max-width: 250px;
+          }
+          .sub-radio {
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid black;
+            position: absolute;
+            left: .5rem;
+            top: .5rem;
+            border-radius: 100%;
+            background-color: white;
+          }
+          .sub-selector-title {
+            font-size: .9rem;
+            text-transform: uppercase;
+            margin-bottom: .5rem;
+          }
+          .sub-selector-benefit {
+            font-size: .9rem;
+            line-height: 1.2;
+            font-weight: 600;
+            text-transform: none;
+            margin-bottom: 0;
+            letter-spacing: normal;
+          }
+          &.active {
+            transform: scale(1.05);
+            background-color: #f0d83d;
+            .sub-radio {
+              &::after {
+                content: '';
+                position: absolute;
+                width: calc(100% - 4px);
+                height: calc(100% - 4px);
+                left: 2px;
+                top: 2px;
+                background: black;
+                border-radius: 100%;
+              }
+            }
+          }
+          &:not(.active):hover {
+            border-color: #f0d83d;
+          }
+        }
+      }
+    }
+  }
+}
+#twobbloader.loading {
+  background: black!important;
+  .blob {
+    background: #f0d83d!important;
+  }
+}
+
+.shop-blind-prod-content {
+  span {
+    color: white !important;
+  }
+
+  input {
+    &:last-of-type {
+      margin-top: 1rem;
+      &:not(:first-of-type) {
+        padding-right: 1rem;
+        padding-left: 1rem;
+      }
+    }
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    span {
+      font-size: 2.5em !important;
+    }
+
+    input {
+      font-size: 0.9em !important;
+    }
+  }
+}
+
+#subscription-app {
+  .shop-blind-prod-content {
+    span {
+      color: #231f20 !important;
+    }
+
+    input {
+      transition: all 0.1s ease-in;
+    }
+  }
+}
+
+.subscription-video-play {
+  width: 70px!important;
+  height: 70px!important;
+}
+@media (max-width: 480px) {
+  #shopblind-reviews {
+    padding: 0;
+
+    .section-header {
+      padding-top: 2rem;
+      margin-bottom: 0;
+
+      h2 {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .slideshow-wrapper .carousel-slides {
+    padding: 3rem;
+  }
+}

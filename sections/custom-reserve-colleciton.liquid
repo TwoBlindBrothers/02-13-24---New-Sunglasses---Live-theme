@@ -1,0 +1,38 @@
+{% assign collection = collections[section.settings.cs_1] %}
+<div class="custom-reserv-colleciton">
+    <div class="custom-reserv-colleciton-contaioner">
+        <div class="custom-reserv-colleciton-block">
+            {% for product in collection.products limit: 4 %}
+            <div class="custom-reserv-colleciton-item">
+                <a href="{{ product.url }}">
+                <div class="tom-reserv-colleciton-img">
+                    {% if product.featured_image  != blank %}
+                        <img src="{{ product.featured_image | img_url: '1000x'  }}" alt="">
+                    {% endif %}
+                </div>
+                <h2>{{ product.title}} </h2>
+                <span>{{ product.price |  money }}</span>
+              </a>
+                 <a href="/cart/add?id={{ product.selected_or_first_available_variant.id }}" class="custom-quick-add">Add to Bag</a> 
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+{% schema %}
+{
+    "name": "Reserve Page Product",
+    "settings": [
+            {
+                "type": "collection",
+                "id": "cs_1",
+                "label": "Select Collection"
+            }
+        ],
+        "presets": [
+            {
+                "name": "Reserve Page Product"
+            }
+        ]
+}
+{% endschema %}

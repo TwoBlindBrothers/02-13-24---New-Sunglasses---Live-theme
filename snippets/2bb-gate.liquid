@@ -1,0 +1,166 @@
+{%- assign page_url = content_for_header | split:'"pageurl":"' | last | split:'"' | first | split: request.host | last | replace:'\/','/' | replace:'%20',' ' | replace:'\u0026','&'  -%}
+{% assign param = blank %}
+
+{%- for i in (1..1) -%}
+
+  {%- unless page_url contains "?" -%}{% break %}{%- endunless -%}
+  {%- assign query_string = page_url | split:'?' | last -%}
+  {%- assign qry_parts= query_string | split:'&' -%}
+
+  {%- for part in qry_parts -%}
+    {%- assign key_and_value = part | split:'=' -%}
+    {%- if key_and_value.size > 1 -%}
+      {% if key_and_value[0] == 'view' %}
+        {% assign param = key_and_value[1] %}
+      {% endif %}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}
+{% assign should_show_gate = true %}
+{% assign is_blocked_page = false %}
+{% assign non_blocked_collections = "travel,home,cold-weather-accessories,gifts-under-50,socks,the-2bb-sock-collection,gifts,guide-dog-collection,cavalier-replacements,gate-collection" | split: ',' %}
+<script>
+  let gateSettings = { shop: '{{ shop.permanent_domain }}' }
+  gateSettings.pageTitle = null
+  {% if page %}
+    gateSettings.pageTitle = "{{ page.title | replace: '"', '' | replace: "'", '' }}"
+    {% if template contains 'reserve' %}
+      gateSettings.pageTitle = null
+      {% assign is_blocked_page = true %}
+    {% endif %}
+  {% endif %}
+  {% if collection %}
+    gateSettings.pageTitle = "{{ collection.title | replace: '"', '' | replace: "'", '' }} Collection"
+    {% unless non_blocked_collections contains collection.handle %}
+      {% assign is_blocked_page = true %}
+    {% endunless %}
+  {% endif %}
+  {% if product %}
+    gateSettings.pageTitle = "{{ product.title | replace: '"', '' | replace: "'", '' }}"
+    {% assign product_in_non_blocklist = false %}
+    {% for collection in product.collections %}
+      {% if non_blocked_collections contains collection.handle %}
+        {% assign product_in_non_blocklist = true %}
+      {% endif %}
+    {% endfor %}
+    {% if product_in_non_blocklist == false %}
+      {% assign is_blocked_page = true %}
+    {% endif %}
+  {% endif %}
+  {% if template.name == "index" and param == 'reserve' %} 
+    {% assign is_blocked_page = true %}
+    gateSettings.pageTitle = null
+  {% endif %}
+  {% if customer %}
+    console.log('has customer')
+    gateSettings.email = '{{ customer.email }}'
+    gateSettings.customerId = 'gid://shopify/Customer/{{ customer.id }}'
+    {% if customer.tags contains 'waitlist' %}
+        gateSettings['waitlist'] = true
+    {% endif %}
+    {% if customer.tags contains 'gate-survey-attempted' %}
+        gateSettings['surveyAttempted'] = true
+    {% endif %}
+    {% if customer.tags contains 'gate-survey-success' %}
+        gateSettings['surveySuccess'] = true
+    {% endif %}
+    {% if customer.tags contains 'gate-survey-failed' %}
+        gateSettings['surveySuccess'] = false
+    {% endif %}
+    {% if customer.tags contains 'reserve-access' %}
+        gateSettings['reserveAccess'] = true
+        {% assign should_show_gate = false %}
+    {% endif %}
+    {% if customer.orders.size > 0 %}
+        gateSettings['hasShopped'] = true
+    {% endif %}
+  {% endif %}
+  {% if should_show_gate and is_blocked_page == true %}
+    gateSettings.showGate = true
+  {% endif %}
+  {% if is_blocked_page == false %}
+    {% assign should_show_gate = false %}
+  {% endif %}
+    window['2bbGate'] = gateSettings
+    // console.log(window['2bbGate'])
+    // // TEST WINDOW.2BBGATE
+    //     window['2bbGate'] = {
+    //         ...window['2bbGate'],
+    //         email: 'brandon@fullmetalworkshop.com',
+    //         customerId: 'gid://shopify/Customer/6965994357048',
+    //         waitlist: false,
+    //         surveyAttempted: false,
+    //         hasShopped: true,
+    //         surveySuccess: false,
+    //         reserveAccess: false,
+    //         reserveAccessSeen: false,
+    //         showGate: true
+    //     }
+    // END TEST WINDOW.2BBGATE
+</script>
+
+
+{% if should_show_gate %}
+  {% style %}
+    #gate-2bb-loading {
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      z-index: 999;
+      left: 0;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      font-family: 'ABCDiatype';
+      background-color: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+    #gate-2bb-content * {
+      color: black!important;
+    }
+    body {
+      overflow-y: hidden;
+  }
+  {% endstyle %}
+  <link rel="preload" href="{{ 'ABCDiatype-Regular.woff2' | file_url }}" as="font" type="font/woff2" crossorigin> 
+  <link rel="preload" href="{{ 'ABCDiatype-Medium.woff2' | file_url }}" as="font" type="font/woff2" crossorigin> 
+  <link rel="preload" href="{{ 'ABCDiatype-Bold.woff2' | file_url }}" as="font" type="font/woff2" crossorigin> 
+  {% style %}
+    @font-face {
+        font-family: 'ABCDiatype';
+        src: url("{{ 'ABCDiatype-Regular.woff2' | file_url }}") format('woff2'),
+            url("{{ 'ABCDiatype-Regular.woff' | file_url }}") format('woff');
+        font-weight: normal;
+        font-style: normal;
+        line-height: normal;
+    }
+    @font-face {
+        font-family: 'ABCDiatype';
+        src: url("{{ 'ABCDiatype-Medium.woff2' | file_url }}") format('woff2'),
+            url("{{ 'ABCDiatype-Medium.woff' | file_url }}") format('woff');
+        font-weight: 600;
+        font-style: normal;
+        line-height: normal;
+    }
+    @font-face {
+        font-family: 'ABCDiatype';
+        src: url("{{ 'ABCDiatype-Bold.woff2' | file_url }}") format('woff2'),
+            url("{{ 'ABCDiatype-Bold.woff' | file_url }}") format('woff');
+        font-weight: bold;
+        font-style: normal;
+        line-height: normal; 
+    } 
+  {% endstyle %}
+
+  <gate-2bb id="gate-2bb-app">
+      <div id="gate-2bb-loading">
+          <div id="gate-2bb-loading-content">
+              LOADING
+          </div>
+      </div>
+  </gate-2bb>
+  
+{% endif %}

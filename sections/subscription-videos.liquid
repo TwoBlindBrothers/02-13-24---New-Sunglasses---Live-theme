@@ -1,0 +1,102 @@
+{% unless section.settings.hide_videos %}
+  {% if section.blocks.size > 0 or section.settings.title != empty or section.settings.subheader != empty %}
+    <section class="text-center">
+      <div data-section-id="{{ section.id }}" id="shopblind-reviews" data-section-type="reviews">
+        {% if section.settings.title or section.settings.subheader %}
+          <div class="page-width">
+            <div class="section-header flex-grid flex-center text-center">
+              <div>
+                {% if section.settings.title %}
+                  <h2 class="h1 text-center uppercase icons-section-title">{{ section.settings.title }}</h2>
+                {% endif %}
+                {% if section.settings.subheader %}
+                  <div class="text-center">{{ section.settings.subheader }}</div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        {% if section.blocks %}
+          <div class="slideshow-wrapper">
+            <div class="slideshow-arrow-wrapper arrow-wrapper-left">
+              <div class="slider-arrow arrow-left">
+                {% render 'icon-chevron-left' %}
+              </div>
+            </div>
+            <div class="carousel-slides mx-auto flex-gutter-medium flex-center">
+              {% for block in section.blocks %}
+                <div class="carousel-slide">
+                  <div style="height: 0; padding-bottom: 85%; position: relative; background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2)), rgba(0,0,0,0.2) url('https://img.youtube.com/vi/{{ block.settings.video }}/0.jpg'); background-position: center; background-repeat: no-repeat;">
+                    <div class="video-block__content">
+                      <a class="play-btn" data-fancybox href="https://www.youtube.com/watch?v={{ block.settings.video }}" title="play video">
+                        {% include 'svg_icon_play', fill: 'white', classes: 'subscription-video-play'%}
+                      </a>
+                    </div>
+                    <div class="remodal video" data-remodal-id="{{ block.settings.video }}-grid-video" aria-modal="true">
+                      <button data-remodal-action="close" class="remodal-close"></button>
+                      <div class="youtube-player" data-id="{{ block.settings.video }}"></div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+            <div class="slideshow-arrow-wrapper arrow-wrapper-right">
+              <div class="slider-arrow arrow-right">
+                {% render 'icon-chevron-right' %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </section>
+  {% endif %}
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js" defer="defer"></script>
+  <script src="{{ 'carousel.js' | asset_url }}" defer="defer"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" integrity="sha512-yHknP1/AwR+yx26cB1y0cjvQUMvEa2PFzt1c9LlS4pRQ5NOTZFWbhBig+X9G9eYW/8m0/4OXNx8pxJ6z57x0dw==" crossorigin="anonymous" />
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Subscription Videos",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "hide_videos",
+      "label": "Hide Videos?"
+    },
+    {
+      "type":      "header",
+      "content":   "Videos"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Header"
+    },
+    {
+      "type": "richtext",
+      "id": "subheader",
+      "label": "Text"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "video",
+      "name": "Video",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title for Accessibility"
+        },
+        {
+          "type": "text",
+          "id": "video",
+          "label": "YouTube video ID",
+          "info": "Example Fkgb6aAHyCQ"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

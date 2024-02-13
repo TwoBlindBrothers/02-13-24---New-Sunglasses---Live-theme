@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ direction }}" class="{{ checkout_html_classes }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, user-scalable=0">
+    <meta name="referrer" content="origin">
+
+    <title>{{ page_title }}</title>
+
+    {{ content_for_header }}
+
+    {{ checkout_stylesheets }}
+    {{ checkout_scripts }}
+    <!-- ADDRESS VALIDATOR -->
+    {{ 'checkout-2bb.scss.css' | asset_url | stylesheet_tag }}
+    <script async src="https://d3ox8tdk614ykk.cloudfront.net/pobox_checker.js"></script>
+    <script src="https://use.typekit.net/ugw7ksw.js"></script>
+    <script> try{Typekit.load({  async: true }); }catch(e){} </script>
+    <!-- Insert in head tag -->
+    <script src="https://cdn.attn.tv/checkout/checkout.js" defer></script>
+    <script src="https://cdn.attn.tv/2bb/dtag.js"></script>
+
+    <style type="text/css">
+      .section__content.section__content__attentive {
+          border-radius: 4px;
+          background-color: #fafafa;
+          border: solid 1px #e6e6e6;
+          padding: 12px;
+      }
+      .section__content.section__content__attentive .input-checkbox {
+          background: #fff;
+      }
+      .section__footer__attentive {
+          font-size: 9px;
+          font-weight: normal;
+          font-style: normal;
+          font-stretch: normal;
+          line-height: 1.25;
+          letter-spacing: normal;
+          text-align: left;
+          color: #000000;
+          padding-top: 4px;
+      }
+      .section__footer__attentive a {
+          color: #000000;
+          text-decoration: underline;
+      }
+      .section__footer__attentive b {
+          font-weight: bold;
+      }
+      .checkbox__label.checkbox__label__attentive {
+          cursor: auto;
+          margin-left: 0.75em;
+      }
+      .checkbox__label__attentive__header {
+          font-size: 14px;
+          font-weight: bold;
+          font-style: normal;
+          font-stretch: normal;
+          line-height: 1;
+          letter-spacing: normal;
+          text-align: left;
+          color: #333333;
+      }
+      .checkbox__label__attentive__subheader {
+          font-size: 12px;
+          font-weight: normal;
+          font-style: normal;
+          font-stretch: normal;
+          line-height: 1.17;
+          letter-spacing: normal;
+          text-align: left;
+          color: #737373;
+          padding-top: 4px;
+      }
+      .checkbox-wrapper {
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: -webkit-flex;
+          display: flex;
+          align-items: baseline;
+      }
+    </style>
+
+    <!-- Start WKND tag. Deploy at the beginning of document head. -->
+    <script>
+      (function(d) {
+        var e = d.createElement('script');
+        e.src = d.location.protocol + '//tag.wknd.ai/5456/i.js';
+        e.async = true;
+        d.getElementsByTagName("head")[0].appendChild(e);
+      }(document));
+    </script>
+    <!-- End WKND tag -->
+
+
+  </head>
+  <body>
+    {{ skip_to_content_link }}
+
+    <header class="banner" data-header role="banner">
+      <div class="wrap">
+        {{ content_for_logo }}
+      </div>
+    </header>
+
+    {{ order_summary_toggle }}
+    <div class="content" data-content>
+      <div class="wrap">
+        <div class="main">
+          <header class="main__header" role="banner">
+            {{ content_for_logo }}
+            {{ breadcrumb }}
+            {{ alternative_payment_methods }}
+          </header>
+          <main class="main__content" role="main">
+            {{ content_for_layout }}
+            <!-- insert HTML in body main__content section -->
+            <div id="attentiveTransactionalOptIn" class="fieldset-description" data-buyer-accepts-transactional-attentive="" aria-label="Phone Sign Up">
+                <div class="section__content section__content__attentive">
+                    <div class="checkbox-wrapper">
+                        <div class="checkbox__input">
+                            <input name="attributes[buyer_accepts_transactional_attentive]" type="hidden" value="0">
+                            <input class="input-checkbox" data-backup="buyer_accepts_transactional" type="checkbox" value="1" name="attributes[buyer_accepts_transactional_attentive]" id="checkout_buyer_accepts_transactional_attentive" aria-labelledby="headers" tabindex="0" focusable="true" checked>
+                        </div>
+                        <div class="checkbox__label checkbox__label__attentive">
+                            <span id="headers" tabindex="0" focusable="true">
+                                <div class="checkbox__label__attentive__header">Get SMS alerts about your orders</div>
+                                <div class="checkbox__label__attentive__subheader">Stay up to date on your purchase with order confirmation and shipping confirmation messages</div>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- insert HTML in body main__content section -->
+            <div id="attentiveOptIn" class="fieldset-description" data-buyer-accepts-marketing-attentive="" aria-label="Phone Sign Up">
+                <div class="section__content section__content__attentive">
+                    <div class="checkbox-wrapper">
+                        <div class="checkbox__input">
+                            <input name="attributes[buyer_accepts_marketing_attentive]" type="hidden" value="0">
+                            <input class="input-checkbox" data-backup="buyer_accepts_marketing" type="checkbox" value="1" name="attributes[buyer_accepts_marketing_attentive]" id="checkout_buyer_accepts_marketing_attentive" aria-labelledby="headers" tabindex="0" focusable="true">
+                        </div>
+                        <div class="checkbox__label checkbox__label__attentive">
+                            <span id="headers" tabindex="0" focusable="true">
+                                <div class="checkbox__label__attentive__header">Stay In The Know</div>
+                                <div class="checkbox__label__attentive__subheader">Sign up to get texts from Two Blind Brothers and you'll be the first to know about our new Shop Blind boxes</div>
+                            </span>
+                            <div class="section__footer__attentive">By checking this box, you agree to receive recurring automated promotional and personalized marketing text messages <b>(e.g. cart reminders)</b> from Two Blind Brothers at the cell number used when signing up. Consent is not a condition of any purchase. <b>Reply HELP for help and STOP to cancel.</b> Msg frequency varies. Msg & data rates may apply. View <a href="http://attn.tv/2bb/terms.html" target="_blank" rel="noopener noreferrer" aria-label="Two Blind Brothers Terms Link" >Terms</a> &amp; <a href="https://attnl.tv/p/wgb" target="_blank" rel="noopener noreferrer" aria-label="Two Blind Brothers Privacy Link">Privacy</a>.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+          </main>
+          <footer class="main__footer" role="contentinfo">
+            {{ content_for_footer }}
+          </footer>
+        </div>
+        <aside class="sidebar" role="complementary">
+          <div class="sidebar__header">
+            {{ content_for_logo }}
+          </div>
+          <div class="sidebar__content">
+            {{ content_for_order_summary }}
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    {{ tracking_code }}
+  <div data-rebuy-id="121831"></div>
+<script async src="https://cdn.rebuyengine.com/onsite/js/rebuy.js?shop=two-blind-brothers.myshopify.com"></script>
+</body>
+</html>
+
+<style>
+  .section--tip { display: none; }
+</style>
+<script>
+  (function() {
+
+    function listenForTipSection(e) {
+      if ( e.relatedNode.className === 'section__content' ) {
+        const tipSection = document.getElementsByClassName('section--tip')
+        if ( tipSection.length ) {
+          window.removeEventListener("DOMNodeInserted", listenForTipSection, false);
+          fetch('/cart.js')
+          .then(function(response) {
+            return response.json();
+          })
+          .then(function(json) {
+            // show tip content
+            if (tipSection.length) {
+              var show_tip_types = [
+                'guide dog',
+                'guide dogs',
+                'vday guide dog',
+                'pip and friends'
+              ]
+              for (const item in json.items) {
+                if ( show_tip_types.includes(json.items[item].product_type.toLowerCase()) ) {
+                  tipSection[0].style.display = 'block';
+                  break;
+                }
+              }
+            }
+          })
+          .catch(function(error) {
+            console.error('Error retreiving cart: ', error);
+          });
+        }
+      }
+    }
+    window.addEventListener("DOMNodeInserted", listenForTipSection, false);
+
+    const listenForDiscountSection = () => {
+      const discountSection = document.getElementsByClassName('order-summary__section--discount')
+      if ( discountSection.length ) {
+        addDiscountAlert()
+        window.removeEventListener("DOMNodeInserted", listenForDiscountSection)
+      }
+    }
+
+    window.addEventListener("DOMNodeInserted", listenForDiscountSection, false)
+
+    const addCartItems = discountedItems => {
+      let addData = { items: [] }
+      discountedItems.forEach( item => {
+        let newItemProps = {}
+        Object.entries(item.properties).forEach( ([key,value]) => {
+          if ( key !== '_ocu_offer_id' && key !== '_ocu_offer_reference_id' ) {
+            newItemProps[key] = value
+          }
+        })
+        addData.items.push({
+          id: item.variant_id,
+          quantity: item.quantity,
+          properties: newItemProps
+        })
+      })
+      fetch('/cart/add.js', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(addData)
+      })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(json) {
+        window.location.replace('https://twoblindbrothers.com/checkout');
+      })
+      .catch(function(error) {
+        console.log(error)
+        // ShopifyAPI.onError(obj, status)
+      })
+    }
+
+    const removeCartItems = discountedItems => {
+      const discountLoader = document.createElement('div')
+      discountLoader.setAttribute('style', 'box-sizing: border-box; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255,255,255,.9); display: flex; justify-content: center; align-items: center; padding: 1rem;')
+      const discountLoaderText = document.createElement('p')
+      discountLoaderText.setAttribute('style', 'font-weight: 900;')
+      discountLoaderText.innerHTML = 'Processing'
+      discountLoader.append(discountLoaderText)
+      document.getElementById('discount-alert').append(discountLoader)
+      let updateData = { updates: {} }
+      discountedItems.forEach( item => {
+        updateData.updates[item.variant_id] = 0
+      })
+      fetch('/cart/update.js', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData)
+      })
+      .then(function(response) {
+        addCartItems(discountedItems)
+      })
+      .then(function(json) {
+        //console.log(json)
+      })
+      .catch(function(error) {
+        console.error('Error retreiving cart: ', error);
+      });
+    }
+
+    const addDiscountAlert = () => {
+      // Look for inability to add discount
+      const discountSection = document.getElementsByClassName('edit_checkout')
+      if ( discountSection.length ) {
+        fetch('/cart.js')
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(json) {
+          // Look for an OCU offer property
+          //console.log(json.items)
+          const discountedItems = json.items.filter( item => item.properties && '_ocu_offer_id' in item.properties )
+          // If one exists, show the message inviting customers to remove their discount
+          //console.log(discountedItems)
+          if ( discountedItems.length ) {
+            const summarySection = document.querySelector('.order-summary__sections')
+            const discountSection = document.querySelector('.order-summary__section--discount')
+            const discountAlert = document.createElement('div')
+            const discountText1 = document.createElement('p')
+            const discountText2 = document.createElement('p')
+            const discountLink = document.createElement('a')
+            discountAlert.setAttribute('id', 'discount-alert')
+            discountAlert.setAttribute('style', 'box-sizing: border-box; position: relative; margin-top: 1.25rem; text-align: center;')
+            discountLink.setAttribute('href', '#')
+            discountLink.setAttribute('id', 'clear-discounts')
+            discountLink.setAttribute('style', 'font-weight: 600;')
+            discountLink.innerHTML = 'click here'
+            discountText1.innerHTML = 'Your discount has been applied! To use a different code '
+            discountText2.innerHTML = 'To apply a different discount code, remove the current discount by clicking '
+            discountText1.append(discountLink)
+            discountAlert.append(discountText1)
+            //discountAlert.append(discountText2)
+            summarySection.insertBefore(discountAlert, discountSection)
+            discountSection.setAttribute('style', 'border-top: none;')
+            document.getElementById('clear-discounts').addEventListener('click', function () {
+              removeCartItems(discountedItems)
+              return
+            })
+            //removeCartItems(discountedItems)
+          }
+        })
+        .catch(function(error) {
+          console.error('Error retreiving cart: ', error);
+        });
+      }  
+    }  
+  })();
+  // const selectCountry = document.querySelector('[data-address-field="country"]');
+  // const phoneField = document.querySelector('[data-address-field="phone"]');
+  // const zipField = document.querySelector('[data-address-field="zip"]')
+  // const addressFields = document.querySelector('.address-fields');
+  // console.log(addressFields)
+  // const canadaAlert = document.createElement("p");
+  // canadaAlert.innerHTML = 'Please note: we cannot provide return labels for international orders'
+  // canadaAlert.classList.add("alert")
+  // if ( selectCountry.querySelector('option:checked').value !== 'United States' ) {
+  //   canadaAlert.appendAfter(zipField)
+  // }
+  // selectCountry.addEventListener('change', (event) => {
+  //   if ( event.target.value !== 'United States' ) {
+  //     canadaAlert.appendAfter(zipField)
+  //   } else {
+  //     canadaAlert.remove()
+  //   }
+  // });
+  //
+  // Element.prototype.appendAfter = function (element) {
+  //   element.parentNode.insertBefore(this, element.nextSibling);
+  // },false;
+</script>
+
+<!-- Conversion Pixel for [registration]- DO NOT MODIFY -->
+<img src="https://data.adxcel-ec2.com/pixel/?ad_log=referer&action=registration&pixid=e503aefe-73f2-46f2-8010-e12740208050" width="1" height="1" border="0">
+<!-- End of Conversion Pixel -->
+
+<!--Gorgias Chat Widget Start-->
+<script id="gorgias-chat-widget-install-v3" 
+    src="https://config.gorgias.chat/bundle-loader/01H2DX32D7RHVBGVWR3EG2HXDS">
+</script>
+<!--Gorgias Chat Widget End-->

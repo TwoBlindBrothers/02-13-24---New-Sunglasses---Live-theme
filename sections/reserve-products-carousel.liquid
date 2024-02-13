@@ -1,0 +1,91 @@
+{%- assign count_nav = 0 -%}
+{%- assign count_panel = 0 -%}
+
+{%- if section.blocks.size > 0 -%}
+  <reserve-products-carousel class="reserve-products-carousel bg-white text-black">
+    <div class="reserve-products-carousel__inner mx-auto max-w-[1440px] px-[15px] py-[32px] sm:px-[32px] sm:pt-[32px] md:px-[40px] md:pt-[40px] lg:px-[56px] lg:pt-[56px]">
+      <div class="reserve-products-carousel__header">
+        {%- if section.settings.tagline != blank -%}
+          <div class="p3 px-[7px] h-[22px] bg-grey-200 rounded-[50px] inline-flex items-center justify-center mb-2 md:mb-3 lg:mb-2.5">{{ section.settings.tagline }}</div>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="h2-reserve mb-2 sm:mb-3 md:mb-4">{{ section.settings.title }}</h2>
+        {%- endif -%}
+      </div>
+      <div class="reserve-products-carousel__tabs">
+        <div class="mb-7 sm:mb-5 md:mb-4 lg:mb-8 flex gap-[25px]" role="tablist" aria-label="Products Carousel Tabs">
+          {%- for block in section.blocks -%}
+            {%- if block.settings.rebuy_widget_id != blank -%}
+              {%- assign count_nav = count_nav | plus: 1 -%}
+              <button
+                class="label reserve-products-carousel__tab"
+                role="tab"
+                aria-selected="{% if count_nav == 1 %}true{% else %}false{% endif %}"
+                aria-controls="panel-{{ forloop.index }}"
+                id="tab-{{ forloop.index }}"
+                tabindex="{% if count_nav == 1 %}0{% else %}-1{% endif %}">
+                {{ block.settings.title }}
+              </button>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+
+        {%- for block in section.blocks -%}
+          {%- if block.settings.rebuy_widget_id != blank -%}
+            {%- liquid
+              assign count_panel = count_panel | plus: 1
+              assign rebuy_widget_id = block.settings.rebuy_widget_id
+            -%}
+            <div class="opacity-0 h-0 [&.is-active]:h-auto [&.is-active]:opacity-100{% if count_panel == 1 %} is-active{% endif %}" id="panel-{{ forloop.index }}" role="tabpanel" tabindex="{% if count_panel == 1 %}0{% else %}-1{% endif %}" aria-labelledby="tab-{{ forloop.index }}">
+              {%- render 'rebuy-templates', rebuy_id: rebuy_widget_id -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </reserve-products-carousel>
+
+  {%- render 'vite-tag' with 'reserve-products-carousel.js' -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Reserve - Prod Carousel",
+  "class": "bg-white",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "products",
+      "name": "Products",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "text",
+          "id": "rebuy_widget_id",
+          "label": "Rebuy Widget ID"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reserve - Prod Carousel"
+    }
+  ]
+}
+{% endschema %}

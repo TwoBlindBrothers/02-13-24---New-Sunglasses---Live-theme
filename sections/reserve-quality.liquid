@@ -1,0 +1,47 @@
+{% render 'reserve-quality',
+  background_image: section.settings.background_image,
+  title: section.settings.title,
+  description: section.settings.description,
+  blocks: section.blocks
+%}
+
+{% schema %}
+{
+  "name": "Reserve Quality",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background Image"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reserve Quality"
+    }
+  ]
+}
+{% endschema %}

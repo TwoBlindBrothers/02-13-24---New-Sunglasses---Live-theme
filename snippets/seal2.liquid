@@ -1,0 +1,94 @@
+{% assign side = block.settings.side %}
+{% assign arrowloc = block.settings.arrowloc %}
+{% assign hasthumb = false %}
+{% if block.settings.thumb != blank %}
+{% capture thumb %}{{ block.settings.thumb | img_url: '600x600', crop: 'center' }}{% endcapture %}
+{% elsif block.settings.gif != blank %}
+{% capture thumb %}{{ block.settings.gif | append: '.gif' | file_img_url }}{% endcapture %}
+{% endif %}
+{% assign sealvideo = block.settings.sealvideo %}
+{% assign titletext1 = block.settings.titletext1 %}
+{% assign titletext2 = block.settings.titletext2 %}
+{% assign titletext3 = block.settings.titletext3 %}
+{% assign titletext4 = block.settings.titletext4 %}
+{% assign text = block.settings.text %}
+{% assign subtext = block.settings.subtext %}
+{% assign sealimg = block.settings.sealimg %}
+
+{% capture grid__thumb %}
+<div class="grid__thumb">
+
+  <img
+       data-sizes="auto"
+       data-src="{{ thumb }}"
+       data-srcset="{{ thumb }} 600w"
+       class="grid__thumb__img lazyload"
+       alt="{{ titletext1 }} {% if titletext2 %} {{ titletext2 }} {% endif %} {% if titletext3 %} {{ titletext3 }} {% endif %} {% if titletext4 %} {{ titletext4 }} {% endif %}" />
+
+  <img data-src="{{ 'arrow-outline.svg' | asset_url }}" class="deco arrow--4 {% if side == 'seal-left' %}arrow--left{% elsif side == 'seal-right' %}arrow--right{% endif %} lazyload"
+       style="{% if arrowloc == 'bottom' %}bottom:-40px;top:auto;
+              {% elsif arrowloc == 'middle' %}top:40%;
+              {% endif %}"/>
+  {% if sealimg != blank %}
+  <img data-src="{{ sealimg | append: '.svg' | asset_url }}" class="deco seal lazyload"
+       style="{% if arrowloc == 'bottom' %}top: 30px;bottom: auto;{% endif %}{% if side == 'seal-right' %}left: auto;right: 30px;{% endif %}"/>
+  {% endif %}
+  {% if sealvideo != blank %}
+    <a class="play-btn" data-fancybox href="https://www.youtube.com/watch?v={{ sealvideo }}" title="play video">
+      {% include 'svg_icon_play' %}
+    </a>
+    <div class="remodal video" data-remodal-id="{{ sealvideo }}-grid-video" aria-modal="true">
+      <button data-remodal-action="close" class="remodal-close"></button>
+      <div class="youtube-player" data-id="{{ sealvideo }}"></div>
+    </div>
+  {% endif %}
+</div>
+{% endcapture %}
+
+<div class="wrapper">
+  <div class="grid-uniform grid--seal {{ side }} clearfix">
+
+    {% if side == 'seal-left' %}
+    <div class="grid__item large--one-half grid__item--seal">
+      {{ grid__thumb }}
+    </div>
+    {% endif %}
+
+    <div class="grid__item grid__item--text large--one-half">
+
+      {% if titletext1 == blank %}
+      <img src="{{ 'curing-blindness_meet-our-partners.svg' | asset_url }}" role="img" alt="meet our visually impaired partners" class="grid__title lazyload">
+      <h2 class="visually-hidden">meet our visually impaired partners</h2>
+      {% else %}
+      <h2 class="h1 slab"><span class="slabtext">{{ titletext1 }}</span>
+        {% if titletext2 %}
+        <span class="slabtext">{{ titletext2 }}</span>
+        {% endif %}
+        {% if titletext3 %}
+        <span class="slabtext">{{ titletext3 }}</span>
+        {% endif %}
+        {% if titletext4 %}
+        <span class="slabtext">{{ titletext4 }}</span>
+        {% endif %}
+      </h2>
+      {% endif %}
+
+      <div class="grid__thumb">
+        <img src="{{ thumb }}" class="grid__thumb__img lazyload" />
+        {% include 'svg_arrow-outline',
+                     classes: 'arrow--4'  %}
+      </div>
+
+      <p class="grid__text">{{ text }}</p>
+      <p class="h2">{{ subtext }}</p>
+
+    </div>
+
+    {% if side == 'seal-right' %}
+    <div class="grid__item  grid__item--seal large--seven-twelfths">
+      {{ grid__thumb }}
+    </div>
+    {% endif %}
+
+  </div>
+</div>

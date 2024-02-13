@@ -1,0 +1,76 @@
+{% capture 'hero_image' %}
+{{ section.settings.hero_image | img_url: '1640x'  }}
+{% endcapture %}
+
+<div id="contact-hero" class="hero" style="background-image:url({{ hero_image }})" {{ block.shopify_attributes }}>
+    <div class="wrapper center-text">
+       <div class="hero-text hero-text--contact">
+           {% if section.settings.title_1 != blank %}
+               <h1 class="slab">
+                <span class="slabtext">{{section.settings.title_1}}</span> 
+                {% if section.settings.title_2 %}
+                <span class="slabtext">{{section.settings.title_2}}</span> 
+                {% endif %}
+               </h1>
+             {% endif %}
+            <div class="hero-description">
+               <ul class="contact-hero__links demarcated bold">
+                   <li><a href="{{section.settings.link_1_url}}" title="{{section.settings.link_1_text}}">{{section.settings.link_1_text}}</a></li>
+                {% if section.settings.link_2_url %}
+                    <li><a  href="{{section.settings.link_2_url}}" title="{{section.settings.link_2_text}}">{{section.settings.link_2_text}}</a></li>
+                {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+
+ {% schema %}
+  {
+    "name": "Hero image",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "hero_image",
+        "label": "Hero image",
+        "info": "1600px wide"
+      },
+       {
+        "type": "text",
+        "id": "title_1",
+        "label": "Heading line 1"
+      },
+      {
+        "type": "text",
+        "id": "title_2",
+        "label": "Heading line 2"
+      },
+      {
+        "type": "textarea",
+        "id": "hero_copy",
+        "label": "Copy"
+      },
+      {
+        "type": "text",
+        "id": "link_1_text",
+        "label": "Link 1 Text"
+      },
+      {
+        "type": "url",
+        "id": "link_1_url",
+        "label": "Link 1 URL"
+      },
+      {
+        "type": "text",
+        "id": "link_2_text",
+        "label": "Link 2 Text"
+      },
+      {
+        "type": "url",
+        "id": "link_2_url",
+        "label": "Link 2 URL"
+      }
+    ]
+  }
+{% endschema %}

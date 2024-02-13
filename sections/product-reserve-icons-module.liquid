@@ -1,0 +1,134 @@
+{% assign icons_meta = product.metafields.reserve_icons %}
+
+{%- if section.settings.use_acf -%}
+  {%- if icons_meta.title != blank or icons_meta.size > 0 -%}
+  <section class="reserve-icons">
+    <div class="max-w-[1440px] mx-auto px-[15px] sm:px-8 md:px-10 lg:px-[56px]">
+      <div class="reserve-icons__content">
+        <div class="reserve-icons__item">
+          <div class="flex items-center h-full reserve-icons__item-block-title">
+            {% if icons_meta.title != blank %}
+              <h2 class="h3-reserve mb-0 lg:max-w-[92%] xl:max-w-[74%] reserve-icons__item--title">{{ icons_meta.title }}</h2>
+            {% endif %}
+          </div>
+        </div>
+        {% for reserve_icons in icons_meta %}
+          {%- liquid
+            assign icon_image = icons_meta.icon_image[forloop.index0] | first
+            assign icon_title = icons_meta.icon_title[forloop.index0]
+            assign icon_description = icons_meta.icon_description[forloop.index0]
+          -%}
+          {%- if icon_image != blank or icon_title != blank or icon_description != blank -%}
+            <div class="reserve-icons__item">
+              <div class="reserve-icons__item-content">
+                {%- if icon_image != blank -%}
+                  {% render 'image', class: 'reserve-icons__item--icon', image: icon_image %}
+                {%- endif -%}
+                <div class="reserve-icons__item--info">
+                  {%- if icon_title != blank -%}
+                    <h3 class="p2 reserve-icons__item--title">{{ icon_title }}</h3>
+                  {%- endif -%}
+                  {%- if icon_description != blank -%}
+                    <div class="p2 reserve-icons__item--description">{{ icon_description }}</div>
+                  {%- endif -%}
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+  {%- endif -%}
+{%- else -%}
+  {%- if section.settings.title != blank or section.blocks.size > 0 -%}
+    <section class="reserve-icons">
+      <div class="max-w-[1440px] mx-auto px-[15px] sm:px-8 md:px-10 lg:px-[56px]">
+        <div class="reserve-icons__content">
+          <div class="reserve-icons__item">
+            <div class="flex items-center h-full reserve-icons__item-block-title">
+              {% if section.settings.title != blank %}
+                <h2 class="h3-reserve mb-0 lg:max-w-[92%] xl:max-w-[74%] reserve-icons__item--title">{{ section.settings.title }}</h2>
+              {% endif %}
+            </div>
+          </div>
+          {% for block in section.blocks %}
+            {%- liquid
+              assign icon_image = block.settings.icon_image
+              assign icon_title = block.settings.icon_title
+              assign icon_description = block.settings.icon_description
+            -%}
+            {%- if icon_image != blank or icon_title != blank or icon_description != blank -%}
+              <div class="reserve-icons__item">
+                <div class="reserve-icons__item-content">
+                  {%- if icon_image != blank -%}
+                    {% render 'image', class: 'reserve-icons__item--icon', image: icon_image %}
+                  {%- endif -%}
+                  <div class="reserve-icons__item--info">
+                    {%- if icon_title != blank -%}
+                      <h3 class="p2 reserve-icons__item--title">{{ icon_title }}</h3>
+                    {%- endif -%}
+                    {%- if icon_description != blank -%}
+                      <div class="p2 reserve-icons__item--description">{{ icon_description }}</div>
+                    {%- endif -%}
+                  </div>
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Reserve - Icons",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "use_acf",
+      "label": "Use ACF",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Exclusive Unparalleled Quality"
+    }
+  ],
+  "max_blocks": 3,
+  "blocks": [
+    {
+      "type": "icon",
+      "name": "Icon",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Icon"
+        },
+        {
+          "type": "text",
+          "id": "icon_title",
+          "label": "Title",
+          "default": "Soft Feel"
+        },
+        {
+          "type": "text",
+          "id": "icon_description",
+          "label": "Description",
+          "default": "Ultra-soft designer clothing from natural fibers for the purpose of curing blindness"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reserve - Icons"
+    }
+  ]
+}
+{% endschema %}

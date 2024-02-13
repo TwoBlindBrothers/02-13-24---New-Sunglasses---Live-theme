@@ -1,0 +1,148 @@
+<div class="gd_why">
+  <div class="gd_image_text gd_image_text--reverse">
+    <div class="gd_image_text__image">
+      <div class="swiper-container">
+        <ul class="swiper-wrapper">
+          {%- assign slides = section.blocks | where: 'type', 'slide' -%}
+          {%- for slide in slides -%}
+          <li class="swiper-slide">
+            {%-liquid              
+              if slide.settings.video_file
+                assign video_id = forloop.index
+                assign section_id = section.id
+                render 'video-autoplay', image: slide.settings.image, video: slide.settings.video_file, video_id: video_id, section_id: section_id, controls: true
+              elsif slide.settings.image
+                render 'image', image: slide.settings.image
+              endif
+            -%}
+          </li>
+          {%- endfor -%}
+        </ul>
+        <div class="swiper-pagination"></div>
+        <div>
+          <span class="swiper-button-prev">
+            {% render 'icon-arrow' %}
+          </span>
+          <span class="swiper-button-next">
+            {% render 'icon-arrow' %}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="gd_image_text__text">
+      <div class="wrapper"> 
+        {%- unless section.settings.title == blank -%}
+          <h2 class="section-title">{{ section.settings.title }}</h2>
+        {%- endunless -%}
+        <p class="">{{ section.settings.text }}</p>
+        <a href="{{ section.settings.button_link }}" class="btn--text" title="take a look">{{ section.settings.button_text }}</a>
+      </div>
+    </div>
+  </div>
+  <div class="gd_cols gd_cols--4">
+    <ul class="gd_cols__grid">
+      {%- assign columns = section.blocks | where: 'type', 'column' -%}
+      {%- for column in columns -%}
+      <li class="gd_cols__col">
+        <div>{{ column.settings.svg }}</div>
+        {%- unless column.settings.title == blank -%}
+          <h3 class="h5">{{ column.settings.title }}</h3>
+        {%- endunless -%}
+        <p>{{ column.settings.text }}</p>
+      </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</div>
+
+{%- if slides.size > 0 -%}
+  <script type="module">
+    import Swiper from 'https://unpkg.com/swiper@7/swiper-bundle.esm.browser.min.js'
+    const thisSwiper = new Swiper(`#shopify-section-{{ section.id }} .swiper-container`,  {
+      direction: 'horizontal',
+      spaceBetween: 50,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+    })
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Guide Dog - Why Give?",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Column",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "textarea",
+          "id": "svg",
+          "label": "SVG Code"
+        }
+      ]
+    },
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "video_file",
+          "label": "Video File",
+          "info": "This overrides the image if not blank."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "UGC",
+      "name": "Guide Dog - Why Give?"
+    }
+  ]
+}
+{% endschema %}

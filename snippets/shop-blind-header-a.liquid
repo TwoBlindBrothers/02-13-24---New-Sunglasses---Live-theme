@@ -1,0 +1,13 @@
+<section id="shop-blind__header-a">
+  <div class="grid text-center" style="max-width: 100%; margin: 0;">
+    <div class="grid__item ten-twelfths  push--one-twelfth">
+      {% include 'eye-closed.svg' %}
+      {% if page.metafields.shop_blind.shop_blind_title != blank %}
+        <h1 tabindex="0" class="shop-blind-title">{{ page.metafields.shop_blind.shop_blind_title }}</h1>
+      {% endif %}
+      {% if page.metafields.shop_blind.hero_content != blank %}
+        <p tabindex="0" class="shop-blind-desc">{{ page.metafields.shop_blind.hero_content }}</p>
+      {% endif %}
+    </div>
+  </div>
+</section>

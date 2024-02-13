@@ -1,0 +1,84 @@
+{% unless product.handle contains 'sunglasses' or page.handle contains 'cavalier' or page.handle contains 'order-search' %}
+<div class="popup">
+    <div class="popup-container">
+
+        <div class="popup-close" aria-label="close popup" onclick="popupClose()"><i class="fa fa-times"></i></div>
+
+        <div class="popup-inner">
+
+            {% if section.settings.title != blank %}
+                <h1>{{ section.settings.title }}</h1>
+            {% endif %}
+            {{ section.settings.body }}
+
+            <form id="email_signup" accept-charset="UTF-8" class="popup-form" action="//manage.kmail-lists.com/subscriptions/subscribe" data-ajax-submit="//manage.kmail-lists.com/ajax/subscriptions/subscribe" method="GET" target="_blank" novalidate="novalidate">
+                <input type="hidden" name="g" value="JGMSg9">
+                <input class="form-input" type="email" value="" name="email" id="k_id_email" placeholder="Enter email" />
+                <button class="form-button btn-cta" onClick="fbq('track', 'Lead');" type="submit">{{ section.settings.button_1_title }}</button>
+            </form>
+
+
+
+
+            <script type="text/javascript" src="//www.klaviyo.com/media/js/public/klaviyo_subscribe.js"></script>
+            <script type="text/javascript">
+              KlaviyoSubscribe.attachToForms('#email_signup', {
+                success: function($form) {
+                    $(".popup-inner").hide();
+                    $(".popup-complete").fadeIn();
+
+                    Cookies.set('popup', 'hidden', { sameSite: true });
+                }
+              });
+            </script>
+
+            <button class="form-button form-button--reject btn-cta" onclick="popupClose();">{{ section.settings.button_2_title }}</button>
+
+        </div>
+
+        <div class="popup-complete">
+            <h1>{{ section.settings.heading_complete }}</h1>
+            <p>{{ section.settings.text_complete }}</p>
+        </div>
+
+    </div>
+</div>
+{% endunless %}
+
+{% schema %}
+  {
+    "name": "Popup",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "richtext",
+        "id": "body",
+        "label": "Body"
+      },
+      {
+        "type": "text",
+        "id": "button_1_title",
+        "label": "Button 1 Title"
+      },
+      {
+        "type": "text",
+        "id": "button_2_title",
+        "label": "Button 2 Title"
+      },
+      {
+          "type": "text",
+          "id": "heading_complete",
+          "label": "Heading - Complete"
+      },
+      {
+          "type": "richtext",
+          "id": "text_complete",
+          "label": "Text - Complete"
+      }
+    ]
+  }
+{% endschema %}

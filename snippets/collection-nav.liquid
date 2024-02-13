@@ -1,0 +1,39 @@
+{% if collection.handle contains 'womens' %}
+
+  <div id="collection-filters">
+      <ul class="inline-list text-center">
+
+          {% for link in linklists.collection-womens.links %}
+
+              <li>
+                <a role="tab" aria-selected="{% if link.active %}true{% else %}false{% endif %}" class="{% if link.active %}active{% endif %} filter-btn--alt" href="{{ link.url }}">
+                  {{ link.title }}
+                  {% include 'svg_icon_plus', title: ''  %}
+                </a>
+              </li>
+
+          {% endfor %}
+
+      </ul>
+  </div>
+
+{% elsif collection.handle contains 'mens' %}
+
+  <div id="collection-filters">
+      <ul class="inline-list text-center">
+
+          {% for link in linklists.collection-mens.links %}
+
+              <li>
+                <a role="tab" aria-selected="{% if link.active %}true{% else %}false{% endif %}" class="{% if link.active %}active{% endif %} filter-btn--alt" href="{{ link.url }}">
+                  {{ link.title }}
+                  {% include 'svg_icon_plus', title: ''  %}
+                </a>
+              </li>
+
+          {% endfor %}
+
+      </ul>
+  </div>
+
+{% endif %}

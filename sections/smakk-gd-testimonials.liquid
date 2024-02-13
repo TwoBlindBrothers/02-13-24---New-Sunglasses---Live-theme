@@ -1,0 +1,90 @@
+<div class="gd_test">
+  <div class="gd_test__inner">
+    <div class="swiper-container">
+      <ul class="swiper-wrapper">
+        {%- assign slides = section.blocks -%}
+        {%- for slide in slides -%}
+        <li class="swiper-slide">
+          <blockquote>
+            <span aria-hidden="true">
+              <svg width="77" height="41" viewBox="0 0 77 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M76.6726 0.399902H52.1726L36.0726 40.2999H64.0726L76.6726 0.399902ZM40.9726 0.399902H16.4726L0.372559 40.2999H28.3726L40.9726 0.399902Z" fill="#231F20"/>
+              </svg>
+            </span>
+            <p>
+              {{ slide.settings.text }}
+            </p>
+            <cite>
+              {{ slide.settings.title }}
+            </cite>
+          </blockquote>
+        </li>
+        {%- endfor -%}
+      </ul>
+      <div class="swiper-pagination"></div>
+      <div>
+        <span class="swiper-button-prev">
+          {% render 'icon-arrow' %}
+        </span>
+        <span class="swiper-button-next">
+          {% render 'icon-arrow' %}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+{%- if slides.size > 0 -%}
+  <script type="module">
+    import Swiper from 'https://unpkg.com/swiper@7/swiper-bundle.esm.browser.min.js'
+    const thisSwiper = new Swiper(`#shopify-section-{{ section.id }} .swiper-container`,  {
+      direction: 'horizontal',
+      spaceBetween: 50,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      autoplay: {
+        delay: 5000,
+      },
+    })
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Guide Dog Testimonials",
+  "settings": [
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonials",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Name"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Quote Text",
+          "default": "Review ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut sit labore.",
+          "info": "This overrides the image if not blank."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Text",
+      "name": "Guide Dog Testimonials"
+    }
+  ]
+}
+{% endschema %}

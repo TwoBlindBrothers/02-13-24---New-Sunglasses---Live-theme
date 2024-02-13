@@ -1,0 +1,567 @@
+{% comment %}
+{% include 'loader' %}
+{% endcomment %}
+
+{% assign bg_color = false %}
+{% assign img_border_color = false %}
+{% if collection %}
+  {% if collection.metafields.style.collection_background %}
+    {%  assign bg_color = collection.metafields.style.collection_background %}
+  {% endif %}
+  {% if collection.metafields.style.products_border_color %}
+    {%  assign img_border_color = collection.metafields.style.products_border_color %}
+  {% endif %}
+{% endif %}
+
+<div itemscope class="product-info-container remodal-bg"{% if bg_color %} style="background-color: {{ bg_color }}!important;"{% endif %} itemtype="http://schema.org/Product">
+
+  <meta itemprop="url" content="{{ shop.url }}{{ product.url }}">
+  <meta itemprop="image" content="{{ product.featured_image.src | img_url: 'grande' }}">
+
+  {% assign current_variant = product.selected_or_first_available_variant %}
+  {{ 'jQuery.verticalCarousel.js' | asset_url | script_tag }}
+  {{ 'jQuery.verticalCarousel.css' | asset_url | stylesheet_tag }}
+
+  {% comment %}
+  {% section "variant-descriptions" %}
+  {% endcomment %}
+
+  {% comment %}{% include 'breadcrumb' %}{% endcomment %}
+
+  <div class="grid product-single">
+    <div class="grid__item large--two-thirds text-center">
+      {% unless product.type == 'Gift' %}
+        <div class="mobile-product-title-container large--hide">
+          <h1 class="product-title mobile-product-title" itemprop="name" id="variantTitle">
+            {{ product.title | replace: "Women's ", "" | replace: "Men's ", "" }}
+          </h1>
+        </div>
+      {% endunless %}
+      {% if product.images.size > 1 %}
+        <div class="grid product-images" aria-hidden="true">
+          <div class="grid__item large--three-tenths medium-down--hide product-images-thumbnails">
+            {% include 'svg_arrow-solid',
+                    classes: 'carousel_arrow carouselGoUp hideBtn' %}
+            {% include 'svg_arrow-solid',
+                        classes: 'carousel_arrow carouselGoDown' %}
+            <div id="ProductThumbs" class="">
+              <ul class="product-single__thumbnails no-bullets thumbnails thumbnail_list thumbnail_vert" style="transform: translateY(0px)";>
+
+                {% for image in product.images %}
+                {% assign dataColor = image.alt | split: ' - ' | last | remove: ' Hover' | replace: ' ', '-' | replace: '/', '-' | replace: '-&-', '-' %}
+                {% capture imgAlt %}{{ shop.name }} - {{product.type }} {{ product.title }} {{ dataColor }}{% endcapture %}
+                <li aria-hidden="true">
+                  <a tabindex="-1" href="{{ image.src | img_url: '1000x' | split:'?' | first }}" data-image-id="{{ image.id }}" class="product-single__thumbnail
+                                                                                                                         {% if product.options.size == 1 %}filter-all{% else %}
+                                                                                                                         filter-{{ dataColor }}{% endif %}">
+
+                    <img src="{{ image.src | img_url: '200x200', crop: 'top' | split:'?' | first  }}" alt="{{dataColor}} thumbnail" />
+                  </a>
+                </li>
+                {% endfor %}
+
+              </ul>
+
+            </div>
+
+          </div>
+          <div class="grid__item large--seven-tenths product-image-wrapper" style="position: relative;">
+
+            <div id="price-mobile" class="large--hide">
+              <span id="ProductPrice" itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}"  class="h2">
+                {{ current_variant.price | money_without_trailing_zeros }}
+              </span>
+              {% if sca_compare_at_price_max > sca_price %}
+              <span class="visually-hidden">{{ 'products.general.sale_price' | t }}</span>
+              <span id="ComparePrice">
+                {{ current_variant.compare_at_price | money_without_trailing_zeros }}
+              </span>
+              {% endif %}
+            </div>
+            {%comment%}
+            <div class="num large--hide"></div>
+            {%endcomment%}
+            <div class="product-single__photos medium-down--hide" id="ProductPhoto" {% if product.type == 'Gift'%}style="margin-top:60px"{% endif %}>
+              {% assign featured_image = current_variant.featured_image | default: product.featured_image %}
+              <img src="{{ featured_image | img_url: '1000x' | split:'?' | first }}" alt="{{ imgAlt }}" id="ProductPhotoImg" class="lazyload">
+              <div class="main-image-navigation" style="display:none;">
+                <span class="prev">prev</span>
+                <span class="next">next</span>
+              </div>
+            </div>
+
+            <div id="owl-demo" class="owl-carousel large--hide medium-down--show">
+              {% assign dataColorCount = 0 %}
+              {% for image in product.images %}
+              {% if product.options.size == 1 %}
+              {% assign dataColor = 'all' %}
+              {% else %}
+              {% assign dataColor = image.alt | split: ' - ' | last | remove: ' Hover' | replace: ' ', '-' | replace: '/', '-' | replace: '-&-', '-' %}
+              {% endif %}
+              {% capture imgAlt %}{{ shop.name }} - {{product.type }} {{ product.title }} {{ dataColor }}{% endcapture %}
+              {% assign dataColorCount = dataColorCount | plus: 1 %}
+
+              <div class="mthumb filter-{{ dataColor }}" data-color-count="{{ dataColorCount }}">
+                <img
+                     sizes="auto"
+                     src="{{ image | product_img_url: '600x' | split:'?' | first }}"
+                     srcset="{{ image | product_img_url:  '400x' | split:'?' | first }} 400w,
+                             {{ image | product_img_url:  '600x' | split:'?' | first }} 600w,
+                             {{ image | product_img_url:  '700x' | split:'?' | first  }} 700w"
+                     alt="{{ imgAlt | escape }}" />
+              </div>
+              {% endfor %}
+              <div class="owl-controls clickable">
+                <div class="owl-buttons">
+                  <div class="owl-prev">previous image</div>
+                  <div class="owl-next">next image</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="mob-product-images" class="owl-carousel"></div>
+
+            <script>
+              $(document).ready(function(){
+                var options = {
+                  navigation : true, // Show next and prev buttons
+                  navigationText: ["",""],
+                  slideSpeed : 300,
+                  paginationSpeed : 400,
+                  singleItem:true,
+                  pagination: true,
+                  addClassActive: true,
+                };
+                $("#owl-demo").owlCarousel(options);
+                $('#owl-demo .mthumb').clone().appendTo($('#mob-product-images'));
+
+                var slide = 0;
+                $('.carouselGoUp').click(function() {
+                  var current_transform = parseInt($('.thumbnail_vert').css('transform').split(',')[5]);
+                  $('.carouselGoDown').removeClass('hideBtn');
+                  if (current_transform < '0') {
+                    slide+=180;
+                    $('.thumbnail_vert').css ({
+                      'transform': 'translateY(' + slide + 'px)',
+                      '-webkit-transform': 'translateY(' + slide + 'deg)',
+                      '-moz-transform': 'translateY(' + slide + 'deg)',
+                      '-o-transform': 'translateY(' + slide + 'deg)',
+                      '-ms-transform': 'translateY(' + slide + 'deg)'
+                    });
+                  }
+                  if (current_transform == '-180') {
+                    $('.carouselGoUp').addClass('hideBtn');
+                  }
+
+                });
+
+                $('.carouselGoDown').click(function() {
+                  var active_items = $('.thumbnail_vert .active-filter').length
+                  var max_height = -((active_items - 4) * 180);
+                  var current_transform = parseInt($('.thumbnail_vert').css('transform').split(',')[5]);
+                  $('.carouselGoUp').removeClass('hideBtn');
+                  if (current_transform >= max_height) {
+                    slide-=180;
+                    $('.thumbnail_vert').css ({
+                      'transform': 'translateY(' + slide + 'px)',
+                      '-webkit-transform': 'translateY(' + slide + 'deg)',
+                      '-moz-transform': 'translateY(' + slide + 'deg)',
+                      '-o-transform': 'translateY(' + slide + 'deg)',
+                      '-ms-transform': 'translateY(' + slide + 'deg)'
+                    });
+                  }
+                  if (current_transform <= max_height) {
+                    $(this).addClass('hideBtn');
+                  }
+                });
+
+              });
+              //Count
+              $( window ).on( "load", function() {
+                var totalItems = $('.owl-item').length;
+                var currentIndex = $('div.active').index() + 1;
+                $('.num').html(''+currentIndex+'/'+totalItems+'');
+
+                $('#owl-demo').bind('slid', function() {
+                  currentIndex = $('div.active').index() + 1;
+                  $('.num').html(''+currentIndex+'/'+totalItems+'');
+                });
+              });
+            </script>
+
+          </div>
+        </div>
+      {% else %}
+      <div class="product-single__photos single-photo" id="ProductPhoto">
+        {% assign featured_image = current_variant.featured_image | default: product.featured_image %}
+        <img class="zoom-image" src="{{ featured_image | img_url: '1000x' | split:'?' | first }}" alt="{{ imgAlt }}" id="ProductPhotoImg" class="lazyload">
+      </div>
+      {% endif %}
+
+    </div>
+
+    <div class="grid__item large--one-third product-info">
+      <div class="medium-down--hide product-title-container" style="max-width:360px; margin:0 auto">
+        <h1 class="product-title medium-down--hide" itemprop="name">
+          <div style="position:relative;">
+            {{ product.title | replace: "Women's ", "" | replace: "Men's ", "" }}
+          </div>
+        </h1>
+        <span class="medium-down--hide variant-meta color-meta" style="{% if product.variants.first.title contains 'Default' %}display: none;{% endif %}">
+          {% if product.metafields.custom.default_color %}{{ product.metafields.custom.default_color }}{% endif %}
+        </span>
+        {% for variant in product.variants %}
+          <div style="display: none;" class="variant-meta-data" data-variant="{{ variant.id }}">{{ variant.metafields.global.variant_name }}</div>
+        {% endfor %}
+
+        <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
+        <div id="product-price">
+          <span id="ProductPrice_d" itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}"  class="h2">
+            {{ current_variant.price | money_without_trailing_zeros }}
+          </span>
+          {% if sca_compare_at_price_max > sca_price %}
+          <span class="visually-hidden">{{ 'products.general.sale_price' | t }}</span>
+          <span id="ComparePrice">
+            {{ current_variant.compare_at_price | money_without_trailing_zeros }}
+          </span>
+          {% endif %}
+          <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+        </div>
+
+      </div>
+
+      <div itemprop="offers" class="product-info-wrapper" itemscope itemtype="http://schema.org/Offer">
+        <meta itemprop="priceCurrency" content="{{ shop.currency }}">
+
+        <link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
+
+
+        <form action="/cart/add" data-productid="{{ product.id }}" method="post" enctype="multipart/form-data" id="AddToCartForm" class="form-vertical">
+          <select name="id" data-productid="{{ product.id }}" id="productSelect" class="product-single__variants">
+            {% for variant in product.variants %}
+              {% if variant.available %}
+                {% comment %}
+                Note: if you use option_selection.js, your <select> tag will be overwritten, meaning what you have inside <option> will not reflect what you coded below.
+                {% endcomment %}
+                <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} data-sku="{{ variant.sku }}" value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+
+              {% else %}
+                <option disabled="disabled">
+                  {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+                </option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          {% if product.available %}
+            {% for option in product.options %}
+              {% include 'swatch' with option %}
+            {% endfor %}
+          {% endif %}
+          <div class="size-chart-link-container"></div>
+          {% section "size-charts" %}
+          <button type="submit" name="add" id="AddToCart" class="btn">
+            <span id="AddToCartText">{{ 'products.product.add_to_cart' | t }}</span>
+          </button>
+        </form>
+
+        <div class="large--hide">
+          {% unless product.type == 'Gift' %}
+            <h1 class="product-title" itemprop="name" id="variantTitle_m"></h1>
+            <span class="h4 product-title-mobile">{% unless product.variants.first.title == 'Default Title' %}{{ product.title }}{% endunless %}</span>
+          {% else %}
+            <h1 class="product-title" itemprop="name">{% unless product.variants.first.title == 'Default Title' %}{{ product.title }}{% endunless %}</h1>
+          {% endunless %}
+        </div>
+
+        {% if product.metafields.c_f.model_info %}
+        <div class="product-meta">
+          {{ product.metafields.c_f.model_info }}
+        </div>
+        {% endif %}
+
+        {% comment %}
+        {% unless product.tags contains 'unisex' %}
+        {% if product.type == "Mens" %}
+        <a data-remodal-target="mens-size-chart" class="h5 size-chart-link">View Sizing Chart</a>
+        {% endif %}
+        {% if product.type == "Womens" %}
+        <a data-remodal-target="womens-size-chart" class="h5 size-chart-link">View Sizing Chart</a>
+        {% endif %}
+        {% else %}
+        <a data-remodal-target="unisex-size-chart" class="h5 size-chart-link">View Sizing Chart</a>
+        {% endunless %}
+
+        {% endcomment %}
+
+
+      </div>
+          {% comment %}
+          {% assign descHTML = product.description | split: '<!-- split -->' %}
+          {{ descHTML | size }}
+          {% for desc in descHTML %}
+            {% assign h4tag = desc | split: '<h4>' %}
+            {{ h4tag | size }}
+          {% endfor %}
+          {% endcomment %}
+
+      <div class="product-description rte" itemprop="description">
+        {{ product.description }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{{ 'option_selection.js' | shopify_asset_url | script_tag }}
+
+{% assign product_size_guide_title = product.metafields.size_guide.title %}
+{% assign product_size_guide_image = product.metafields.size_guide.image | first %}
+{% assign product_size_guide_description = product.metafields.size_guide.description %}
+{% assign product_size_guide_sizes = product.metafields.size_guide.sizes %}
+{% if product_size_guide_sizes %}
+    <script>
+        $('.product-description table').remove()
+        $('.size-chart-link-container').append(`
+            {% if product_size_guide_sizes %}
+            <a tabindex="0" data-remodal-target="product-size-chart" class="h5 size-chart-popup-link">View Sizing Chart</a>
+            {% endif %}
+            <div class="remodal product-size-chart size-guide" data-remodal-id="product-size-chart" data-remodal-options="hashTracking: false">
+            <button data-remodal-action="close" class="remodal-close"></button>
+            <p class="h2">Size Guide</p>
+            <div class="size-guide-content">
+                <div class="fit-details-info">
+                {% if product_size_guide_image %}
+                    <img src="{{ product_size_guide_image.src }}" alt="{{ product_size_guide_image.alt }}" />
+                {% endif %}
+                <div class="fit-details-info__description">
+                    {% if product_size_guide_title %}
+                    <p class="h3" style="margin-bottom: .5rem; text-transform: uppercase;">{{ product_size_guide_title }}</p>
+                    {% endif %}
+                    {% if product_size_guide_description %}
+                    <p>{{ product_size_guide_description }}</p>
+                    {% endif %}
+                </div>
+                </div>
+                <div class="table-wrapper">
+                {{ product_size_guide_sizes }}
+                </div>
+                <img class="mobile-fit-details-image" src="{{ product_size_guide_image.src }}" alt="{{ product_size_guide_image.alt }}" />
+            </div>
+            </div>
+        `);
+        if ($(window).width() < 768) {
+            $('.table-wrapper table caption').insertBefore($('.table-wrapper table'));
+        }
+        $('.size-chart-link').hide();
+        $(".table-wrapper").scroll(function() {
+            if ($(".table-wrapper").scrollLeft() > 0) {
+            $(".table-wrapper").addClass('hasScroll');
+            } else {
+            $(".table-wrapper").removeClass('hasScroll');
+            }
+        })
+        $('[data-remodal-target]').on('keyup', function(e) {
+          e.preventDefault();
+          if(e.key === 'Enter') {
+            $(this).click()
+          }
+        });
+    </script>
+{% endif %}
+
+<script>
+
+  var productDesc = document.getElementsByClassName('product-description');
+  var descHtml = '';
+  var sizeTable = productDesc[0].querySelectorAll('table')
+  var descTags = productDesc[0].querySelectorAll('*')
+  var prevTag = false;
+  descTags.forEach(function(node, index) {
+    if(node.nodeName === 'META') {
+      return
+    }
+    if(node.nodeName === 'H4') {
+      if(prevTag) {
+        descHtml += `</div></div>`
+      }
+      descHtml += `
+      <div class="desc-toggle-section">
+        <a href=#" class="desc-toggle-header">
+          <h3>${node.innerHTML}</h3>
+          <button class="contact_toggle" aria-expanded="false" tabindex="-1">
+            <svg version="1.1" viewBox="0 0 14.329 14.329" aria-labelledby="title" class="role=&quot;img&quot;" width="15px" height="15px">
+            <title id="play-btn-title">Plus sign</title>
+            <polygon points="14.329,5.665 8.665,5.665 8.665,0 5.665,0 5.665,5.665 0,5.665 0,8.665 5.665,8.665 5.665,14.329 8.665,14.329 8.665,8.665 14.329,8.665 "></polygon> </svg>
+          </button>
+        </a>
+        <div class="desc-toggle-content">`
+        prevTag = false
+    } else {
+      if ( !node.parentNode.classList.contains('product-description') ) {
+        return
+      }
+      descHtml += node.outerHTML
+      if(index === descTags.length - 1) {
+        descHtml += '</div></div>'
+      }
+      prevTag = true
+    }
+  })
+  if( descHtml != '' ) {
+    $('.product-description').html(descHtml)
+    $('.desc-toggle-section:first-of-type .desc-toggle-content').show();
+    $('.desc-toggle-section:first-of-type').addClass('active');
+    $('.desc-toggle-section:first-of-type button').attr('aria-expanded', 'true');
+    $('.desc-toggle-header').on('click', function() {
+      $(this).closest('div.desc-toggle-section').find('.desc-toggle-content').slideToggle('fast');
+      $(this).closest('div.desc-toggle-section').toggleClass('active');
+      if ($(this).closest('div.desc-toggle-section').hasClass('active')) {
+        $(this).find('button').attr('aria-expanded', 'true');
+      } else {
+        $(this).find('button').attr('aria-expanded', 'false');
+      }
+
+      return false;
+    })
+  }
+  var selectCallback = function(variant, selector) {
+    var filterColor = variant.option1.replace(/ /g, '-').replace('/', ' ').replace(/-&-/g,'-').replace('$', '');
+    var filterThumbs = function(){
+      $(".product-single__thumbnail, .mthumb").removeClass('active-filter');
+      $(".product-single__thumbnails, .owl-carousel").find('.filter-all, .filter-' + filterColor).addClass('active-filter');
+
+      function showThumbsbyVariant(variant) {
+        if ( $( "#owl-demo" ).length ) {
+          var owl = $("#owl-demo").data('owlCarousel');
+
+          owl.addItem('<div/>', 0);
+
+          var nb = owl.itemsAmount;
+          for (var i = 0; i < (nb - 1); i++) {
+            owl.removeItem(1);
+          }
+
+          $('.mthumb.filter-all,#mob-product-images .mthumb.filter-' + filterColor).each(function () {
+            owl.addItem($(this).clone());
+          });
+          owl.removeItem(0);
+        }
+      }
+      showThumbsbyVariant(filterColor);
+    }
+    filterThumbs();
+
+    // BEGIN SWATCHES
+    if (variant) {
+      var form = jQuery('#' + selector.domIdPrefix).closest('form');
+      for (var i=0,length=variant.options.length; i<length; i++) {
+        var radioButton = form.find('.swatch[data-option-index="' + i + '"] :radio[value="' + variant.options[i] +'"]');
+        if (radioButton.size()) {
+          radioButton.get(0).checked = true;
+        }
+      }
+    }
+    // END SWATCHES
+    timber.productPage({
+      money_format: "{{ shop.money_format }}",
+      variant: variant,
+      selector: selector
+    });
+  };
+
+  jQuery(function($) {
+"undefined"==typeof freegifts_product_json&&(window.freegifts_product_json=function(e){if(e){for(var i=0;i<e.options.length;i++)if(option=e.options[i],option.values)for(var r=0;r<option.values.length;r++)(option.values[r].endsWith("(Freegifts)")||option.values[r].endsWith("% off)"))&&(option.values.splice(r,1),r--);for(var a=function(e){for(var i in e)if(e.hasOwnProperty(i))return!1;return!0},p=e.price,t=e.price_max,o=e.price_min,n=e.compare_at_price,_=e.compare_at_price_max,c=e.compare_at_price_min,i=0;i<e.variants.length;i++){var r=e.variants[i],s=r.option3?r.option3:r.option2?r.option2:r.option1;"undefined"!=typeof SECOMAPP&&"undefined"!=typeof SECOMAPP.gifts_list_avai&&!a(SECOMAPP.gifts_list_avai)&&"undefined"!=typeof SECOMAPP.gifts_list_avai[r.id]||s.endsWith("(Freegifts)")||s.endsWith("% off)")?(e.variants.splice(i,1),i-=1):(t>=r.price&&(t=r.price,p=r.price),o<=r.price&&(o=r.price),r.compare_at_price&&(_>=r.compare_at_price&&(_=r.compare_at_price,n=r.compare_at_price),c<=r.compare_at_price&&(c=r.compare_at_price)),1==r.available&&(e.available=!0))}e.price=p,e.price_max=o,e.price_min=t,e.compare_at_price=n,e.compare_at_price_max=c,e.compare_at_price_min=_,e.price_varies=o>t?!0:!1,e.compare_at_price_varies=c>_?!0:!1}return e});
+var sca_product_info = freegifts_product_json ({{ product | json }});
+    new Shopify.OptionSelectors('productSelect', {
+      product:sca_product_info,
+      onVariantSelected: selectCallback,
+      enableHistoryState: true
+    });
+
+    // $('.next').click(function() {
+    //   var $current = $('.thumb.active'); // active thumb
+    //   var $thumbs = $('.thumb'); // find other thumbs
+    //   var $next = $thumbs.eq($thumbs.index($current) + 1); // next thumb
+    //   $($next).trigger('click');
+    //   $($current).removeClass('active');
+    // });
+
+    // $('.prev').click(function() {
+    //   var $current = $('.thumb.active'); // active thumb
+    //   var $thumbs = $('.thumb'); // find other thumbs
+    //   var $previous = $thumbs.eq($thumbs.index($current) - 1); // prev thumb
+    //   $($previous).trigger('click');
+    // });
+
+    // Add label if only one product option and it isn't 'Title'. Could be 'Size'.
+    {% if product.options.size == 1 and product.options.first != 'Title' %}
+    $('.selector-wrapper:eq(0)').prepend('<label for="productSelect-option-0">{{ product.options.first | escape }}</label>');
+                                         {% endif %}
+
+                                         // Hide selectors if we only have 1 variant and its title contains 'Default'.
+                                         {% if product.variants.size == 1 and product.variants.first.title contains 'Default' %}
+                                         $('.selector-wrapper').hide();
+    {% endif %}
+  });
+</script>
+
+{% include 'related-products' %}
+
+{% section 'product_custom-sections' %}
+
+  {% comment %}
+  {% if product.type == 'Mens' %}
+  {% section 'product-m_custom-grid' %}
+  {% elsif product.type == 'Womens' %}
+  {% section 'product-w_custom-grid' %}
+  {% else %}
+  {% section 'product-gen_custom_grid' %}
+  {% endif %}
+  {% endcomment %}
+
+{%comment%}<div id="shopify-product-reviews" data-id="{{product.id}}">{{ product.metafields.spr.reviews }}</div>{%endcomment%}
+
+ <script text="text/javascript">
+  var _learnq = _learnq || [];
+
+  var item = {
+    Name: {{ product.title|json }},
+    ProductID: {{ product.id|json }},
+    Categories: {{ product.collections|map:'title'|json }},
+    ImageURL: "https:{{ product.featured_image.src|img_url:'grande' }}",
+    URL: "{{ shop.secure_url }}{{ product.url }}",
+    Brand: {{ product.vendor|json }},
+    Price: {{ sca_price|money|json }},
+    CompareAtPrice: {{ sca_compare_at_price_max|money|json }},
+    Variant: {
+      ID: {{ product.selected_variant.id|json }},
+      Title: {{ product.selected_variant.title|json }},
+      Images: [(("https:{{ product.selected_variant.image.src|img_url:'grande' }}".includes('https://cdn.shopify.com/s/assets/no-image-')) ? "" : "https:{{ product.selected_variant.image.src|img_url:'grande' }}")],
+      URL: (("{{product.selected_variant.url}}") ? "{{ shop.secure_url }}{{product.selected_variant.url}}" : ""),
+      Price: {{product.selected_variant.price|money|json}}
+    }
+  };
+
+  _learnq.push(['track', 'Viewed Product', item]);
+  _learnq.push(['trackViewedItem', {
+    Title: item.Name,
+    ItemId: item.ProductID,
+    Categories: item.Categories,
+    ImageUrl: item.ImageURL,
+    Url: item.URL,
+    Metadata: {
+      Brand: item.Brand,
+      Price: item.Price,
+      CompareAtPrice: item.CompareAtPrice
+    }
+  }]);
+</script>
+
+<script text="text/javascript">
+    var _learnq = _learnq || [];
+    const addToCartBtn = document.getElementById("AddToCart")
+    if ( addToCartBtn ) {
+        document.getElementById("AddToCart").addEventListener('click',function (){
+            _learnq.push(['track', 'Add To Cart', item]);
+        });
+    }
+</script>

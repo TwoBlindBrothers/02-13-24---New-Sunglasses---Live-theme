@@ -1,0 +1,193 @@
+<section id="product_features" class="sunglasses_about sunglasses_about--interactive" tabindex="-1">
+    <div class="text_container">
+        <h2 class="h1">
+          {% if settings.easter_enabled %}
+            Lo<span class="easter-egg-spot look-great-egg">o
+              {% case settings.hunt_type %}
+                {% when '2bb' %}
+                  <a class="easter-link easter-link-2bb sunglasses-egg" href="{{ settings.easter_url }}">
+                    <img src="{{ '2BB-sticker-brad.png' | file_img_url: '100x' }}" class="easter-egg-2bb"/>
+                  </a>
+                {% when 'easter' %}
+                  <a class="easter-link" href="{{ settings.easter_url | append: 'blue' }}">
+                    <img src="{{ '2bb-egg-blue.png' | asset_url }}" class="easter-egg"/>
+                  </a>
+                {% when 'v-day' %}
+                <a class="easter-link v-day-link" href="{{ settings.easter_url | append: '?i-heart-2bb' }}">
+                    <img src="{{ 'heart.png' | asset_url }}" class="easter-egg"/>
+                </a>
+              {% endcase %}
+              </span>k great, <br>see better.
+          {% else %}
+            {{ section.settings.hero_title }}
+          {% endif %}
+          </h2>
+        <p>{{ section.settings.hero_subcopy }}</p>
+    </div>
+    <div class="interactive_grid medium-down--hide">
+
+        {% for block in section.blocks %}
+        <div class="interactive_grid__item is-active" data-shine="trigger" data-id="{{ forloop.index }}" tabindex="0">
+            <h3>{{ block.settings.feature_title }}</h3>
+            <p>{{ block.settings.feature_copy }}</p>
+        </div>
+        {% endfor %}
+
+        <div class="interactive_grid__image" data-shine="destination">
+            <img class="is-active lazyload" data-id="0" src="{{ section.settings.about_main-img | img_url: '1000x' }}" alt="{{ section.settings.about_main-img.alt }}">
+            {% for block in section.blocks %}
+              {% if block.settings.feature_img != blank %}
+                <div style="display: none;" class="interactive-temp-image" data-id="{{ forloop.index }}" data-src="{{ block.settings.feature_img | img_url: '1000x' }}" data-alt="{{ block.settings.feature_img.alt }}"></div>
+
+              {% endif %}
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+<div id="owl-demo2" class="owl-carousel large--hide">
+{% assign dataColorCount = 0 %}
+{% for block in section.blocks %}
+
+    {% assign dataColor = 'all' %}
+    {% assign dataColor = block.settings.feature_title | split: ' - ' | last | remove: ' Hover' | replace: ' ', '-' | replace: '/', '-' | replace: '-&-', '-' %}
+    {% assign dataColorCount = dataColorCount | plus: 1 %}
+
+    <div class="mthumb filter-{{ dataColor }}" data-color-count="{{ dataColorCount }}">
+       {% if block.settings.feature_img != blank %}
+            <img class="lazyload" data-id="{{ forloop.index }}" src="{{ block.settings.feature_img | img_url: '660x' }}" alt="{{ block.settings.feature_img.alt }}">
+        {% endif %}
+        <div class="mobile_interactive_item">
+            <h3>{{ block.settings.feature_title }}</h3>
+            <p>{{ block.settings.feature_copy }}</p>
+        </div>
+    </div>
+{% endfor %}
+
+{% comment %} <div class="owl-controls clickable">
+    <div class="owl-buttons">
+    <div class="owl-prev">previous image</div>
+    <div class="owl-next">next image</div>
+    </div>
+</div> {% endcomment %}
+</div>
+
+<div id="mob-product-images" class="owl-carousel"></div>
+
+<script>
+$(document).ready(function(){
+    var options = {
+    navigation : true, // Show next and prev buttons
+    navigationText: ["",""],
+    slideSpeed : 300,
+    autoPlay : 4000,
+    paginationSpeed : 400,
+    singleItem:true,
+    pagination: true,
+    addClassActive: true,
+    paginationNumbers: false,
+    autoHeight: false
+    };
+    $("#owl-demo2").owlCarousel(options);
+    $('#owl-demo2 .mthumb').clone().appendTo($('#mob-product-images'));
+
+    var slide = 0;
+    $('.carouselGoUp').click(function() {
+    var current_transform = parseInt($('.thumbnail_vert').css('transform').split(',')[5]);
+    $('.carouselGoDown').removeClass('hideBtn');
+    if (current_transform < '0') {
+        slide+=180;
+        $('.thumbnail_vert').css ({
+        'transform': 'translateY(' + slide + 'px)',
+        '-webkit-transform': 'translateY(' + slide + 'deg)',
+        '-moz-transform': 'translateY(' + slide + 'deg)',
+        '-o-transform': 'translateY(' + slide + 'deg)',
+        '-ms-transform': 'translateY(' + slide + 'deg)'
+        });
+    }
+    if (current_transform == '-180') {
+        $('.carouselGoUp').addClass('hideBtn');
+    }
+
+    });
+
+    $('.carouselGoDown').click(function() {
+    var active_items = $('.thumbnail_vert .active-filter').length
+    var max_height = -((active_items - 4) * 180);
+    var current_transform = parseInt($('.thumbnail_vert').css('transform').split(',')[5]);
+    $('.carouselGoUp').removeClass('hideBtn');
+    if (current_transform >= max_height) {
+        slide-=180;
+        $('.thumbnail_vert').css ({
+        'transform': 'translateY(' + slide + 'px)',
+        '-webkit-transform': 'translateY(' + slide + 'deg)',
+        '-moz-transform': 'translateY(' + slide + 'deg)',
+        '-o-transform': 'translateY(' + slide + 'deg)',
+        '-ms-transform': 'translateY(' + slide + 'deg)'
+        });
+    }
+    if (current_transform <= max_height) {
+        $(this).addClass('hideBtn');
+    }
+    });
+
+});
+//Count
+$( window ).on( "load", function() {
+    var totalItems = $('.owl-item').length;
+    var currentIndex = $('div.active').index() + 1;
+    $('.num').html(''+currentIndex+'/'+totalItems+'');
+
+    $('#owl-demo2').bind('slid', function() {
+    currentIndex = $('div.active').index() + 1;
+    $('.num').html(''+currentIndex+'/'+totalItems+'');
+    });
+});
+</script>
+
+{% schema %}
+  {
+    "name": "Product Features",
+    "settings": [
+        {
+            "type": "image_picker",
+            "id": "about_main-img",
+            "label": "Main image"
+        },
+        {
+            "type": "text",
+            "id": "hero_title",
+            "label": "Hero title"
+        },
+        {
+            "type": "text",
+            "id": "hero_subcopy",
+            "label": "Hero subcopy"
+        }
+    ],
+    "blocks": [
+        {
+        "type": "feature",
+        "name": "Product Features",
+        "settings": [
+            {
+                "type": "text",
+                "id": "feature_title",
+                "label": "Feature title"
+            },
+            {
+                "type": "text",
+                "id": "feature_copy",
+                "label": "Feature copy"
+            },
+            {
+                "type": "image_picker",
+                "id": "feature_img",
+                "label": "Rollover image"
+            }
+        ]
+       }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,113 @@
+{% assign add_to_cart_product = false %}
+{%- if section.settings.button_add_to_cart != blank -%}
+    {% assign add_to_cart_product = all_products[section.settings.button_add_to_cart] %}
+{%- endif -%}
+
+<div class="gd_image_text {% if section.settings.reverse %}gd_image_text--reverse{% endif %}" {% if section.settings.section_id %} id="{{section.settings.section_id}}" {% endif %}>
+  <div class="gd_image_text__image">
+    {% if section.settings.image %}
+        {%- if add_to_cart_product -%}
+            <a href="{{ add_to_cart_product.url }}">
+        {%- endif -%}
+      {% render 'image', image: section.settings.image, aspect: 1 %}
+        {%- if add_to_cart_product -%}
+            </a>
+        {%- endif -%}
+    {% endif %}
+    {% if section.settings.show_paw %}
+      {% render 'icon-paw' %}
+    {% endif %}
+    {% if settings.easter_enabled and settings.hunt_type == '2bb' and section.settings.show_easter_egg %}
+  		<a class="easter-link easter-link-2bb gd-egg" href="{{ settings.easter_url }}">
+  			<img src="{{ '2BB-sticker-bryan.png' | file_img_url: '100x' }}" class="easter-egg-2bb"/>
+  		</a>
+  	{% endif %}
+  </div>
+  <div class="gd_image_text__text">
+    <div class="wrapper">
+      {%- unless section.settings.title == blank -%}
+        <h2 class="section-title">{{ section.settings.title }}</h2>
+      {%- endunless -%}
+      {%- unless section.settings.text == blank -%}
+        <p class="">{{ section.settings.text }}</p>
+      {%- endunless -%}
+      {%- if add_to_cart_product -%}
+        <button class="{% if add_to_cart_product.available %}addToCart ajax-add-to-cart {% endif %}btn btn--blue" data-product-id="{{ section.settings.button_add_to_cart.id }}" data-variant-id="{{ section.settings.button_add_to_cart.variants[0].id }}" type="submit" name="{% if add_to_cart_product.available %}add to cart{% else %}sold out{% endif %}"{% unless add_to_cart_product.available %} disabled{% endunless %} onClick="handleClickQuickAdd(this, {{ product.id }});">
+          <span class="addToCartText">{% if add_to_cart_product.available %}{{ section.settings.button_text }}{% else %}Sold out{% endif %} | {{ add_to_cart_product.price | money_without_trailing_zeros }}</span>
+        </button>
+      {%- else -%}
+        {%- unless section.settings.button_link == blank or section.settings.button_text == blank -%}
+          <a href="{{ section.settings.button_link }}" class="btn--text">{{ section.settings.button_text }}</a>
+        {%- endunless -%}
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Guide Dog Image w/ Text",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_paw",
+      "default": true,
+      "label": "Show Paw?"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_easter_egg",
+      "default": false,
+      "label": "Show Easter Egg?"
+    },
+    {
+      "type": "checkbox",
+      "id": "reverse",
+      "default": true,
+      "label": "Reverse order on desktop?"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "text",
+      "id": "section_id",
+      "label": "Section ID"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "product",
+      "id": "button_add_to_cart",
+      "label": "Add To Cart Product",
+      "info": "This will override the button link and add the item to the cart"
+    }
+  ],
+  "presets": [
+    {
+      "category": "Image",
+      "name": "Guide Dog Image w/ Text"
+    }
+  ]
+}
+{% endschema %}

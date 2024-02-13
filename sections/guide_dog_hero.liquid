@@ -1,0 +1,42 @@
+<section class="hero page-hero sunglasses_hero" style="background-image:url('{{ section.settings.hero_img | img_url: '1600x' }}'); background-size: 60%; background-position:center center">
+    <div class="wrapper">
+        {% if section.settings.hero_title %}
+          <h1>{{ section.settings.hero_title }}</h1>
+        {% endif %}
+        {% if section.settings.hero_subtitle %}
+          <p class="h2 text-center">{{ section.settings.hero_subtitle }}</p>
+        {% endif %}
+        {% if section.settings.hero_button %}
+          <a href="#main_prod_hero" class="btn" title="take a look">{{ section.settings.hero_button }}</a>
+        {% endif %}
+    </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Guide Dog hero",
+    "settings": [
+        {
+            "type": "image_picker",
+            "id": "hero_img",
+            "label": "Hero bg image (16:9)"
+        },
+        {
+            "type": "text",
+            "id": "hero_title",
+            "label": "Hero title"
+        },
+        {
+            "type": "text",
+            "id": "hero_subtitle",
+            "label": "Hero subtitle"
+        },
+        {
+            "type": "text",
+            "id": "hero_button",
+            "label": "Hero button text"
+        }
+
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,231 @@
+<div class="header-wrapper" style="position: relative;">
+    {% include 'announcement' %}
+    <header class="site-header" id="sticky-header">
+
+        <div class="wrapper">
+        <a href="#main-content" class="visually-hidden">Skip to main content</a>
+        {% include 'site-logo' %}
+        <nav aria-labelledby="mainmenulabel" class="site-nav-container medium-down--hide">
+            <ul class="site-nav inline-list text-center" id="AccessibleNav">
+            <!-- for link in linklists.main-menu-new.links -->
+            {% for link in linklists['main-menu'].links %}
+                <li>
+                {% assign child_links_count = link.links | size %}
+                <a href="{{ link.url }}" class="site-nav--item {% if child_links_count > 0 %}site-nav--has-dropdown {% endif %}{% if link.active %}site-nav--active{% endif %}" data-sub="{{ link.title | handleize }}" {% if child_links_count > 0 %}data-has-sub="true"{% else %}data-has-sub="false"{% endif %} data-closed="true">{{ link.title }}</a>
+                {% if child_links_count > 0 %}
+                    <div class="sub-nav-wrapper link-levels-{{ link.levels }}">
+                    {% if section.blocks.size > 0 and link.levels > 1 %}
+                        <div class="menu-featured-products">
+                        {% for block in section.blocks %}
+                            {% assign feature_url = block.settings.url %}
+                            {% assign feature_url_split = feature_url | split: '/' %}
+                            {% assign feature_type = feature_url_split[1] %}
+                            {% assign feature_handle = feature_url_split[2] %}
+                            {% case feature_type %}
+                            {% when 'products' %}
+                                {% assign feature = all_products[feature_handle] %}
+                            {% when 'collections' %}
+                                {% assign feature = collections[feature_handle] %}
+                            {% endcase %}
+                            {% assign feature_title = block.settings.title | default: feature.title %}
+                            {% assign image = feature.featured_image | img_url: '600x' %}
+                            {% if block.settings.image %}
+                            {% assign image = block.settings.image | img_url: '600x' %}
+                            {% endif %}
+                            <div class="menu-featured-product">
+                            <div class="menu-featured-product-wrapper">
+                                <a class="menu-featured-image-link" href="{{ feature_url }}">
+                                <img src="{{ image }}"/>
+                                </a>
+                                <h3 class="h6" style="letter-spacing: normal; font-size: .8rem;"><a href="{{ feature_url }}">{{ feature_title }}</a></h3>
+                            </div>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                    <ul class="sub-nav">
+                        {% assign hasSingleChildLinks = false %}
+                        {% for childLink in link.links %}
+                        {% assign childLinksSize = childLink.links | size %}
+                        {% unless childLinksSize > 0 %}
+                            {% assign hasSingleChildLinks = true %}
+                            {% continue %}
+                        {% endunless %}
+                        <li>
+                            <a href="{{ childLink.url }}" class="site-nav--sub-item">{{ childLink.title }}</a>
+                            <ul>
+                            {% for grandchildLink in childLink.links %}
+                                <li>
+                                <a href="{{ grandchildLink.url }}" class="site-nav--sub-sub-item"><span>{{ grandchildLink.title }}</span></a>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </li>
+                        {% endfor %}
+                        {% if hasSingleChildLinks %}
+                        <li>
+                            <ul class="single-nav-items">
+                            {% for childLink in link.links %}
+                                {% assign childLinksSize = childLink.links | size %}
+                                {% if childLinksSize > 0 %}
+                                {% continue %}
+                                {% endif %}
+                                <li>
+                                <a href="{{ childLink.url }}" class="site-nav--sub-item">{{ childLink.title }}</a>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    </div>
+                {% endif %}
+                </li>
+            {% endfor %}
+            </ul>
+        </nav>
+        {%- assign template_name = template.name | strip -%}
+        <nav aria-labelledby="utility-links" class="utility-links-container" style="display: flex;">
+            <ul id="utility-links" class="inline-list">
+            <li class="large--hide hamburger-wrapper">
+                <button class="hamburger hamburger--spring large--hide{% if template_name == 'index' %} light{% endif %}" type="button">
+                <span class="hamburger-box">
+                    <span class="hamburger-inner"></span>
+                </span>
+                </button>
+            </li>
+            <li class="wishlist-link">
+                <style>
+                    {% if template contains 'index' %}
+                        .wishlist-link status-saved-link {
+                            --icon-stroke-color: white;
+                            --icon-size: 24px;
+                            --indicator-position-horizontal: 110%;
+                            --icon-hover-stroke-color: var(--sb-color-bg);
+                            --icon-hover-fill-color: var(--sb-color-bg);
+                            --indicator-text-size: 12px;
+                            --icon-stroke: 2px;
+                        }
+                    {% else %}
+                        .wishlist-link status-saved-link {
+                            --icon-stroke-color: white;
+                            --icon-size: 24px;
+                            --indicator-position-horizontal: 110%;
+                            --icon-hover-stroke-color: #f0d83d;
+                            --icon-hover-fill-color: #f0d83d;
+                            --indicator-text-size: 12px;
+                            --icon-stroke: 2px;
+                        }
+                    {% endif %}
+                </style>
+                <status-saved-link style="display: none!important;" aria-label="View saved items">
+                </status-saved-link>
+                <li class="utility-links__search">
+                    <a class="site-search-link" aria-controls="searchForm" href="#" aria-expanded="false">
+                        {% render 'svg-icon-search' %}
+                    </a>
+
+                </li>
+            </li>
+            <li>
+                <a href="/account">
+                {% render 'svg-icon-profile' %}
+                </a>
+            </li>
+            <li>
+                <a onclick="return false" href="/cart" class="js-drawer-open-right site-cart-link" aria-controls="CartDrawer" aria-expanded="false">
+                    {% render 'svg-icon-cart' %}
+                    <span class="cart__item-count">{% unless cart.item_count == 0 %}{{ cart.item_count }}{% endunless %}</span>
+                </a>
+            </li>
+            </ul>
+        </nav>
+        {% include 'search-bar' %}
+        </div>
+
+    </header>
+</div>
+
+
+{% comment %}
+<div class="sub-menu">
+
+{% for link in linklists.main-menu-new.links %}
+
+<div class="site-menu__sub" id="sub-{{ link.title | handleize }}">
+    <div class="site-menu__sub--inner">
+    <div class="wrapper">
+        <div class="site-menu__sub-container">
+        {% for sub_link in link.links %}
+
+        <div class="site-menu__sub-item">
+
+            <div class="site-menu__sub-item--image">
+            <a href="{{ sub_link.url }}" title="{{ sub_link.title }}">
+                <img src="{{ all_products[sub_link.handle].image | img_url: 'master' }}" alt="{{ sub_link.title }}" />
+            </a>
+            </div>
+
+            <a href="{{ sub_link.url }}">{{ sub_link.title }}</a>
+        </div>
+
+        {% endfor %}
+        </div>
+    </div>
+
+    <div class="site-menu__sub--close" onclick="closeSub();">
+        <i class="fa fa-chevron-up"></i>
+    </div>
+    </div>
+</div>
+
+
+{% endfor %}
+
+</div>
+{% endcomment %}
+
+
+{% comment %} {% unless template.name == 'index' %}
+<div id="mobile-nav" class="large--hide">
+    <ul>
+    {% for link in linklists.mobile-menu.links %}
+    <li {% if link.active %}class="mobile-nav--active"{% endif %}>
+        <a class="h4" href="{{ link.url }}">{{ link.title }}</a>
+    </li>
+    {% endfor %}
+    </ul>
+</div>
+{% endunless %} {% endcomment %}
+{% include 'menu-overlay' %}
+
+{% schema %}
+{
+    "name": "Header",
+    "blocks": [
+    {
+        "type": "features",
+        "name": "Featured Product",
+        "settings": [
+        {
+            "type": "url",
+            "id": "url",
+            "label": "URL"
+        },
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "info": "This will replace the title from the product"
+        },
+        {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image",
+            "info": "This will replace the image from the product"
+        }
+        ]
+    }
+    ]
+}
+{% endschema %}

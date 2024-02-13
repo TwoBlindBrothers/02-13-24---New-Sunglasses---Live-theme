@@ -1,0 +1,64 @@
+{%- comment -%}
+  Parameters
+  * background_image
+  * title
+  + description
+  * blocks
+  * is_acf
+{%- endcomment -%}
+
+{% liquid
+  assign hide_section = false
+  if template.name == 'product'
+    assign is_acf = true
+    assign background_image = product.metafields.reserve_quality.background_image | first
+    assign title = product.metafields.reserve_quality.title
+    assign description = product.metafields.reserve_quality.description | map: 'html'
+    assign images = product.metafields.reserve_quality.images
+  endif
+%}
+<reserve-quality class="reserve-quality">
+  <div class="reserve-quality__wrapper js-reserve-quality-wrapper">
+    {%- if background_image != blank -%}
+      {%- render 'image', class: 'absolute w-full h-full js-reserve-quality-background', classes: 'absolute inset-0 h-full w-full object-cover', image: background_image -%}
+    {%- endif -%}
+    <div class="reserve-quality__content">
+      <div class="reserve-quality__content-text">
+        {%- if title != blank -%}
+          <h2 class="h3-reserve reserve-quality__title">{{- title -}}</h2>
+        {%- endif -%}
+        {%- if description != blank -%}
+          <div class="reserve-quality__description wysiwyg--reserve-quality">{{- description -}}</div>
+        {%- endif -%}
+      </div>
+      {%- capture items -%}
+        {%- if is_acf -%}
+          {%- if images.size > 0 -%}
+            {%- for image in images -%}
+              <div class="reserve-quality__image js-reserve-quality-image">
+                {%- render 'image', class: 'relative aspect-square', classes: 'absolute inset-0 w-full h-full object-cover', image: image -%}
+              </div>
+            {%- endfor -%}
+          {%- endif -%}
+        {%- else -%}
+          {%- if blocks.size > 0 -%}
+            {%- for block in blocks reversed -%}
+              {%- if block.settings.image != blank -%}
+                <div class="reserve-quality__image js-reserve-quality-image">
+                  {%- render 'image', class: 'relative aspect-square', classes: 'absolute inset-0 w-full h-full object-cover', image: block.settings.image -%}
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endcapture -%}
+
+      {%- if items -%}
+        <div class="reserve-quality__images js-reserve-quality-images">
+          {{ items }}
+        </div>
+    </div>
+    {%- endif -%}
+  </div>
+</reserve-quality>
+{%- render 'vite-tag' with 'reserve-quality.js' -%}

@@ -1,0 +1,175 @@
+<div class="site-popup">
+    <div class="site-popup-overlay"></div>
+    <div class="site-popup-container">
+      <div class="close-btn">
+         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
+    <path d="M25 22.3086L15.1719 12.4352L24.8854 2.69142L22.2063 0L12.4928 9.7582L2.7937 0L0.114613 2.69142L9.82808 12.4352L0 22.3086L2.67908 25L12.4928 15.1267L22.3209 25L25 22.3086Z" fill="#231F20"/>
+  </svg>
+      </div>
+      <div class="site-popup-content">
+        {% if section.settings.content1 != blank %}
+         <h3> {{ section.settings.content1 }}</h3>
+      {% endif %}
+      {% if section.settings.content2 != blank %} 
+          {{ section.settings.content2 }}
+      {% endif %}
+          {% if section.settings.vidoe != blank %}
+        <div class="video">
+          <video id="ban_video" class="tv_video" loop playsinline poster="https://cdn.shopify.com/s/files/1/1330/8707/files/thumb.png?v=1701790887">
+            <source src="{{ section.settings.vidoe }}" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <div class="video-btn">
+          <div class="play-bt">
+              <img src="https://cdn.shopify.com/s/files/1/0606/3357/9777/files/icons8-play-30.png?v=1701210586" class="play-btns" alt="">
+          </div>
+            </div>  
+          <div class="pause-bt" style="display:none;">   <img src="https://cdn.shopify.com/s/files/1/0606/3357/9777/files/icons8-pause-30.png?v=1701210585" class="pause-btns" alt=""></div>
+            <div class="mute-bt">
+               <img src="https://cdn.shopify.com/s/files/1/0606/3357/9777/files/icons8-volume-30.png?v=1701210586" class="vvol-btns" alt="">
+               <img src="https://cdn.shopify.com/s/files/1/0606/3357/9777/files/icons8-mute-30.png?v=1701210586" class="mute-btn" alt="">
+              
+            </div>
+              <div class="stop-bt">
+                 <img src="https://cdn.shopify.com/s/files/1/0606/3357/9777/files/revert-svgrepo-com.svg?v=1701382472" class="stop-btn" alt="">
+              </div>
+              <div class="fastforward-btn">
+              <button onclick="fastForward(3)"> <img src="https://cdn.shopify.com/s/files/1/0606/3357/9777/files/icons8-fast-forward-30.png?v=1701384207" class="stop-btn" alt=""></button> 
+              </div>
+        </div>
+      {% endif %}
+      <a {% if section.settings.url %} href="{{ section.settings.url }}" {% else %} href="#"{% endif %}>{{ section.settings.btn }}</a>
+      </div>
+    </div>
+  </div>
+  <script>
+    $(document).ready(function () {
+      var popup_video = document.getElementById('ban_video');
+      var playBtn = document.querySelector('.play-bt');
+      playBtn.addEventListener('click', ()=> {
+        popup_video.play();
+        playBtn.style.display = 'none';
+      })
+      $('.close-btn').on('click', function(){
+          $('.site-popup').addClass('hide');
+          popup_video.pause();
+          popup_video.currentTime = 0;
+          playBtn.style.display = 'block';
+        $('body').css("overflow", "visible");
+         $(".pause-bt").hide();
+         $('.site-popup').removeClass('showpop')
+      })
+      $('.shop-blind-hero__modal-button').on('click', function(){
+         $('.site-popup').addClass('showpop');
+        $('body').css("overflow", "hidden");
+      })
+       $('.site-popup-content > a').on('click', function(){
+          $('.site-popup').removeClass('showpop');
+         $('.site-popup').addClass('hide');
+          $('body').css("overflow", "visible");
+             popup_video.pause();
+         $(".pause-bt").hide();
+             popup_video.currentTime = 0;
+             playBtn.style.display = 'block';
+      });
+         $('.site-popup-content > a').on('click', function(event) {
+              if ($(this).attr('href') === '#') {
+                  // Prevent the default behavior only if the href is '#'
+                  event.preventDefault();
+              }
+          });
+   
+  
+  
+      var video1 = document.getElementById("ban_video");
+      video1.currentTime = 0;
+      $(".mute-bt").click(function(){
+           if($(this).hasClass("stop"))
+           {
+               var ban_video = document.getElementById("ban_video");
+               $("#ban_video").prop('muted', false);
+               $(this).removeClass("stop");
+           }
+           else{
+               var ban_video = document.getElementById("ban_video");
+               $("#ban_video").prop('muted', true);
+               $(this).addClass("stop");
+           }
+       });
+       
+       $(".play-bt").click(function(){
+           $(".play-bt").hide();
+           $(".pause-bt").show();
+           var ban_video = document.getElementById("ban_video");
+           if($(".stop-bt").hasClass("active")){
+               ban_video.currentTime = 0;
+           }
+           ban_video.play();                                         
+       });
+       $(".pause-bt").click(function(){
+           $(".play-bt").show();
+           $(".pause-bt").hide();
+           $(".pause-bt").addClass("active");
+           $(".stop-bt").removeClass("active");
+           var ban_video = document.getElementById("ban_video");
+           ban_video.pause();                                         
+       });
+       $(".stop-bt").click(function(){
+           $(".pause-bt").removeClass("active");
+           $(".stop-bt").addClass("active");
+           var ban_video = document.getElementById("ban_video");
+           stop
+            ban_video.currentTime = 0                                       
+       });
+  
+    function fastForward(seconds) {
+      var video = document.getElementById('ban_video');
+      if (video.readyState >= 2) {
+        video.pause();
+        video.currentTime += seconds;
+        video.play();
+        $(".play-bt").hide();
+         $(".pause-bt").show();
+      } else {
+        alert("Video is not fully loaded. Please wait and try again.");
+      }
+    }
+   });
+  </script>
+  {% schema %}
+      {
+          "name": "Site Popup",
+          "settings": [
+              {
+                  "type": "url",
+                  "id": "vidoe",
+                  "label": "Video Url"
+              },
+              {
+                  "type": "richtext",
+                  "label": "Title",
+                  "id": "content1"
+              },
+              {
+                  "type": "richtext",
+                  "label": "Description",
+                  "id": "content2"
+              },
+              {
+                "type": "text",
+                "id": "btn",
+                "label": "Button"
+              },
+               {
+                  "type": "url",
+                  "id": "url",
+                  "label": "Button Url"
+              }
+          ],
+    "presets" : [
+      {
+        "name": "Site Popup"
+      }
+    ]
+      }
+  {% endschema %}

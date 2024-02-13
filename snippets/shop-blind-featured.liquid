@@ -1,0 +1,116 @@
+{% assign starburst_color = '#f0d83d' %}
+{% if featured_starburst_color.alpha != 0.0 %}
+    {% assign starburst_color = featured_starburst_color %}
+{% endif %}
+
+{%- assign highlight_bg_rgb = featured_box_color | color_to_rgb | replace: 'rgb(', '' | replace: ')', '' -%}
+{%- assign highlight_bg_rgb = highlight_bg_rgb | split: ',' -%}
+{%- assign highlight_red = highlight_bg_rgb[0] | plus: 0 | times: 0.85 -%}
+{% if highlight_red > 255 %}
+    {% assign highlight_red = 255 %}
+{% endif %}
+{%- assign highlight_green = highlight_bg_rgb[1] | plus: 0 | times: 0.85 -%}
+{% if highlight_green > 255 %}
+    {% assign highlight_green = 255 %}
+{% endif %}
+{%- assign highlight_blue = highlight_bg_rgb[2] | plus: 0 | times: 0.85 -%}
+{% if highlight_blue > 255 %}
+    {% assign highlight_blue = 255 %}
+{% endif %}
+
+
+<div id="shopblind-featured-{{ product.handle }}" class="shopblind-featured" {% if featured_box_color.alpha != 0.0 %} style="--highlight-color: {{ featured_box_color }}; --highlight-color-dark: rgb({{ highlight_red }}, {{ highlight_green }}, {{ highlight_blue }});"{% endif %}>
+    <div class="shopblind-featured__product">
+        <div class="bg-starburst">{% render 'icon-starburst', fill_color: featured_starburst_color %}</div>
+        <div
+            id="box-animation-product-featured-{{ product.handle }}"
+            class="box-animation-product-featured"
+            data-product-id="{{ product.handle }}"></div>
+    </div>
+
+    <div class="shopblind-featured__content">
+        <div>
+            <h2>{{ featured_product_heading }}</h2>
+            <p>{{ featured_product_content }}</p>
+        </div>
+        
+        {% render 'shop-blind-item-form',
+            product: product,
+            featured: true,
+            featured_button_text: featured_button_text,
+            highlight_button_bg: featured_button_bg,
+            highlight_button_text_color: featured_button_text_color,
+            highlighted_product: true,
+            special: false,
+        %}
+    </div>
+
+    {% unless has_multiple_featured_products %}
+    <script>
+        var boxAnimationContainer = $('#box-animation-product-featured-{{ product.handle }}')
+        var boxAnimationWrapper = $('#shopblind-featured-{{ product.handle }}')
+
+        var boxAnimation = bodymovin.loadAnimation({
+            container: boxAnimationContainer[0],
+            renderer: 'svg',
+            loop: false,
+            autoplay: false,
+            path: `{{ 'product-box-animation.json' | asset_url }}`
+        })
+
+        const playAnimationFeatured = () => {
+            boxAnimation.goToAndPlay(24, true)
+            
+            boxAnimation.addEventListener('complete', function() {
+                boxAnimation.playSegments(
+                    [90, 241],
+                    true
+                )
+            })
+        }
+    
+        const stopAnimationFeatured = () => {
+            boxAnimation.resetSegments(
+                [0, 241],
+                true
+            )
+            boxAnimation.goToAndStop(0, true)
+        }
+
+        boxAnimationWrapper.hover(function() {
+            playAnimationFeatured()
+        }, function() {
+            stopAnimationFeatured()
+        })
+
+        function isVisible (ele) {
+            const { top, bottom } = ele.getBoundingClientRect();
+            const vHeight = (window.innerHeight || document.documentElement.clientHeight);
+          
+            return (
+              (top > 0 || bottom > 0) &&
+              top < vHeight
+            );
+        }
+
+        if ($(window).width() < 768 ) {
+            let animationIsPlaying = false
+            const mobileAnimationBox = document.getElementById('box-animation-product-featured-{{ product.handle }}')
+            addEventListener("scroll", (event) => {
+                if ( isVisible(mobileAnimationBox) ) {
+                    if ( !animationIsPlaying ) {
+                        animationIsPlaying = true
+                        playAnimationFeatured()
+                    }
+                } else {
+                    if ( animationIsPlaying ) {
+                        animationIsPlaying = false
+                        stopAnimationFeatured()
+                    }
+                }
+            });
+        }
+
+    </script>
+    {% endunless %}
+</div>

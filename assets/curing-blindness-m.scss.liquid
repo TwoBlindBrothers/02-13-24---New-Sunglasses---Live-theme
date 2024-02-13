@@ -1,0 +1,289 @@
+//MIXINS
+
+@mixin flexbox($direction:row) {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: flex;
+    -webkit-flex-direction: $direction;
+  -moz-flex-direction: $direction;
+  -ms-flex-direction: $direction;
+  flex-direction: $direction;
+}
+@mixin border($width: 5px, $color: {{ settings.color_borders }}, $radius:0) {
+    border: 6px solid $color;
+    border-radius: $radius;
+}
+@mixin outline($color: {{ settings.color_borders }}) {
+    outline: 5px solid $color;
+    outline-offset: -30px
+}
+    
+@mixin section-height($height) {
+    height: $height
+}
+@mixin centered() {
+  margin: 0 auto;
+  display: block
+}
+
+.curingblindness__hero {
+  background: {{ settings.color_primary }};
+  position: relative;
+    height: 100vh;
+}
+.curingblindness__hero__down {
+  position: absolute;
+  left: 50%;
+  width: 75px;
+  transform:translate(-50%, 50%);
+  height: 200px;
+  bottom: 50px;
+}
+.curingblindness__mainarea {
+  margin: 60px auto;
+  max-width: 98%;
+}
+.curingblindness__happening {
+    position: relative;
+    z-index: 1;
+    margin-top: 30px;
+    p {margin-bottom: 0}
+}
+.curingblindness__happening--right {
+    top: 0 !important;
+}
+.curingblindness__profits__profitsforcure {
+    margin-bottom: 90px
+}
+.curingblindness__profits {position: relative}
+
+.curingblindness__profitsforcure__tee {
+    max-width: 90%
+    z-index: 1
+}
+.curingblindness__profits__timefundingh {
+  max-width: 550px;
+  margin: 0 auto !important
+}
+.curingblindness__braille__feel {
+    position: absolute;
+    z-index: 1;
+    width: 105px;
+    top: 188px;
+    right: -20px;
+}
+
+.curingblindness__why {
+  position: relative;
+  margin-bottom: 50px;
+  z-index: 0;
+}
+
+
+// TIMELINE
+
+div[class*='timeline__']{
+    position: absolute;
+    left: 15%;
+    width: 80%;
+    padding-left: 10px;
+    &:before {
+        content: '';
+        width: 100px;
+        height: 4px;
+        background: {{ settings.color_primary }};
+        position: absolute;
+        top: -10px;
+    }
+
+  p {
+    margin-bottom: 0;
+    word-break: break-word;
+  }
+}
+
+.timeline__1 {
+  left: 8.75%;
+top: 150px;
+}
+.timeline__3 {
+    left:33%;
+    top: 270px;
+}
+.timeline__4 {
+    left: 45%;
+    top: 400px;
+}
+.timeline__5 {
+    left: 57%;
+    top: 521px;
+}
+.timeline__7 {
+  left: 81%;
+    top: 647px;
+}
+.timeline__title {
+    top: 45px;
+    &:before {
+        background: #fff !important
+    }
+}
+.timeline__end {
+    right: 0;
+    width: 395px !important;
+    top: 775px !important;
+    width: 80% !important;
+    min-width: 300px !important;
+    &:before {
+        background: #fff !important
+    }
+    img {
+        width:25px;
+        float: left;
+        display: inline-block;
+    };
+    p {
+        display: inline-block;
+        float: left;
+        width: 70%;
+        font-weight: 700 !important;
+        padding-left: 20px
+    }
+}
+
+// Mobile
+
+#timeline_m {
+  height: 950px;
+  position: relative;
+    margin-left: 15px;
+    margin-top: 120px;
+  &:before,
+  &:after {
+    content: '';
+    width: 80px;
+    display: block;
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: absolute;
+    left: -10px;
+  }
+  &:after{
+    background-image: url({{'eye-open.png' | asset_url }});
+    bottom: 0;
+    height: 100px;
+  }
+  &:before {
+    background-image: url({{'eye-closed.png' | asset_url }});
+    height: 52px;
+  }
+}
+.timeline_m {
+  position: absolute;
+  transform: translate(-50%, 50px);
+  left: 30px
+}
+
+// END TIMELINE 
+
+
+.curingblindness__restoring__tee {
+    height: 350px;
+    transition: all ease 150ms;
+   width: 100%;
+    pointer-events: none; 
+}
+
+
+
+//Deco elements
+
+.yellow1 {
+  width: 50%;
+    height: 340px;
+    right: 0;
+    z-index: 0;
+    background: #f0d83d;
+    bottom: 165px;
+    right: -20px;
+}
+.yellow2 {
+     width: 93%;
+    height: 67px;
+    bottom: -35px;
+    left:0;
+    top: 50%;
+    background: {{settings.color_tertiary}};
+    z-index: -1;
+}
+.braille--so-close {
+    height: 30px;
+    top: -15px;
+    right: -10px;
+}
+
+.eyeballs {
+  margin: 120px auto 20px;
+  display: block;
+    text-align: center;
+}
+.eyeball {
+  display: inline-block;
+  max-width: 70px;
+  margin-left: 5px
+}
+
+
+//ANIMATE.CSS
+
+.animated {
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.fadeIn {
+  animation-name: fadeIn;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fadeInUp {
+  animation-name: fadeInUp;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translate3d(100%, 0, 0);
+    visibility: visible;
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.slideInRight {
+  animation-name: slideInRight;
+}

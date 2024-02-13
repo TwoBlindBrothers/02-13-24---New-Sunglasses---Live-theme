@@ -1,0 +1,102 @@
+<section>
+    <div style="display: flex; justify-content: center; position: relative;">
+        <div>
+            <div class="grid text-center{% if section.settings.white_text %} text-white{% endif %}{% if section.settings.black_bg %} bg-black{% endif %}">
+                <div class="grid__item ten-twelfths  push--one-twelfth">
+                {% if section.settings.image %}
+                    <picture class="shop-blind-hero__image">
+                    <source data-srcset="{{ section.settings.image.src | img_url: '700x' }}" media="(min-width: 1200px)" />
+                    <source data-srcset="{{ section.settings.image.src | img_url: '500x' }}" media="(min-width: 769px)" />
+                    <source data-srcset="{{ section.settings.image.src | img_url: '300x' }}" media="(min-width: 500px)" />
+                    <source data-srcset="{{ section.settings.image.src | img_url: '200x' }}" media="(min-width: 320px)" />
+                    <img data-src="{{ section.settings.image.src | img_url: '700x' }}" alt="{{ section.settings.image.meta }}" class="lazyload"/>
+                    </picture>
+                {% else %}
+                    {% if template == 'page.shopblind-template' %}
+                    <img class="shop-blind-logo-alt" src="{{ 'flowers.png' | file_url }}"/>
+                {% else %}
+                    {% assign shop_blind_type = settings.shop_blind_type %}
+                    {% case shop_blind_type %}
+                        {% when 'basic' or 'alt' %}
+                        {% include 'eye-closed.svg' %}
+                        {% when 'valentines' %}
+                        <div class="shop-blind-logo">
+                            {% include 'hearts.svg' %}
+                            {% include 'equals.svg' %}
+                            {% include 'eye-closed.svg' %}
+                        </div>
+                    {% endcase %}
+                {% endif %}
+                {% endif %}
+                {% comment %}If ACF fields, override customzer settings{% endcomment %}
+                {% assign shop_blind_heading = settings.shop_blind_title %}
+            
+                {% if section.settings.title != empty %}
+                    {% assign shop_blind_heading = section.settings.title %}
+                {% endif %}
+            
+                {% if page.metafields.shop_blind.shop_blind_title %}
+                    {% assign shop_blind_heading = page.metafields.shop_blind.shop_blind_title %}
+                {% endif %}
+            
+                {% assign shop_blind_content = settings.shop_blind_desc %}
+            
+                {% if section.settings.desc != empty %}
+                    {% assign shop_blind_content = section.settings.desc %}
+                {% endif %}
+            
+                {% if page.metafields.shop_blind.hero_content %}
+                    {% assign shop_blind_content = page.metafields.shop_blind.hero_content %}
+                {% endif %}
+            
+                {% if shop_blind_heading %}
+                    <h1 tabindex="0" class="shop-blind-title">{{ shop_blind_heading }}</h1>
+                {% endif %}
+                {% if shop_blind_content %}
+                    <p tabindex="0" class="shop-blind-desc">{{ shop_blind_content }}</p>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+  
+  {% schema %}
+  {
+    "name": "Shop Blind Hero",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image",
+        "info": "This will replace the eye logo at the top of the section"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Hero title"
+      },
+      {
+        "type": "textarea",
+        "id": "desc",
+        "label": "Hero text"
+      },
+      {
+        "type": "checkbox",
+        "id": "white_text",
+        "label": "White text?"
+      },
+      {
+        "type": "checkbox",
+        "id": "black_bg",
+        "label": "Black background?"
+      }
+    ],
+    "presets": [
+      {
+        "category": "Shop Blind",
+        "name": "Shop Blind Hero"
+      }
+    ]
+  }
+  {% endschema %}

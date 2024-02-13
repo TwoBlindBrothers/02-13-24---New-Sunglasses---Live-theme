@@ -1,0 +1,67 @@
+{
+  "frontend/entrypoints/custom.css": {
+    "file": "custom-75252962.css",
+    "isEntry": true,
+    "src": "frontend/entrypoints/custom.css"
+  },
+  "frontend/entrypoints/reserve-bundle-save.js": {
+    "file": "reserve-bundle-save-b1c834af.js",
+    "isEntry": true,
+    "src": "frontend/entrypoints/reserve-bundle-save.js"
+  },
+  "frontend/entrypoints/reserve-collapsible-cart.js": {
+    "file": "reserve-collapsible-cart-4546fed9.js",
+    "isEntry": true,
+    "src": "frontend/entrypoints/reserve-collapsible-cart.js"
+  },
+  "frontend/entrypoints/reserve-collection-carousel.js": {
+    "file": "reserve-collection-carousel-ef1b6e63.js",
+    "isEntry": true,
+    "src": "frontend/entrypoints/reserve-collection-carousel.js"
+  },
+  "frontend/entrypoints/reserve-hello-button.js": {
+    "file": "reserve-hello-button-0f912d41.js",
+    "isEntry": true,
+    "src": "frontend/entrypoints/reserve-hello-button.js"
+  },
+  "frontend/entrypoints/reserve-products-carousel.js": {
+    "file": "reserve-products-carousel-021af591.js",
+    "isEntry": true,
+    "src": "frontend/entrypoints/reserve-products-carousel.js"
+  },
+  "frontend/entrypoints/reserve-quality.js": {
+    "file": "reserve-quality-14ade853.js",
+    "isEntry": true,
+    "src": "frontend/entrypoints/reserve-quality.js"
+  },
+  "frontend/entrypoints/reserve-social.js": {
+    "file": "reserve-social-bcc0b75c.js",
+    "isEntry": true,
+    "src": "frontend/entrypoints/reserve-social.js"
+  },
+  "frontend/entrypoints/reserve-sticky-atc.js": {
+    "file": "reserve-sticky-atc-6025a8b8.js",
+    "isEntry": true,
+    "src": "frontend/entrypoints/reserve-sticky-atc.js"
+  },
+  "frontend/entrypoints/reserve-testimonials.js": {
+    "file": "reserve-testimonials-6fa34bd7.js",
+    "isEntry": true,
+    "src": "frontend/entrypoints/reserve-testimonials.js"
+  },
+  "frontend/entrypoints/reserve-welcome-popup.js": {
+    "file": "reserve-welcome-popup-a8b2cd25.js",
+    "isEntry": true,
+    "src": "frontend/entrypoints/reserve-welcome-popup.js"
+  },
+  "frontend/entrypoints/reserve.css": {
+    "file": "reserve-59f66704.css",
+    "isEntry": true,
+    "src": "frontend/entrypoints/reserve.css"
+  },
+  "frontend/entrypoints/reserve.js": {
+    "file": "reserve-22a39a80.js",
+    "isEntry": true,
+    "src": "frontend/entrypoints/reserve.js"
+  }
+}

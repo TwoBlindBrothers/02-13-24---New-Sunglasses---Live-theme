@@ -1,0 +1,82 @@
+<div class="protection-perfect">
+    <div class="protection-perfect-wrapper">
+        <div class="protection-perfect-img">
+            {% if section.settings.img != blank %}
+                <img src="{{ section.settings.img |  img_url: 'master' }}" alt="">
+            {% endif %}
+        </div>
+        <div class="protection-perfect-header">
+            {% if section.settings.title != blank %}
+                <h2>{{ section.settings.title }}</h2>
+            {% endif %}
+            {% if section.settings.content != blank %}
+                {{ section.settings.content }}
+            {% endif %}
+        </div>
+        <div class="protection-perfect-row">
+            {% for block in section.blocks %}
+            <div class="protection-perfect-item">
+                {% if block.settings.img != blank %}
+                    <img src="{{ block.settings.img | img_url: 'master' }}" alt="">
+                {% endif %}
+                {% if block.settings.title != blank %}
+                    <h3>{{ block.settings.title }}</h3>
+                {% endif %}
+                {% if block.settings.content != blank %}
+                    {{ block.settings.content }}
+                {% endif %}
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+</div>
+{% schema %}
+    {
+        "name": "Protection Perfect",
+        "settings": [
+            {
+                "type": "text",
+                "id": "title",
+                "label": "Heading"
+            },
+            {
+                "type": "richtext",
+                "id": "content",
+                "label": "Content"
+            },
+            {
+                "type": "image_picker",
+                "id": "img",
+                "label": "Top Image"
+            }
+        ],
+        "blocks": [
+            {
+                "name": "block",
+                "type": "block",
+                "settings": [
+                    {
+                        "type": "text",
+                        "id": "title",
+                        "label": "Title"
+                    },
+                    {
+                        "type": "richtext",
+                        "id": "content",
+                        "label": "Content"
+                    },
+                    {
+                        "type": "image_picker",
+                        "id": "img",
+                        "label": "Image"
+                    }
+                ]
+            }
+        ],
+        "presets": [
+            {
+                "name": "Protection Perfect"
+            }
+        ]
+    }
+{% endschema %}

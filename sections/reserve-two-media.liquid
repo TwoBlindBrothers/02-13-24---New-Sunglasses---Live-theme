@@ -1,0 +1,201 @@
+{% assign _section = section.settings %}
+<section class="reserve-two-media" data-aos="fade-up" data-aos-offset="200" data-aos-delay="50" data-aos-duration="800">
+  <div class="reserve-container">
+    <header class="reserve-two-media__header{% if _section.description == blank %} reserve-two-media__no-description{% endif %}">
+      <div class="reserve-two-media__header-content">
+        {% if _section.title != blank %}
+          <h2 class="h1-reserve reserve-two-media__title">{{ _section.title }}</h2>
+        {% endif %}
+        {% if _section.description != blank %}
+          <div class="p1 reserve-two-media__description">{{ _section.description }}</div>
+        {% endif %}
+      </div>
+      {% if _section.button_text_1 != blank or _section.button_text_2 != blank %}
+        <div class="reserve-two-media__ctas">
+          {% if _section.button_text_1 != blank and _section.button_link_1 != blank %}
+            <a href="{{ _section.button_link_1 }}" class="reserve-btn reserve-two-media__cta sm:min-w-[168.5px] md:min-w-[174px]">{{ _section.button_text_1 }}</a>
+          {% endif %}
+          {% if _section.button_text_2 != blank and _section.button_link_2 != blank %}
+            <a href="{{ _section.button_link_2 }}" class="reserve-btn reserve-two-media__cta sm:min-w-[168.5px] md:min-w-[162px]">{{ _section.button_text_2 }}</a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </header>
+    <div class="reserve-two-media__content">
+      {%- if section.blocks.size > 0 -%}
+        <div class="reserve-two-media__media-wrapper">
+          {%- for block in section.blocks -%}
+            {% if block.settings.media_image_mobile != blank or block.settings.media_video_mobile != blank %}
+              <div class="reserve-two-media__item {% if _section.information_title != blank %} reserve-two-media__item--secondary{% endif %}">
+                {% if block.settings.media_type == 'video' %}
+                  {%- render 'reserve-video',
+                    class: 'reserve-two-media__video-mobile',
+                    video: block.settings.media_video_mobile,
+                    video_url: block.settings.video_url_mobile,
+                    autoplay: true,
+                    muted: true,
+                    overlay: block.settings.media_overlay
+                  -%}
+                  {%- render 'reserve-video',
+                    class: 'reserve-two-media__video-desktop',
+                    video: block.settings.media_video_desktop,
+                    video_url: block.settings.video_url_desktop,
+                    autoplay: true,
+                    muted: true,
+                    overlay: block.settings.media_overlay
+                  -%}
+                {% else %}
+                  {% render 'image', class: 'reserve-two-media__image-mobile', classes: 'animation-image', image: block.settings.media_image_mobile %}
+                  {% render 'image', class: 'reserve-two-media__image-desktop', classes: 'animation-image', image: block.settings.media_image_desktop %}
+                  {% if block.settings.media_overlay != blank %}
+                    <div class="reserve-two-media__overlay" style="opacity: {{ block.settings.media_overlay | times: 0.01 }}"></div>
+                  {% endif %}
+                {% endif %}
+              </div>
+            {% endif %}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {% render 'reserve-information',
+        class: 'reserve-two-media__info',
+        icon: _section.information_icon,
+        title: _section.information_title,
+        description: _section.information_description,
+        is_show: _section.show_information
+      %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Reserve - Two Media",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "button_text_1",
+      "label": "Button 1 Text"
+    },
+    {
+      "type": "url",
+      "id": "button_link_1",
+      "label": "Button 1 Link"
+    },
+    {
+      "type": "text",
+      "id": "button_text_2",
+      "label": "Button 2 Text"
+    },
+    {
+      "type": "url",
+      "id": "button_link_2",
+      "label": "Button 2 Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_information",
+      "label": "Show/Hide Information",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "information_icon",
+      "label": "Information Icon"
+    },
+    {
+      "type": "text",
+      "id": "information_title",
+      "label": "Information Title"
+    },
+    {
+      "type": "richtext",
+      "id": "information_description",
+      "label": "Information Description"
+    }
+  ],
+  "max_blocks": 2,
+  "blocks": [
+    {
+      "type": "video",
+      "name": "Video",
+      "settings": [
+        {
+          "type": "select",
+          "id": "media_type",
+          "label": "Media Type",
+          "options": [
+            { "value": "image", "label": "Image"},
+            { "value": "video", "label": "Video"}
+          ],
+          "default":   "image"
+        },
+        {
+          "type": "range",
+          "id": "media_overlay",
+          "label": "Media Overlay",
+          "default": 5,
+          "min": 0,
+          "max": 100,
+          "step": 1
+        },
+        {
+          "type": "image_picker",
+          "id": "media_image_mobile",
+          "label": "Media Image (Mobile)"
+        },
+        {
+          "type": "image_picker",
+          "id": "media_image_desktop",
+          "label": "Media Image (Desktop)"
+        },
+        {
+          "type": "video",
+          "id": "media_video_mobile",
+          "label": "Media Video (Mobile)"
+        },
+        {
+          "type": "video",
+          "id": "media_video_desktop",
+          "label": "Media Video (Desktop)"
+        },
+        {
+          "type": "video_url",
+          "id": "video_url_mobile",
+          "label": "Video Url (Mobile)",
+          "accept": [
+            "youtube",
+            "vimeo"
+          ],
+          "info": "Link Youtube & Vimeo"
+        },
+        {
+          "type": "video_url",
+          "id": "video_url_desktop",
+          "label": "Video Url (Desktop)",
+          "accept": [
+            "youtube",
+            "vimeo"
+          ],
+          "info": "Link Youtube & Vimeo"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reserve - Two Media"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,40 @@
+{% capture 'hero_image' %}
+{{ section.settings.hero_image | img_url: '1640x'  }} {% endcapture %}
+
+<div id="about-hero" class="page-hero" style="background-image:url({{ hero_image }})" {{ block.shopify_attributes }}>
+   
+    <div class="scaling-container">
+        <div id="about-spot" class="content-grow"></div>
+         <svg version="1.1" viewBox="0 0 557 340" class="svg-text about-text-1" >
+             <text fill="#231f20" transform="translate(0 70)"  xml:space="preserve">
+                 <tspan font-size="95" x="0" dx="0 38 38 38 38 38">WE ARE </tspan>
+                 <tspan font-size="80" x="0" y="105" dx="0 13 13 13 13 13 13 13 13">TWO BLIND </tspan>
+                 <tspan font-size="80" x="0" y="210" dx="0 19 19 19 19 19 19 19 19 ">BROTHERS</tspan>
+             </text>
+         </svg>
+         
+          <svg version="1.1" viewBox="0 0 557 340" class="svg-text about-text-2" fill="#fff" style="width:80%">
+              <text font-size="98" transform="translate(0 70)" xml:space="preserve">
+                  <tspan x="0" y="0" dx="0 37 37 37 37 37">BUT WE </tspan>
+                  <tspan x="0" y="107" dx="0 38 38 38 38 38">HAVE A </tspan>
+                  <tspan x="0" y="213" dx="0 42 42 42 42 42">VISION</tspan>
+              </text>
+              <text font-size="20px" x="0" y="320" textLength="557" xml:space="preserve">WE BELIEVE THAT WE CAN CURE BLINDNESS</text>
+          </svg>
+     </div>
+
+</div>
+
+{% schema %}
+  {
+    "name": "Hero image",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "hero_image",
+        "label": "Hero image",
+        "info": "1600px wide"
+      }
+    ]
+  }
+{% endschema %}

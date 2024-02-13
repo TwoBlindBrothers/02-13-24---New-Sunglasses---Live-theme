@@ -1,0 +1,75 @@
+<section id="warranty" class="warranty-section">
+    <div class="text_container">
+        <h1 class="is-yellow">{{ section.settings.claims_title }}</h1>
+        <p class="is-white">{{ section.settings.claims_copy }}</p>
+        <ul class="warranty-list no-bullets is-white">
+         {% for block in section.blocks %}
+            <li class="grid-flex">
+                <img src="{{ block.settings.warranty_icon | img_url: 'x120' }}" class="warranty-icon" role="presentation" alt="{{ block.settings.warranty_icon.alt }}">
+                <p class="warranty-text">{{ block.settings.warranty_text }}</p>
+            </li>
+         {% endfor %}
+        </ul>
+    </div>
+    <p class="is-yellow">{{ section.settings.claims_subcopy }}</p>
+    <a onclick="warrantyOpen()" class="h5 is-yellow claims_link">{{ section.settings.claims_link }}</a>
+    
+    {% if section.settings.sunnies %}
+    <div class="sunglasses--isolated is-relative">
+        <img src="{{ section.settings.sunnies | img_url: '750x' }}" role="presentation" class="is-absolute centered-abs">
+    </div>
+    {% endif %}
+</section> 
+
+{% schema %}
+  {
+    "name": "Warranty Claims",
+    "class": "bg-black",
+    "settings": [
+        { 
+            "type": "text",
+            "id": "claims_title",
+            "label": "Section title"
+        },
+        { 
+            "type": "text",
+            "id": "claims_copy",
+            "label": "Section subcopy"
+        },
+        { 
+            "type": "text",
+            "id": "claims_subcopy",
+            "label": "Subcopy"
+        },
+        { 
+            "type": "text",
+            "id": "claims_link",
+            "label": "Section link"
+        },
+        { 
+            "type": "image_picker",
+            "id": "sunnies",
+            "label": "Suniies pic"
+        }
+
+    ],
+    "blocks": [
+        {
+        "type": "warranty",
+        "name": "Warranty claim",
+        "settings": [
+            {
+                "type": "text",
+                "id": "warranty_text",
+                "label": "Funny claim"
+            },
+            {
+                "type": "image_picker",
+                "id": "warranty_icon",
+                "label": "Icon image"
+            }
+        ]
+       }
+    ]
+}
+{% endschema %}

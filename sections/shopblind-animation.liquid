@@ -1,0 +1,85 @@
+{% if section.settings.fly_animation_image != null %}
+    <div class="fly-ghost">
+        <img
+            src="{{ section.settings.fly_animation_image | image_url }}"
+            alt="fly animation"
+            loading="lazy"
+            width="200"
+            height
+        />
+    </div>
+{% endif %}
+
+<script>
+    const loadFlyAnimation = () => {
+        let intervalID;
+        let animStartPos = [180, 320, 460, 300]
+        let animObjectWidth = [200, 160, 120, 150]
+        let flyGhost = $('.fly-ghost')
+        let animTrackWidth = window.innerWidth
+        let animMoveWidth = 0
+        let verticalDirection = true
+        let horizontalDirection = true
+        let offsetWidth = 150
+        let currentAnimIndex = 0
+
+        intervalID = setInterval(() => {
+            $('.fly-ghost').css ({
+                'width': `${animObjectWidth[currentAnimIndex]}px`,
+                'top': `${animStartPos[currentAnimIndex]}px`,
+                'transform': `translate(${animMoveWidth}px, ${verticalDirection ? 50 : 0}px) rotateY(${horizontalDirection ? 0 : 180}deg)`,
+                '-webkit-transform': `translate(${animMoveWidth}px, ${verticalDirection ? 50 : 0}px) rotateY(${horizontalDirection ? 0 : 180}deg)`,
+                '-moz-transform': `translate(${animMoveWidth}px, ${verticalDirection ? 50 : 0}px) rotateY(${horizontalDirection ? 0 : 180}deg)`,
+                '-o-transform': `translate(${animMoveWidth}px, ${verticalDirection ? 50 : 0}px) rotateY(${horizontalDirection ? 0 : 180}deg)`,
+                '-ms-transform': `translate(${animMoveWidth}px, ${verticalDirection ? 50 : 0}px) rotateY(${horizontalDirection ? 0 : 180}deg)`
+            })
+
+            if (horizontalDirection) {
+                animMoveWidth -= offsetWidth
+            } else {
+                animMoveWidth += offsetWidth
+            }
+
+            verticalDirection = !verticalDirection
+
+            if (Math.abs(animMoveWidth) > (animTrackWidth + 200)) {
+                if (horizontalDirection) {
+                    animMoveWidth = 0 - animTrackWidth - 200
+                } else {
+                    animMoveWidth = animTrackWidth + 200
+                }
+                horizontalDirection = !horizontalDirection
+                currentAnimIndex ++
+
+                if (currentAnimIndex > 3) {
+                    currentAnimIndex = 0
+                }
+            }
+        }, 1000)
+
+        const stop = () => {
+            clearInterval(intervalID)
+        }
+    }
+
+    loadFlyAnimation()
+</script>
+
+{% schema %}
+  {
+    "name": "Shop Blind Animation",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "fly_animation_image",
+        "label": "Flying animation image"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Flying Animation",
+        "category": "Shop Blind"
+      }
+    ]
+  }
+{% endschema %}

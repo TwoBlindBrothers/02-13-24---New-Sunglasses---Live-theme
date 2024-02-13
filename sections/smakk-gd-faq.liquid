@@ -1,0 +1,77 @@
+{%- unless section.blocks.size == 0 -%}
+<section id="shop-blind__faq">
+  <!-- <a style="display: block" tabIndex="0" name="faq"></a> -->
+  <div class="container narrow">
+      {%- unless section.settings.title == blank -%}
+      <div class="section-header">
+        <h2 class="h1 light text-center">{{ section.settings.title }}</h2>
+      </div>
+      {%- endunless -%}
+      {% for block in section.blocks %}
+          <div class="contact__sections__block">
+            <button class="contact_toggle" aria-expanded="false" aria-label="{{ block.settings.title }}" tabindex="0">
+              <div class="desc-title">{{ block.settings.title }}</div>
+              <div class="contact_toggle-icon">
+                <svg version="1.1" viewBox="0 0 14.329 14.329" aria-labelledby="title" class="role=&quot;img&quot;" width="15px" height="15px">
+                  <title id="play-btn-title">Plus sign</title>
+                  <polygon points="14.329,5.665 8.665,5.665 8.665,0 5.665,0 5.665,5.665 0,5.665 0,8.665 5.665,8.665 5.665,14.329 8.665,14.329 8.665,8.665 14.329,8.665 "></polygon>
+                </svg>
+              </div>
+            </button>
+            <div class="desc-body">
+              {{ block.settings.answer }}
+            </div>
+          </div>
+      {% endfor %}
+  </div>
+</section>
+{%- endunless -%}
+
+<script>
+  $( ".contact__menu__item" ).click(function(e) {
+    e.preventDefault();
+    $( ".contact__menu__item" ).removeClass("is-active")
+    $( this ).addClass( "is-active" );
+  });
+  $( ".contact_toggle" ).click(function() {
+    if ($( ".contact_toggle" ).hasClass( "is-active" )) {
+      $(this).attr('aria-expanded', false)
+    } else {
+      $(this).attr('aria-expanded', true)
+    }
+
+    $(this).siblings( ".desc-body" ).slideToggle( "fast" );
+    $( this ).toggleClass( "is-active" );
+  });
+</script>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "settings": [
+    {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Question"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

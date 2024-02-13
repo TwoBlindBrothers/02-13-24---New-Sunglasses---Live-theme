@@ -1,0 +1,40 @@
+<div class="carousel-slide">
+  <div class="carousel-slide-card">
+    <div class="carousel-slide-card-content">
+      {%- if block.settings.title or block.settings.review -%}
+        <div class="product-card__content">
+          <div>
+            <span class="visually-hidden">{{ block.settings.title }}</span>
+            {% if block.settings.name %}
+              <h3 class="">{{ block.settings.name }}</h3>
+            {% endif %}
+            {% if block.settings.date %}
+              <p class="h4 text-center">{{ block.settings.date }}</p>
+            {% endif %}
+            {% if block.settings.stars %}
+              <div class="flex-grid flex-center review-stars">
+                {% for i in (1..5) %}
+                  <div class="review-star">
+                    {% if i <= stars %}
+                      {% render 'icon-star', filled: true %}
+                    {% else %}
+                      {% render 'icon-star' %}
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+            {% if block.settings.title %}
+              <p class="text-center review-title">{{ block.settings.title }}</p>
+            {% endif %}
+            {% if block.settings.review %}
+              <div class="product-card__excerpt">
+                {{ block.settings.review }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>

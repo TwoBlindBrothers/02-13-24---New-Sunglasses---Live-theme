@@ -1,0 +1,599 @@
+{% comment %}
+{% include 'loader' %}
+{% endcomment %}
+<style>
+    .save-button {
+        --icon-fill-filled-default: blue!important;
+    }
+</style>
+{% assign looser_fit = false %}
+{% assign page_url = content_for_header | split:'"pageurl":"' | last | split:'"' | first | split: request.host | last | replace:'\/','/' | replace:'%20',' ' | replace:'\u0026','&' %}
+{%- for i in (1..1) -%}
+
+  {%- unless page_url contains "?" -%}{% break %}{%- endunless -%}
+  {%- assign query_string = page_url | split:'?' | last -%}
+  {%- assign qry_parts= query_string | split:'&' -%}
+
+  {%- for part in qry_parts -%}
+    {%- assign key_and_value = part | split:'=' -%}
+    {%- if key_and_value.size > 1 -%}
+      {% if key_and_value[0] == 'looser-fit' %}
+        {% assign looser_fit = key_and_value[1] %}
+      {% endif %}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endfor -%}
+
+{% assign bg_color = false %}
+{% assign img_border_color = false %}
+{% if collection %}
+  {% if collection.metafields.style.collection_background %}
+    {%  assign bg_color = collection.metafields.style.collection_background %}
+  {% endif %}
+  {% if collection.metafields.style.products_border_color %}
+    {%  assign img_border_color = collection.metafields.style.products_border_color %}
+  {% endif %}
+{% endif %}
+
+{% assign product_zoom_enabled = settings.product_zoom_enabled %}
+
+<div itemscope class="product-info-container remodal-bg"{% if bg_color %} style="background-color: {{ bg_color }}!important;"{% endif %} itemtype="http://schema.org/Product">
+
+  <meta itemprop="url" content="{{ shop.url }}{{ product.url }}">
+  <meta itemprop="image" content="{{ product.featured_image.src | img_url: 'grande' }}">
+
+  {% assign current_variant = product.selected_or_first_available_variant %}
+  {{ 'jQuery.verticalCarousel.js' | asset_url | script_tag }}
+  {{ 'jQuery.verticalCarousel.css' | asset_url | stylesheet_tag }}
+
+  {% comment %}
+  {% section "variant-descriptions" %}
+  {% endcomment %}
+
+  {% comment %}{% include 'breadcrumb' %}{% endcomment %}
+
+  <div class="grid product-single">
+    <div class="grid__item large--two-thirds text-center">
+      {% unless product.type == 'Gift' %}
+        <div class="mobile-product-title-container large--hide">
+          <h1 class="product-title mobile-product-title" itemprop="name" id="variantTitle">
+            {{ product.title | replace: "Women's ", "" | replace: "Men's ", "" }}
+          </h1>
+        </div>
+      {% endunless %}
+      {% if product.images.size > 1 %}
+        <div class="grid product-images" aria-hidden="true">
+          <div class="grid__item large--three-tenths medium-down--hide product-images-thumbnails">
+            <div id="product-thumbs-gallery-wrapper">
+              <div class="product-thumbs-nav-button product-thumbs-prev">
+                {% include 'svg_arrow-solid' %}
+              </div>
+              <div id="product-thumbs-gallery">
+                {% for image in product.images %}
+                    {% comment %}
+                      Omit looser fit options if looser fit param does not exist. Otherwise, omit regular options if looser fit param does exist
+                    {% endcomment %}
+                    {% if looser_fit == false and image.alt contains 'Looser Fit' %}
+                      {% continue %}
+                    {% endif %}
+                    {% if looser_fit != false %}
+                      {% unless image.alt contains 'Looser Fit' %}
+                        {% continue %}
+                      {% endunless %}
+                    {% endif %}
+                  {% if product.options.first == 'Title' %}
+                    {% assign dataColor = 'all' %}
+                  {% else %}
+                    {% assign dataColor = image.alt | split: 'caption:' | first %}
+                    {% assign dataColor = dataColor | split: ' - ' | last | remove: ' Hover' | replace: ' ', '-' | replace: '/', '-' | replace: '-&-', '-' %}
+                  {% endif %}
+                  {% capture imgAlt %}{{ shop.name }} - {{product.type }} {{ product.title }} {{ dataColor }}{% endcapture %}
+
+                  <div id="product-thumb-{{ image.id }}" class="mthumb filter-{{ dataColor | handleize }}">
+                    <img
+                        class="lazyload"
+                        sizes="auto"
+                        src="{{ image | product_img_url: '600x600', crop: 'top' | split:'?' | first }}"
+                        srcset="{{ image | product_img_url:  '400x400', crop: 'top' | split:'?' | first }} 400w,
+                                {{ image | product_img_url:  '600x600', crop: 'top' | split:'?' | first }} 600w,
+                                {{ image | product_img_url:  '700x700', crop: 'top' | split:'?' | first  }} 700w"
+                        alt="{{ imgAlt | escape }}" />
+                  </div>
+                {% endfor %}
+              </div>
+              <div class="product-thumbs-nav-button product-thumbs-next">
+                {% include 'svg_arrow-solid' %}
+              </div>
+            </div>
+          </div>
+          <div class="grid__item large--seven-tenths product-image-wrapper" style="position: relative;">
+
+            <div id="price-mobile" class="large--hide">
+              {% if current_variant.compare_at_price > current_variant.price %}
+                <span id="ComparePrice" style="text-decoration: line-through; margin-right: .5rem;">
+                  {{ current_variant.compare_at_price | money_without_trailing_zeros }}
+                </span>
+              {% endif %}
+              <span id="ProductPrice" style="margin-bottom: 0;" itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}"  class="h2">
+                {{ current_variant.price | money_without_trailing_zeros }}
+              </span>
+              {% if product.tags contains 'FINAL SALE' %}
+                <strong class="final-sale mobile"><span>*Final Sale</span></strong>
+              {% endif %}
+            </div>
+            <div id="product-images-gallery-wrapper">
+              <div id="product-images-gallery" class="product-single__photos">
+                {% for image in product.images %}
+                    {% comment %}
+                      Omit looser fit options if looser fit param does not exist. Otherwise, omit regular options if looser fit param does exist
+                    {% endcomment %}
+                    {% if looser_fit == false and image.alt contains 'Looser Fit' %}
+                      {% continue %}
+                    {% endif %}
+                    {% if looser_fit != false %}
+                      {% unless image.alt contains 'Looser Fit' %}
+                        {% continue %}
+                      {% endunless %}
+                    {% endif %}
+                  {% if product.options.first == 'Title' %}
+                    {% assign dataColor = 'all' %}
+                  {% else %}
+                    {% assign dataColor = image.alt | split: 'caption:' | first %}
+                    {% assign dataColor = dataColor | split: ' - ' | last | remove: ' Hover' | replace: ' ', '-' | replace: '/', '-' | replace: '-&-', '-' %}
+                  {% endif %}
+                  {% assign caption = false %}
+                  {% if image.alt contains 'caption:' %}
+                    {% assign caption = image.alt | split: 'caption:' | last %}
+                  {% endif %}
+                  <div class="filter-{{ dataColor | handleize }}">
+                    <img
+                      class="lazyload product-gal-img{% if product_zoom_enabled %} zoom-image{% endif %}"
+                      data-image-id="{{ product.featured_image.id }}"
+                      src="{{ image | product_img_url: '1200x' }}"
+                      srcset="{{ image | product_img_url:  '600x' | split:'?' | first }} 400w,
+                              {{ image | product_img_url:  '800x' | split:'?' | first }} 800w,
+                              {{ image | product_img_url:  '1250x' | split:'?' | first  }} 800w"
+                      alt="{{ imgAlt | escape }}">
+
+                    {% if caption %}
+                        <div class="product-model-info">{{ caption }}</div>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              </div>
+              <button class="product-images-prev product-images-nav-button">{% render 'icon-arrow' %}</button>
+              <button class="product-images-next product-images-nav-button">{% render 'icon-arrow' %}</button>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="product-single__photos single-photo" id="ProductPhoto">
+          {% assign featured_image = current_variant.featured_image | default: product.featured_image %}
+          <img src="{{ featured_image | img_url: '1000x' | split:'?' | first }}" alt="{{ imgAlt }}" id="ProductPhotoImg" class="lazyload zoom-image">
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="grid__item large--one-third product-info">
+        <div class="mobile-wish-list-btn-wrapper large--hide">
+            <div class="mobile-wish-list-btn">
+                <status-save-button product-id="{{ product.id }}">Save to wishlist</status-save-button>
+            </div>
+        </div>
+      <div class="medium-down--hide product-title-container" style="max-width:360px; margin:0 auto">
+        <h1 class="product-title medium-down--hide" id="variantTitle" itemprop="name">
+          <div style="position:relative;">
+            {{ product.title | replace: "Women's ", "" | replace: "Men's ", "" }}
+          </div>
+        </h1>
+        <span class="medium-down--hide variant-meta color-meta"{% unless product.options[0] == 'Color' %} data-toggle="false"{% endunless %} style="{% unless product.options[0] == 'Color' or product.metafields.custom.default_color %}display: none;{% endunless %}">
+          {% if product.metafields.custom.default_color %}{{ product.metafields.custom.default_color }}{% endif %}
+        </span>
+        {% for variant in product.variants %}
+          <div style="display: none;" class="variant-meta-data" data-variant="{{ variant.id }}">{{ variant.metafields.global.variant_name }}</div>
+        {% endfor %}
+        <div class="flex justify-between align-center" style="margin-bottom: .5rem;">
+            <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
+            <div id="product-price">
+            {% if current_variant.compare_at_price > current_variant.price %}
+                <span class="visually-hidden">{{ 'products.general.sale_price' | t }}</span>
+                <span id="ComparePrice" style="text-decoration: line-through; margin-right: .5rem;">
+                {{ current_variant.compare_at_price | money_without_trailing_zeros }}
+                </span>
+            {% endif %}
+            <span id="ProductPrice_d" itemprop="price" content="{{ current_variant.price | divided_by: 100.00 }}"  class="h2">
+                {{ current_variant.price | money_without_trailing_zeros }}
+            </span>
+            <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+            {% if product.tags contains 'FINAL SALE' %}
+                <strong class="final-sale"><span>*Final Sale</span></strong>
+            {% endif %}
+            </div>
+            <div class="wish-list-button-wrapper">
+              <status-save-button product-id="{{ product.id }}">Save to wishlist</status-save-button>
+            </div>
+        </div>
+
+      </div>
+
+      <div itemprop="offers" class="product-info-wrapper" itemscope itemtype="http://schema.org/Offer">
+        <meta itemprop="priceCurrency" content="{{ shop.currency }}">
+
+        <link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
+
+
+        <form action="/cart/add" data-productid="{{ product.id }}" method="post" enctype="multipart/form-data" id="AddToCartForm" class="form-vertical">
+          {% if product.tags contains 'FINAL SALE' %}
+            <input type="hidden" value="FINAL SALE" name="properties[NOTE]">
+          {% endif %}
+          <select name="id" data-productid="{{ product.id }}" id="productSelect" class="product-single__variants">
+            {% for variant in product.variants %}
+              {% if variant.available %}
+                {% comment %}
+                Note: if you use option_selection.js, your <select> tag will be overwritten, meaning what you have inside <option> will not reflect what you coded below.
+                {% endcomment %}
+                <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} data-sku="{{ variant.sku }}" value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+
+              {% else %}
+                <option disabled="disabled">
+                  {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+                </option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          {% assign swatch_colors = shop.metafields.swatch %}
+          {% assign selected_variant_id = product.selected_or_first_available_variant.id %}
+          {% if product.available %}
+            {% for option in product.options %}
+              {% include 'swatch' with option, swatch_colors, selected_variant_id %}
+            {% endfor %}
+          {% endif %}
+
+          {% comment %}
+            If a product is selected in the looser fit metafield, show the url with the variant options as a URL parameter
+          {% endcomment %}
+          {% if product.metafields.looser_fit.product %}
+            {% assign selected_variant = product.selected_or_first_available_variant %}
+            {% assign looser_fit_url = product.metafields.looser_fit.product.value.handle | append: '?looser-fit=' %}
+            {% comment %}
+              {% if selected_variant.option1 %}
+                {% assign looser_fit_url = looser_fit_url | append: selected_variant.option1 %}
+              {% endif %}
+              {% if selected_variant.option2 %}
+                {% assign looser_fit_url = looser_fit_url | append: '-' | append: selected_variant.option2 %}
+              {% endif %}
+            {% endcomment %}
+            <button type="button" onClick="goToLooserOption('{{ looser_fit_url }}')" class="underlined bold h5 looser-fit">Looser Fit Option</button>
+          {% endif %}
+
+          <button type="submit" name="add" id="AddToCart" class="btn">
+            <span id="AddToCartText">{{ 'products.product.add_to_cart' | t }}</span>
+          </button>
+        </form>
+
+        {% if product.metafields.c_f.model_info %}
+        <div class="product-meta">
+          {{ product.metafields.c_f.model_info }}
+        </div>
+        {% endif %}
+
+
+      </div>
+
+      <div class="product-description rte" itemprop="description">
+        {{ product.description }}
+      </div>
+      {% comment %}
+      <div class="myTolstoyStories">
+      <tolstoy-stories
+      data-tags="{% for tag in product.tags -%}{{ tag }},{%- endfor %}"
+      class="tolstoy-stories"
+      data-publish-id="lkf88yl2hqijj" 
+      data-product-id="{{ product.id }}">
+      </tolstoy-stories>
+      </div>
+      {% endcomment %}
+    </div>
+  </div>
+</div>
+
+{{ 'option_selection.js' | shopify_asset_url | script_tag }}
+
+<script>
+
+    const goToLooserOption = url => {
+      let looserFitUrl = url
+      let looserFitArr = []
+      $('.product-info .swatch input:checked').each( ( s, swatch) => {
+        looserFitArr.push($(swatch).val())
+      })
+      looserFitUrl += looserFitArr.join('-')
+      window.location = looserFitUrl
+    }
+  let $thumbsCarousel, $imagesCarousel = null;
+  let selectedColor = '';
+  $(document).ready( function() {
+    if ( $('.zoom-image').length ) {
+      $zoomImages = $('.zoom-image')
+      $($zoomImages).each( function() {
+        $(this).imageZoom({
+          zoom: 200
+        });
+      });
+    }
+
+    if ( $('#product-images-gallery').length ) {
+
+      const featuredCarouselOptions = {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        mouseDrag: false,
+        fade: true,
+        prevArrow: '.product-images-prev',
+        nextArrow: '.product-images-next',
+      }
+
+      $imagesCarousel = $('#product-images-gallery').on('reInit', function() {
+        $imagesCarousel.slick('slickGoTo', 0)
+        $thumbsCarousel.slick('refresh')
+      }).slick(featuredCarouselOptions);
+
+      var options = {
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        vertical: true,
+        focusOnSelect: true,
+        asNavFor: '#product-images-gallery',
+        prevArrow: '.product-thumbs-prev',
+        nextArrow: '.product-thumbs-next',
+        swipe: false
+      };
+
+      $thumbsCarousel = $('#product-thumbs-gallery').slick(options);
+    }
+
+  });
+
+  var productDesc = document.getElementsByClassName('product-description');
+  var descHtml = '';
+  var sizeTable = productDesc[0].querySelectorAll('table')
+  var descTags = productDesc[0].querySelectorAll('*')
+  var prevTag = false;
+  descTags.forEach(function(node, index) {
+    if(node.nodeName === 'META') {
+      return
+    }
+    if(node.nodeName === 'H4') {
+      if(prevTag) {
+        descHtml += `</div></div>`
+      }
+      descHtml += `
+      <div class="desc-toggle-section">
+        <a href=#" class="desc-toggle-header">
+          <h3>${node.innerHTML}</h3>
+          <button class="contact_toggle" aria-expanded="false" tabindex="-1">
+            <svg version="1.1" viewBox="0 0 14.329 14.329" aria-labelledby="title" class="role=&quot;img&quot;" width="15px" height="15px">
+            <title id="play-btn-title">Plus sign</title>
+            <polygon points="14.329,5.665 8.665,5.665 8.665,0 5.665,0 5.665,5.665 0,5.665 0,8.665 5.665,8.665 5.665,14.329 8.665,14.329 8.665,8.665 14.329,8.665 "></polygon> </svg>
+          </button>
+        </a>
+        <div class="desc-toggle-content">`
+        prevTag = false
+    } else {
+      if ( !node.parentNode.classList.contains('product-description') ) {
+        return
+      }
+      descHtml += node.outerHTML
+      if(index === descTags.length - 1) {
+        descHtml += '</div></div>'
+      }
+      prevTag = true
+    }
+  })
+  if( descHtml != '' ) {
+    $('.product-description').html(descHtml)
+    $('.desc-toggle-section:first-of-type .desc-toggle-content').show();
+    $('.desc-toggle-section:first-of-type').addClass('active');
+    $('.desc-toggle-section:first-of-type button').attr('aria-expanded', 'true');
+    $('.desc-toggle-header').on('click', function() {
+      $(this).closest('div.desc-toggle-section').find('.desc-toggle-content').slideToggle('fast');
+      $(this).closest('div.desc-toggle-section').toggleClass('active');
+      if ($(this).closest('div.desc-toggle-section').hasClass('active')) {
+        $(this).find('button').attr('aria-expanded', 'true');
+      } else {
+        $(this).find('button').attr('aria-expanded', 'false');
+      }
+
+      return false;
+    })
+  }
+
+  var selectCallback = function(variant, selector) {
+    var filterColor = variant ? variant.option1.replace(/ /g, '-').replace('/', ' ').replace(/-&-/g,'-').replace('$', '').replace('-+-', '-').toLowerCase() : '';
+    if ( variant ) {
+      var form = jQuery('#' + selector.domIdPrefix).closest('form');
+      const length = variant.options.length;
+      for ( var i = 0; i < length; i++ ) {
+        var radioButton = form.find('.swatch[data-option-index="' + i + '"] :radio[value="' + variant.options[i] +'"]');
+        if ( radioButton.length ) {
+          radioButton[0].checked = true;
+        }
+      }
+    }
+
+    if ( selectedColor === filterColor ) {
+      return
+    }
+
+    let shouldFilter = true
+
+    $imagesCarousel.slick('slickUnfilter');
+    $thumbsCarousel.slick('slickUnfilter');
+
+    if ( filterColor == 'Default-Title' ) {
+      shouldFilter = false
+    }
+    if ( !$(`.filter-${filterColor}`).length ) {
+      shouldFilter = false
+    }
+
+    selectedColor = filterColor
+
+    if ( shouldFilter ) {
+        //console.log('selected', selectedColor, 'filter color: ', filterColor, 'length: ', $(`.filter-${filterColor}`).length)
+        $thumbsCarousel.slick('slickFilter', `.filter-${filterColor}`);
+        $imagesCarousel.slick('slickFilter', `.filter-${filterColor}`);
+    }
+
+    // BEGIN SWATCHES
+
+    // END SWATCHES
+    timber.productPage({
+      money_format: "{{ shop.money_format }}",
+      variant: variant,
+      selector: selector
+    });
+  };
+
+  jQuery(function($) {
+    {% if product.variants.size > 0 %}
+      "undefined"==typeof freegifts_product_json&&(window.freegifts_product_json=function(e){if(e){for(var i=0;i<e.options.length;i++)if(option=e.options[i],option.values)for(var r=0;r<option.values.length;r++)(option.values[r].endsWith("(Freegifts)")||option.values[r].endsWith("% off)"))&&(option.values.splice(r,1),r--);for(var a=function(e){for(var i in e)if(e.hasOwnProperty(i))return!1;return!0},p=e.price,t=e.price_max,o=e.price_min,n=e.compare_at_price,_=e.compare_at_price_max,c=e.compare_at_price_min,i=0;i<e.variants.length;i++){var r=e.variants[i],s=r.option3?r.option3:r.option2?r.option2:r.option1;"undefined"!=typeof SECOMAPP&&"undefined"!=typeof SECOMAPP.gifts_list_avai&&!a(SECOMAPP.gifts_list_avai)&&"undefined"!=typeof SECOMAPP.gifts_list_avai[r.id]||s.endsWith("(Freegifts)")||s.endsWith("% off)")?(e.variants.splice(i,1),i-=1):(t>=r.price&&(t=r.price,p=r.price),o<=r.price&&(o=r.price),r.compare_at_price&&(_>=r.compare_at_price&&(_=r.compare_at_price,n=r.compare_at_price),c<=r.compare_at_price&&(c=r.compare_at_price)),1==r.available&&(e.available=!0))}e.price=p,e.price_max=o,e.price_min=t,e.compare_at_price=n,e.compare_at_price_max=c,e.compare_at_price_min=_,e.price_varies=o>t?!0:!1,e.compare_at_price_varies=c>_?!0:!1}return e});
+      var sca_product_info = freegifts_product_json ({{ product | json }});
+      new Shopify.OptionSelectors('productSelect', {
+        product:sca_product_info,
+        onVariantSelected: selectCallback,
+        enableHistoryState: true
+      });
+    {% endif %}
+
+    // Add label if only one product option and it isn't 'Title'. Could be 'Size'.
+    {% if product.options.first == 'Title' %}
+      $('.selector-wrapper:eq(0)').prepend('<label for="productSelect-option-0">{{ product.options.first | escape }}</label>');
+    {% endif %}
+
+    // Hide selectors if we only have 1 variant and its title contains 'Default'.
+    {% if product.variants.size == 1 and product.variants.first.title contains 'Default' %}
+      $('.selector-wrapper').hide();
+    {% endif %}
+  });
+
+  {% if looser_fit %}
+    const looserFitOptions = '{{ looser_fit }}'.split('-')
+    looserFitOptions.forEach( option => {
+     const $optionEl = $(`.product-info input[value="${option}"]`)
+      if ( $($optionEl).length ) {
+        setTimeout( function () {
+          $optionEl.click()
+        }, 1000)
+      }
+    })
+  {% endif %}
+
+</script>
+
+{% assign product_size_guide_title = product.metafields.size_guide.title %}
+{% assign product_size_guide_image = product.metafields.size_guide.image | first %}
+{% assign product_size_guide_description = product.metafields.size_guide.description %}
+{% assign product_size_guide_sizes = product.metafields.size_guide.sizes %}
+{% if product_size_guide_sizes %}
+    <script>
+        $('.product-description table').remove()
+        $('.size-chart-link-container').append(`
+            {% if product_size_guide_sizes %}
+            <a tabindex="0" data-remodal-target="product-size-chart" class="h5 size-chart-popup-link">View Sizing Chart</a>
+            {% endif %}
+            <div class="remodal product-size-chart size-guide" data-remodal-id="product-size-chart" data-remodal-options="hashTracking: false">
+            <button data-remodal-action="close" class="remodal-close"></button>
+            <p class="h2">Size Guide</p>
+            <div class="size-guide-content">
+                <div class="fit-details-info">
+                {% if product_size_guide_image %}
+                    <img src="{{ product_size_guide_image.src }}" alt="{{ product_size_guide_image.alt }}" />
+                {% endif %}
+                <div class="fit-details-info__description">
+                    {% if product_size_guide_title %}
+                    <p class="h3" style="margin-bottom: .5rem; text-transform: uppercase;">{{ product_size_guide_title }}</p>
+                    {% endif %}
+                    {% if product_size_guide_description %}
+                    <p>{{ product_size_guide_description }}</p>
+                    {% endif %}
+                </div>
+                </div>
+                <div class="table-wrapper">
+                {{ product_size_guide_sizes }}
+                </div>
+                <img class="mobile-fit-details-image" src="{{ product_size_guide_image.src }}" alt="{{ product_size_guide_image.alt }}" />
+            </div>
+            </div>
+        `);
+        if ($(window).width() < 768) {
+            $('.table-wrapper table caption').insertBefore($('.table-wrapper table'));
+        }
+        $('.size-chart-link').hide();
+        $(".table-wrapper").scroll(function() {
+            if ($(".table-wrapper").scrollLeft() > 0) {
+            $(".table-wrapper").addClass('hasScroll');
+            } else {
+            $(".table-wrapper").removeClass('hasScroll');
+            }
+        })
+        $('[data-remodal-target]').on('keyup', function(e) {
+          e.preventDefault();
+          if(e.key === 'Enter') {
+            $(this).click()
+          }
+        });
+    </script>
+{% endif %}
+
+{% section 'related-products' %}
+
+{% section 'product_custom-sections' %}
+
+ <script text="text/javascript">
+  var _learnq = _learnq || [];
+
+  var item = {
+    Name: {{ product.title|json }},
+    ProductID: {{ product.id|json }},
+    Categories: {{ product.collections|map:'title'|json }},
+    ImageURL: "https:{{ product.featured_image.src|img_url:'grande' }}",
+    URL: "{{ shop.secure_url }}{{ product.url }}",
+    Brand: {{ product.vendor|json }},
+    Price: {{ sca_price|money|json }},
+    CompareAtPrice: {{ sca_compare_at_price_max|money|json }},
+    Variant: {
+      ID: {{ product.selected_variant.id|json }},
+      Title: {{ product.selected_variant.title|json }},
+      Images: [(("https:{{ product.selected_variant.image.src|img_url:'grande' }}".includes('https://cdn.shopify.com/s/assets/no-image-')) ? "" : "https:{{ product.selected_variant.image.src|img_url:'grande' }}")],
+      URL: (("{{product.selected_variant.url}}") ? "{{ shop.secure_url }}{{product.selected_variant.url}}" : ""),
+      Price: {{product.selected_variant.price|money|json}}
+    }
+  };
+
+  _learnq.push(['track', 'Viewed Product', item]);
+  _learnq.push(['trackViewedItem', {
+    Title: item.Name,
+    ItemId: item.ProductID,
+    Categories: item.Categories,
+    ImageUrl: item.ImageURL,
+    Url: item.URL,
+    Metadata: {
+      Brand: item.Brand,
+      Price: item.Price,
+      CompareAtPrice: item.CompareAtPrice
+    }
+  }]);
+</script>
+
+<script text="text/javascript">
+    var _learnq = _learnq || [];
+    const addToCartBtn = document.getElementById("AddToCart")
+    if ( addToCartBtn ) {
+        document.getElementById("AddToCart").addEventListener('click',function (){
+            _learnq.push(['track', 'Add To Cart', item]);
+        });
+    }
+</script>
+<div data-rebuy-id="114720" data-rebuy-shopify-product-ids="{{ product.id }}"></div>
+<div data-rebuy-id="120361"></div>

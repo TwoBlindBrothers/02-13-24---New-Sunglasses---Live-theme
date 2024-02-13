@@ -1,0 +1,59 @@
+{%- comment -%}
+  Parameters
+  * urls (urls separated by pipe symbols '|')
+  * snippets
+  * on_delay_load
+  * load_apps
+  * delay
+  * enable
+{%- endcomment -%}
+
+{%- assign urls_split = urls | split: '|' -%}
+
+<script>
+  (function() {
+    {%- if enable -%}
+      function createScript(url) {
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = url;
+        var x = document.getElementsByTagName('script')[0];
+        x.parentNode.insertBefore(s, x);
+      };
+
+      var urls = {{ urls_split | json -}}{%- if load_apps -%}.concat(window.shopifyAppUrls || []){%- endif %};
+
+      // We want to load rebuy immediately
+      var rebuyUrl = window.shopifyAppUrls.find(url => url.includes('cdn.rebuyengine.com'));
+      createScript(rebuyUrl);
+
+      urls = urls.filter(function(url) {
+        return !url.includes('cdn.rebuyengine.com');
+      });
+
+      function delayLoad(event) {
+        if (event && !event.isTrusted) {
+          return;
+        }
+        setTimeout(function() {
+          for (var i = 0; i < urls.length; i++) {
+            createScript(urls[i]);
+          };
+          {{- on_delay_load -}}
+        }, {{- delay | default: 1000 -}});
+        events.forEach(function(event) {
+          window.removeEventListener(event, delayLoad);
+        });
+      };
+      var events = ['keydown', 'mousemove', 'touchmove', 'touchstart', 'touchend', 'wheel'];
+      events.forEach(function(event) {
+        window.addEventListener(event, delayLoad);
+      });
+      {{- snippets -}}
+    {%- else -%}
+      {{- snippets -}}
+      {{- on_delay_load -}}
+    {%- endif -%}
+  }());
+</script>

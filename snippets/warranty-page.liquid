@@ -1,0 +1,297 @@
+<div id="sunglasses-warranty">
+    {% if customer %}
+        {% assign test_emails = 'angela@twoblindbrothers.com,bradford@twoblindbrothers.com,bryan@twoblindbrothers.com,rachel@twoblindbrothers.combrandon@fullmetalworkshop.comkatie@twoblindbrothers.comryan@twoblindbrothers.complaceholder@twoblindbrothers.comdevelopment@fullmetalworkshop.comkrysta@twoblindbrothers.com' %}
+        {% if test_emails contains customer.email %}
+            <div class="wrapper reserve-two-media">
+                <div>
+                    {% assign warranty_metafield = "metafields.sunglasses.warranty" %}
+                    {% assign warranty_products = all_products | map: 'variants' | map: warranty_metafield | compact %}
+                    {% comment %} {% assign filteredProducts = all_products | where: "metafields.your_metafield_namespace.your_metafield_key", desiredMetafield %} {% endcomment %}
+
+                    <div id="warranty-products" class="w-full max-w-7xl mx-auto flex flex-col justify-center items-center py-16">
+                        <h2 class="mb-1 h1-reserve">
+                            {% if customer.first_name %}
+                                Hi, {{ customer.first_name }}!
+                            {% else %}
+                                Hi there!
+                            {% endif %}
+                        </h2>
+                        <p class="mb-8 p1">Please wait while we locate your eligible warranties</p>
+                        <div class="page-loading is-active">
+                            <div class="loader">
+                            <div class="dot dot-1"></div>
+                            <div class="dot dot-2"></div>
+                            <div class="dot dot-3"></div>
+                            <div class="dot dot-4"></div>
+                            <div class="dot dot-5"></div>
+                            <div class="dot dot-6"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="warranty-products-none" class="w-full max-w-lg px-4 flex hidden mx-auto text-center flex-col justify-center items-center py-16">
+                        <h2 class="mb-1 h1-reserve text-center">
+                            Uh oh...
+                        </h2>
+                        <p class="mb-8 p1">We couldn't find any warranties for your account. If you think this is a mistake, please email us at <a href="mailto:hello@twoblindbrothers.com">hello@twoblinbrothers.com</a></p>
+                    </div>
+                    {% for product in warranty_products %}
+                        {{ product.title }}
+                        {% for variant in product.variants %}
+                            {% if variant[warranty_metafield] %}
+                                <!-- Output information about the product and variant as needed -->
+                                {{ product.title }} - {{ variant.title }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+            <script>
+                const fetchWarrantyVariants = async () => {
+                    /* let warrantyOrders = [
+                        {
+                            orderName: '#651024',
+                            createdAt: '2024-01-30T01:26:25Z',
+                            warranties: [
+                                {
+                                    replacement: {
+                                        sku: '910309925149998',
+                                        name: 'Cavalier Replacement - Matte Black',
+                                        variant_id: 'gid://shopify/ProductVariant/20068499488864',
+                                        product_id: 'gid://shopify/Product/2257385750624',
+                                        handle: 'cavalier-replacement-matte-black'
+                                    },
+                                    variant: {
+                                        sku: '910309925149997',
+                                        name: 'Cavalier Sunglasses - Black Matte / Single Pair',
+                                        variant_id: 'gid://shopify/ProductVariant/39434828120160',
+                                        product_id: 'gid://shopify/Product/8314802307384',
+                                        handle: 'cavalier-replacement-matte-black'
+                                    }
+                                },
+                                {
+                                    replacement: {
+                                        sku: '910309925149998',
+                                        name: 'Cavalier Replacement - Matte Black',
+                                        variant_id: 'gid://shopify/ProductVariant/20068499488864',
+                                        product_id: 'gid://shopify/Product/2257385750624',
+                                        handle: 'cavalier-replacement-matte-black'
+                                    },
+                                    variant: {
+                                        sku: '910309925149997',
+                                        name: 'Cavalier Sunglasses - Black Matte / Single Pair',
+                                        variant_id: 'gid://shopify/ProductVariant/39434828120160',
+                                        product_id: 'gid://shopify/Product/8314802307384',
+                                        handle: 'cavalier-replacement-matte-black'
+                                    }
+                                }
+                            ]
+                        }
+                    ] */
+                    // jmd82012@gmail.com
+                    const warrantiesQuery = await fetch(`https://2bb-gate.fly.dev/api/customer/warranties?shop=two-blind-brothers.myshopify.com&email={{ customer.email }}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then( response => response.json() ) 
+                    .then( data => data )
+
+                    if ( warrantiesQuery?.warranties ) {
+                        warrantyOrders = warrantiesQuery.warranties
+                        //warrantyOrders = []
+                        const productsContainer = document.getElementById('warranty-products')
+                        if ( warrantyOrders.length ) {
+                            const cart = await fetch(`/cart.js`)
+                            .then( response => response.json() ) 
+                            .then( data => data )
+                            var allWarranties = document.createElement('div');
+                            allWarranties.classList.add('w-full', 'sm:w-auto')
+                            const warrantyPromises = [];
+                            for await ( const order of warrantyOrders ) {
+                                var orderSection = document.createElement('div');
+                                orderSection.classList.add('mx-auto', 'mb-8')
+                                var orderItems = document.createElement('div');
+                                //orderItems.classList.add('flex', 'gap-4', 'mx-auto', 'w-full', 'justify-center')
+                                orderItems.classList.add('w-full', 'divide-y')
+                                var orderHeading = document.createElement('h2');
+                                orderHeading.classList.add('h3-reserve', 'pb-2', 'border-b')
+                                orderHeading.innerHTML = `Warranty products for order #${order.orderName}`;
+                                orderSection.append(orderHeading)
+                                
+                                for await ( const warranty of order.warranties ) {
+                                    const compareCreatedAt = (order1, order2) => {
+                                        const date1 = new Date(order1.createdAt);
+                                        const date2 = new Date(order2.createdAt);
+                                        return date1 - date2;
+                                    };
+                                    
+                                    let cannotReplace = false
+                                    const twoWeeksAgo = new Date();
+                                    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+                                    if ( warranty.replacementsOrdered?.length ) {
+                                        console.log(warranty.replacementsOrdered)
+                                        let replacementsOrdered = warranty.replacementsOrdered
+                                        replacementsOrdered = replacementsOrdered.sort(compareCreatedAt);
+        
+                                        const isLessThanTwoWeeksAgo = new Date(replacementsOrdered[replacementsOrdered.length - 1].createdAt) > twoWeeksAgo
+                                        if ( isLessThanTwoWeeksAgo ) {
+                                            cannotReplace = 'Replacements can not be ordered within two weeks of each other'
+                                        }
+
+                                        // Limit to 4 orders per year
+                                        const currentDate = new Date();
+                                        const oneYearAgo = new Date();
+                                        oneYearAgo.setFullYear(currentDate.getFullYear() - 1);
+                                        const ordersInPastYear = replacementsOrdered.filter(order => {
+                                            return new Date(order.createdAt) > oneYearAgo
+                                        });
+                                        const hasFourOrdersInPastYear = ordersInPastYear.length === 4;
+                                        if ( hasFourOrdersInPastYear ) {
+                                            cannotReplace = 'You can only place 4 replacement orders per year'
+                                        }
+                                    } else {
+                                        const isLessThanTwoWeeksAgo = new Date(warranty.createdAt) > twoWeeksAgo
+                                        if ( isLessThanTwoWeeksAgo ) {
+                                            cannotReplace = 'Replacements can not be ordered within two weeks of the original order date'
+                                        }
+                                    }
+
+                                    const variantId = warranty.replacement.variant_id.split('/ProductVariant/')[1]
+                                    const replacementId = warranty.lineItemInc
+                                    const addedToCart = cart.items.find( item => {
+                                        return item.properties['_replacement-item'] === replacementId
+                                    })
+
+                                    // Set warranty parameters
+                                    let warrantyParameters = `&handle=${warranty.replacement.handle}&variant=${variantId}&order=${order.orderName.replace('#', '')}&replacement_id=${replacementId}&in_cart=${addedToCart !== undefined}`
+
+                                    let lastOrderDate = null
+                                    if ( warranty.replacementsOrdered?.length ) {
+                                        lastOrderDate = warranty.replacementsOrdered[warranty.replacementsOrdered.length - 1].createdAt
+                                        
+                                        lastOrderDate = new Date(lastOrderDate).toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'numeric',
+                                            day: 'numeric',
+                                        }).toString()
+                                        warrantyParameters += `&last_order=${encodeURIComponent(lastOrderDate)}`
+                                    }
+                                    
+                                    if ( cannotReplace ) {
+                                        warrantyParameters += `&cannot_replace=${encodeURIComponent(cannotReplace)}`
+                                    }
+                                    const warrantyPromise = await fetch(`/pages/warranty?view=warranty-product${warrantyParameters}`, {
+                                        method: 'GET',
+                                        headers: {
+                                            'Content-Type': 'text/html'
+                                        }
+                                    })
+                                    .then( response => response.text() )
+                                    .then( data => { 
+                                        var itemHtml = document.createElement('div');
+                                        itemHtml.classList.add('w-full', 'py-4')
+                                        itemHtml.innerHTML = data;
+                                        orderItems.append(itemHtml)
+                                    })
+                                    warrantyPromises.push(warrantyPromise);
+                                }
+                                orderSection.append(orderItems)
+                                allWarranties.append(orderSection)
+                            }
+                            await Promise.all(warrantyPromises);
+                            productsContainer.innerHTML = ''
+                            productsContainer.append(allWarranties)
+                        } else {
+                            productsContainer.classList.add('hidden')
+                            const warrantyFail = document.getElementById('warranty-products-none')
+                            warrantyFail.classList.remove('hidden')
+                        }
+                    }
+
+                }
+                
+                fetchWarrantyVariants()
+                
+            </script>
+        {% else %}
+            <div id="warranty-products" class="w-full max-w-7xl mx-auto flex flex-col justify-center items-center py-16">
+                <h1 class="h1-reserve">Coming soon</h1>
+            </div>
+        {% endif %}
+    {% else %}
+        
+        <!-- /templates/customers/login.liquid -->
+        <div class="wrapper reserve-two-media">
+            <div class="grid">
+            
+                <div class="grid__item large--one-third push--large--one-third text-center">
+
+                    <div class="note form-success" id="ResetSuccess" style="display:none;">
+                        {{ 'customer.recover_password.success' | t }}
+                    </div>
+                    
+                    <div id="CustomerLoginForm" class="form-vertical">
+                        {% form 'customer_login' %}
+                    
+                            <h1 class="h1-reserve reserve-two-media__title">Sunglasses warranty</h1>
+                            <div class="p1 reserve-two-media__description mb-4">
+                                <p>Log in to your account to process your warranty fulfillment</p>
+                            </div>
+                    
+                            {{ form.errors | default_errors }}
+                            
+                            <label for="CustomerEmail" class="hidden-label">{{ 'customer.login.email' | t }}</label>
+                            <input type="text" name="customer[email]" id="CustomerEmail" class="input-full{% if form.errors contains 'email' %} error{% endif %}" placeholder="{{ 'customer.login.email' | t }}" aria-label="{{ 'customer.login.email' | t }}" autocorrect="off" autocapitalize="off" autofocus>
+                            <input type="hidden" name="return_to" value="/pages/warranty">
+                            {% if form.password_needed %}
+                            <label for="CustomerPassword" class="hidden-label">{{ 'customer.login.password' | t }}</label>
+                            <input type="password" value="" name="customer[password]" id="CustomerPassword" class="input-full mt-4{% if form.errors contains 'password' %} error{% endif %}" placeholder="{{ 'customer.login.password' | t }}" aria-label="{{ 'customer.login.password' | t }}">
+                            {% endif %}
+                            <div class="flex justify-end">
+                                <input type="submit" class="reserve-btn reserve-two-media__cta sm:min-w-[168.5px] md:min-w-[174px]" value="{{ 'customer.login.sign_in' | t }}">
+                            </div>
+                            {% if form.password_needed %}
+                                <p class="underline p1 mt-6"><a href="#recover" id="RecoverPassword">{{ 'customer.login.forgot_password' | t }}</a></p>
+                            {% endif %}
+                    
+                        {% endform %}
+                    </div>
+                
+                    {% comment %}
+                    JS shows/hides this form in timber.loginForms()
+                    {% endcomment %}
+                    <div id="RecoverPasswordForm" style="display: none;">
+                
+                        <h2>{{ 'customer.recover_password.title' | t }}</h2>
+                        <p>{{ 'customer.recover_password.subtext' | t }}</p>
+                    
+                        <div class="form-vertical">
+                            {% form 'recover_customer_password' %}
+                    
+                            {{ form.errors | default_errors }}
+                    
+                            {% comment %}
+                                Assign variable to be used after timber.init() is run in theme.liquid
+                            {% endcomment %}
+                            {% if form.posted_successfully? %}
+                                {% assign resetPassword = true %}
+                            {% endif %}
+                    
+                            <label for="RecoverEmail" class="hidden-label">{{ 'customer.recover_password.email' | t }}</label>
+                            <input type="email" value="" name="email" id="RecoverEmail" class="input-full" placeholder="{{ 'customer.recover_password.email' | t }}" autocorrect="off" autocapitalize="off">
+                    
+                            <p>
+                                <input type="submit" class="btn btn--full" value="{{ 'customer.recover_password.submit' | t }}">
+                            </p>
+                            <button type="button" id="HideRecoverPasswordLink" class="text-link">{{ 'customer.recover_password.cancel' | t }}</button>
+                            {% endform %}
+                        </div>
+                
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {%- render 'vite-tag' with 'reserve.css' -%}

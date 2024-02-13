@@ -1,0 +1,413 @@
+<section class="sb-landing sb-landing-2 text-center">
+  <div
+    class="sb-landing__bg {% if section.settings.shopblind_prod_highlight != blank %}featured__bg{% endif %}"
+    {% if section.settings.bg_color.alpha != 0.0 %}
+      style="background-color: {{ section.settings.bg_color }}"
+    {% endif %}
+  ></div>
+
+  {% comment %}If ACF fields, override customzer settings{% endcomment %}
+  {% liquid
+    assign shopblind_prod_highlight = section.settings.shopblind_prod_highlight
+    assign highlight_color = section.settings.highlight_color
+    assign highlight_button_color = section.settings.highlight_button_color
+    assign highlight_button_text_color = section.settings.highlight_button_text_color
+    assign highlight_type = section.settings.shopblind_prod_highlight_type
+    assign featured_box_color = section.settings.featured_box_color
+    assign featured_starburst_color = section.settings.featured_starburst_color
+    assign featured_product_heading = section.settings.featured_product_heading
+    assign featured_product_content = section.settings.featured_product_content
+    assign featured_button_text = section.settings.featured_button_text
+    assign sb_collection = section.settings.shopblind_col
+    if page.metafields.shop_blind.collection
+      assign sb_collection = page.metafields.shop_blind.collection
+    endif
+    assign collection = collections[sb_collection]
+  %}
+
+  {% if collection %}
+    {% assign products = collection.products | sort: 'price' %}
+    <div id="shop-blind-grid-container" class="container">
+      <div class="shop-blind-carousel">
+        <div class="slideshow-arrow-wrapper arrow-wrapper-left">
+          <div class="slider-arrow arrow-left">
+            {% render 'svg_bold_arrow_left' %}
+          </div>
+        </div>
+        <div id="shop-blind-products-carousel" class="slideshow-wrapper">
+          {% for product in products %}
+            {% liquid
+              assign highlighted_product = false
+              if forloop.index == products.size
+                assign highlighted_product = true
+              endif
+              if shopblind_prod_highlight != blank
+                assign highlight_prod_url = shopblind_prod_highlight | prepend: '/products/'
+                if highlight_prod_url == product.url
+                  assign highlighted_product = true
+                else
+                  assign highlighted_product = false
+                endif
+              endif
+            %}
+            {% render 'shop-blind-item',
+              product: product,
+              highlight_color: highlight_color,
+              highlight_type: highlight_type,
+              starburst_color: section.settings.starburst_color,
+              highlighted_product: highlighted_product,
+              highlight_button_bg: highlight_button_color,
+              highlight_button_text_color: highlight_button_text_color
+            %}
+          {% endfor %}
+        </div>
+        <div class="slideshow-arrow-wrapper arrow-wrapper-right">
+          <div class="slider-arrow arrow-right">
+            {% render 'svg_bold_arrow_right' %}
+          </div>
+        </div>
+      </div>
+
+      {% if shopblind_prod_highlight != blank and featured_product_heading != blank %}
+        {%
+          render 'shop-blind-featured',
+          product: all_products[shopblind_prod_highlight],
+          featured_box_color: featured_box_color,
+          featured_starburst_color: featured_starburst_color,
+          featured_product_heading: featured_product_heading,
+          featured_product_content: featured_product_content,
+          featured_button_text: featured_button_text,
+          featured_button_bg: featured_box_color,
+          featured_button_text_color: highlight_button_text_color,
+        %}
+      {% endif %}
+
+      <div class="is-relative">
+        {% for product in products %}
+          {% render 'shop-blind-item-option', product: product %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <script src="{{ 'shopblind-aria-modal.js' | asset_url }}" async></script>
+    <script src="{{ 'shopblind-page.js' | asset_url }}" async></script>
+
+    {% capture 'shop_blind_products' %}
+      [
+      {% for product in products %}
+        {% assign special = false %}
+        {% if forloop.index == products.size %}
+          {% assign special = true %}
+        {% endif %}
+        {
+        id: {{ product.id }},
+        available: {{ product.available }},
+        title: "{{ product.title }}",
+        product_type: "{{ product.product_type }}",
+        html: '{{ product.content | strip_newlines | escape }}',
+        images: {{ product.images | json }},
+        vendor: "{{ product.vendor }}",
+        variants: {{ product.variants | json }},
+        options: {{ product.options | json }},
+        price: "{{ product.price | money_without_trailing_zeros }}",
+        special: {{ special }},
+        {% if product.metafields.shop_blind_header.header %}
+          header_text: "{{ product.metafields.shop_blind_header.header }}",
+        {% endif %}
+        {% if product.metafields.shop_blind_header.subtext %}
+          header_subtext: "{{ product.metafields.shop_blind_header.subtext }}",
+        {% endif %}
+        },
+      {% endfor %}
+      ]
+    {% endcapture %}
+  {% endif %}
+</section>
+
+<script>
+
+  var isHalloween = '{{ highlight_type }}' == 'halloween'
+  var shopBlindProducts = {{ shop_blind_products }}
+  var boxAnimations = {}
+
+  const playAnimation = (animation, isHighlightBox = false ) => {
+    boxAnimations[animation].goToAndPlay(
+      isHalloween && isHighlightBox ? 50 : 24, true
+    )
+    
+    boxAnimations[animation].addEventListener('complete', function() {
+      boxAnimations[animation].playSegments(
+        (isHalloween && isHighlightBox) ? [200, 300] : [90, 241],
+        true
+      )
+    })
+  }
+
+  const stopAnimation = animation => {
+    boxAnimations[animation].resetSegments(
+      isHalloween ? [0, 300] : [0, 241],
+      true
+    )
+    boxAnimations[animation].goToAndStop(0, true)
+  }
+
+const loadBoxAnimation = () => {
+    var highlightColor = `{{ highlight_color }}`;
+    var highlightProduct = `{{ shopblind_prod_highlight }}`;
+    var slides = document.getElementsByClassName("shopblind_prod");
+
+    for (var i = 0; i < slides.length; i++) {
+        var isHighlightBox = false;
+
+        if ( highlightProduct ) {
+            var prodPrice = 0;
+            var prodPriceBox = slides.item(i).getElementsByClassName("shop-blind-form")[0];
+            if (prodPriceBox) {
+            var productUrl = prodPriceBox.dataset.productUrl;
+            isHighlightBox = productUrl && (productUrl == `/products/${highlightProduct}`);
+            }
+        }
+
+        var animationContainer = slides.item(i).getElementsByClassName("box-animation")[0];
+        var boxAnimation = bodymovin.loadAnimation({
+            container: animationContainer,
+            renderer: 'svg',
+            loop: false,
+            autoplay: false,
+            path: isHighlightBox
+            ? isHalloween
+                ? `{{ 'product-pumpkin-animation.json' | asset_url }}`
+                : `{{ 'product-box-stars-animation.json' | asset_url }}`
+            : `{{ 'product-box-animation.json' | asset_url }}`
+        })
+
+        if (isHighlightBox) {
+            slides.item(i).classList.add('highlight-prod');
+            animationContainer.classList.add(`${
+                isHalloween ? 'halloween' : 'highlight-box'
+            }`);
+
+            //slides.item(i).style.setProperty('--highlight-color', highlightColor);
+            //animationContainer.style.fill = highlightColor;
+        }
+
+        boxAnimations[`box-animation-${i}`] = boxAnimation
+
+        $(slides.item(i)).data('box-animation', `box-animation-${i}`)
+
+        $(slides.item(i)).hover(function() {
+            const animationIndex = $(this).data('box-animation')
+            if (activeAnimation) {
+            stopAnimation(activeAnimation)
+            }
+            activeAnimation = animationIndex
+            if ( highlightProduct ) {
+                var prodPrice = 0;
+                var prodPriceBox = $('.shop-blind-form', this)
+                if (prodPriceBox) {
+                var productUrl = prodPriceBox.data('product-url');
+                isHighlightBox = productUrl && (productUrl == `/products/${highlightProduct}`);
+                }
+            }
+            playAnimation(animationIndex, isHighlightBox)
+        }, function() {
+            const animationIndex = $(this).data('box-animation')
+            stopAnimation(animationIndex)
+        })
+    }
+    if ($(window).width() < 1200) {
+        const animationIndex = $('.shop-blind-carousel .slick-current').data('box-animation')
+        activeAnimation = animationIndex
+        if ( highlightProduct ) {
+            var prodPrice = 0;
+            var prodPriceBox = $('.shop-blind-carousel .slick-current .shop-blind-form')
+            if ( prodPriceBox ) {
+                var productUrl = prodPriceBox.data('product-url');
+                
+                isHighlightBox = productUrl && (productUrl == `/products/${highlightProduct}`);
+            }
+        }
+        playAnimation(animationIndex, isHighlightBox)
+    }
+  }
+
+    var sbSlides = document.getElementsByClassName("shopblind_prod");
+    let initialSlide = 0
+    if ( sbSlides.length > 4 ) {
+        initialSlide = $(window).width() > 1200 ? 2 : 1
+    }
+
+    var productsSlickObj = {
+        arrows: true,
+        centerMode: true,
+        dots: true,
+        slidesToShow: 4,
+        initialSlide: initialSlide,
+        slidesToScroll: 1,
+        prevArrow: $('.shop-blind-carousel .arrow-left'),
+        nextArrow: $('.shop-blind-carousel .arrow-right'),
+        responsive: [
+        {
+            breakpoint: 1200,
+            settings: {
+            slidesToShow: 3
+            }
+        }, {
+            breakpoint: 900,
+            settings: {
+                centerPadding: '30vw',
+                slidesToShow: 1
+            }
+        }, {
+            breakpoint: 680,
+            settings: {
+                centerPadding: '20vw',
+                slidesToShow: 1
+            }
+        }
+        ]
+    }
+
+    let activeAnimation = null
+    $('#shop-blind-products-carousel').on('init', function(slick) {
+        loadBoxAnimation()
+    }).slick(productsSlickObj).on('afterChange', function(slick, currentSlide) {
+        if ($(window).width() < 1200) {
+            if (activeAnimation) {
+                stopAnimation(activeAnimation)
+            }
+
+            const animationIndex = $('.shop-blind-carousel .slick-current').data('box-animation')
+            activeAnimation = animationIndex
+            
+            var highlightProduct = `{{ shopblind_prod_highlight }}`;
+            var isHighlightBox = false
+
+            if ( highlightProduct ) {
+                var prodPrice = 0;
+                var prodPriceBox = $('.shop-blind-carousel .slick-current .shop-blind-form')
+                if ( prodPriceBox ) {
+                    var productUrl = prodPriceBox.data('product-url');
+                    
+                    isHighlightBox = productUrl && (productUrl == `/products/${highlightProduct}`);
+                }
+            }
+        
+            playAnimation(animationIndex, isHighlightBox)
+        }
+    });
+</script>
+
+{% comment %} {{ 'shop-blind-beta-app.js' | asset_url | script_tag }} {% endcomment %}
+{% schema %}
+  {
+    "name": "Shop Blind 2.0 Products",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Main products"
+      },
+      {
+        "type": "collection",
+        "id": "shopblind_col",
+        "label": "Shop Blind Collection",
+        "info": "Set the main products on the backend in Shopify Collections"
+      },
+      {
+        "type": "color",
+        "id": "bg_color",
+        "label": "Background color"
+      },
+      {
+        "type": "text",
+        "id": "shopblind_col_button",
+        "label": "Button text"
+      },
+      {
+        "type": "header",
+        "content": "Highlight product"
+      },
+      {
+        "type": "select",
+        "id": "shopblind_prod_highlight_type",
+        "label": "Shop Blind product highlight type",
+        "options": [
+          {
+            "value": "default",
+            "label": "Default"
+          },
+          {
+            "value": "halloween",
+            "label": "Halloween"
+          }
+        ]
+      },
+      {
+        "type": "product",
+        "id": "shopblind_prod_highlight",
+        "label": "Shop Blind Highlight Product"
+      },
+      {
+        "type": "color",
+        "id": "highlight_color",
+        "label": "Highlight color"
+      },
+      {
+        "type": "color",
+        "id": "highlight_button_color",
+        "label": "Highlight button color"
+      },
+      {
+        "type": "color",
+        "id": "highlight_button_text_color",
+        "label": "Highlight button text color"
+      },
+      {
+        "type": "color",
+        "id": "starburst_color",
+        "label": "Starburst color",
+        "default": "#2f2a2b"
+      },
+      {
+        "type": "header",
+        "content": "Featured product"
+      },
+      {
+        "type": "color",
+        "id": "featured_box_color",
+        "label": "Featured Box color"
+      },
+      {
+        "type": "color",
+        "id": "featured_starburst_color",
+        "label": "Featured Starburst color"
+      },
+      {
+        "type": "image_picker",
+        "id": "featured_burst_image",
+        "label": "Background burst image"
+      },
+      {
+        "type": "text",
+        "id": "featured_product_heading",
+        "label": "Featured product heading"
+      },
+      {
+        "type": "richtext",
+        "id": "featured_product_content",
+        "label": "Featured product content"
+      },
+      {
+        "type": "text",
+        "id": "featured_button_text",
+        "label": "Button text"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Shop Blind 2.0 Products",
+        "category": "Shop Blind"
+      }
+    ]
+  }
+{% endschema %}

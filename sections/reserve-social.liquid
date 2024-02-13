@@ -1,0 +1,75 @@
+<reserve-social class="bg-white text-black pt-[18px] pb-10 sm:pt-10 sm:pb-[55px] md:pt-[46px] lg:py-[56px] block reserve-social" data-aos="fade-up" data-aos-offset="200" data-aos-delay="50" data-aos-duration="800">
+  <header class="reserve-social__header">
+    <div class="container reserve-container">
+      <div class="flex items-center gap-4 pb-[8px] md:pb-3">
+        {% if section.settings.instagram_handle != blank %}
+          <h2 class="label normal-case md:mr-[10px]">{{ section.settings.instagram_handle }}</h2>
+        {% endif %}
+        {% if section.settings.instagram_link != blank %}
+          <a href="{{ section.settings.instagram_link }}" target="_blank" class="hover:text-yellow">
+            {% render 'svg_icon_instagram' %}
+          </a>
+        {% endif %}
+        {% if section.settings.tiktok_link != blank %}
+          <a href="{{ section.settings.tiktok_link }}" target="_blank" class="hover:text-yellow">
+            {% render 'svg_icon_tiktok' %}
+          </a>
+        {% endif %}
+      </div>
+      {% if section.settings.title != blank %}
+        <h3 class="h2-reserve">{{ section.settings.title }}</h3>
+      {% endif %}
+    </div>
+  </header>
+
+  {%- if section.blocks.size > 0 -%}
+    <div class="mt-6">
+      {%- for block in section.blocks -%}
+        {% render block %}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</reserve-social>
+{%- render 'vite-tag' with 'reserve-social.js' -%}
+{% schema %}
+{
+  "name": "Reserve - Social",
+  "settings": [
+    {
+      "type": "text",
+      "id": "instagram_handle",
+      "label": "Instagram Handle"
+    },
+    {
+      "type": "url",
+      "id": "instagram_link",
+      "label": "Instagram Link"
+    },
+    {
+      "type": "url",
+      "id": "tiktok_link",
+      "label": "Tiktok Link"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "embed_code",
+      "label": "Embed Code"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reserve - Social"
+    }
+  ]
+}
+{% endschema %}

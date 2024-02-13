@@ -1,0 +1,114 @@
+<script>
+// (c) Copyright 2016 Caroline Schnapp. All Rights Reserved. Contact: mllegeorgesand@gmail.com
+// See https://docs.shopify.com/themes/customization/navigation/link-product-options-in-menus
+
+// Modified by Jonathan Moore (Style Hatch) https://github.com/jonathanmoore
+/*
+	Updated to work with sectioned themes
+    	- Added required methods from the deprecated options_selection.js
+        - Triggers an initial variant change
+        - Hides sold out variants with only one option
+*/
+  var Shopify = Shopify || {};
+
+  // Required functionality from depricated options_selection.js
+  Shopify.arrayIncludes = function(e, t) {
+    for (var n = 0; n < e.length; n++)
+        if (e[n] == t) return !0;
+    return !1
+  }, Shopify.uniq = function(e) {
+      for (var t = [], n = 0; n < e.length; n++) Shopify.arrayIncludes(t, e[n]) || t.push(e[n]);
+      return t
+  }
+  Shopify.optionsMap = {};
+  Shopify.updateOptionsInSelector = function(selectorIndex, selector, id) {
+
+    switch (selectorIndex) {
+      case 0:
+        var key = 'root';
+        var selector = jQuery('.single-option-selector:eq(0)', selector);
+        break;
+      case 1:
+        var key = jQuery('.single-option-selector:eq(0)', selector).val();
+        var selector = jQuery('.single-option-selector:eq(1)', selector);
+        break;
+      case 2:
+        var key = jQuery('.single-option-selector:eq(0)', selector).val();
+        key += ' / ' + jQuery('.single-option-selector:eq(1)', selector).val();
+        var selector = jQuery('.single-option-selector:eq(2)', selector);
+        var colorName = selector.val();
+      //  console.log(colorName + " color")
+    }
+
+    var initialValue = selector.val();
+    // console.log(initialValue + ' init val');
+    selector.empty();
+    var availableOptions = Shopify.optionsMap[id][key]
+    for (var i=0; i<availableOptions.length; i++) {
+      var option = availableOptions[i];
+      var newOption = jQuery('<option></option>').val(option).html(option);
+      selector.append(newOption);
+    }
+    jQuery('.swatch[data-option-index="' + selectorIndex + '"] .swatch-element').each(function() {
+      if (jQuery.inArray($(this).attr('data-value'), availableOptions) !== -1) {
+        $(this).removeClass('soldout').show().find(':radio').removeAttr('disabled','disabled').removeAttr('checked');
+      }
+      else {
+        $(this).addClass('soldout').find(':radio').removeAttr('checked').attr('disabled','disabled');
+      }
+    });
+
+    if (jQuery.inArray(initialValue, availableOptions) !== -1) {
+      selector.val(initialValue);
+    }
+    selector.trigger('change');
+
+  };
+  Shopify.linkOptionSelectors = function(product, id) {
+    // Building our mapping object.
+    for (var i=0; i<product.variants.length; i++) {
+      var variant = product.variants[i];
+      if (variant.available) {
+        // Gathering values for the 1st drop-down.
+        Shopify.optionsMap[id]['root'] = Shopify.optionsMap[id]['root'] || [];
+        Shopify.optionsMap[id]['root'].push(variant.option1);
+        Shopify.optionsMap[id]['root'] = Shopify.uniq(Shopify.optionsMap[id]['root']);
+        // Gathering values for the 2nd drop-down.
+        if (product.options.length > 1) {
+          var key = variant.option1;
+          Shopify.optionsMap[id][key] = Shopify.optionsMap[id][key] || [];
+          Shopify.optionsMap[id][key].push(variant.option2);
+          Shopify.optionsMap[id][key] = Shopify.uniq(Shopify.optionsMap[id][key]);
+        }
+        // Gathering values for the 3rd drop-down.
+        if (product.options.length === 3) {
+          var key = variant.option1 + ' / ' + variant.option2;
+          Shopify.optionsMap[id][key] = Shopify.optionsMap[id][key] || [];
+          Shopify.optionsMap[id][key].push(variant.option3);
+          Shopify.optionsMap[id][key] = Shopify.uniq(Shopify.optionsMap[id][key]);
+        }
+      }
+    }
+    //console.log(Shopify.optionsMap)
+    // Update options right away.
+    $('.product-single__variants').each( function() {
+      var productId = $(this).data('product-id')
+      Shopify.updateOptionsInSelector(0, this, productId);
+      if (product.options.length > 1) Shopify.updateOptionsInSelector(1, this, productId);
+      if (product.options.length === 3) Shopify.updateOptionsInSelector(2, this, productId);
+
+      // When there is an update in the first dropdown.
+      jQuery(".single-option-selector:eq(0)", this).change(function() {
+        Shopify.updateOptionsInSelector(1, this, productId);
+        if (product.options.length === 3) Shopify.updateOptionsInSelector(2, this, productId);
+        return true;
+      });
+      // When there is an update in the second dropdown.
+      jQuery(".single-option-selector:eq(1)", this).change(function() {
+        if (product.options.length === 3) Shopify.updateOptionsInSelector(2, this, productId);
+        return true;
+      });
+    })
+
+  };
+</script>

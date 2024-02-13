@@ -1,0 +1,189 @@
+{% if section.blocks.size > 0 %}
+  <div class="shopblind-tiktok" {% if section.settings.bg_color.alpha != 0.0 %}style="background-color: {{ section.settings.bg_color }}"{% endif %}>
+    <div class="tiktok-videos">
+      {% if section.settings.heading_line_1 %}
+        <div class="tiktok-header">
+          {% if section.settings.heading_line_1 %}
+            <h2 class="h1 light text-center" {% if section.settings.heading_color.alpha != 0.0 %}style="color: {{ section.settings.heading_color }}"{% endif %}>
+              {{ section.settings.heading_line_1 }}
+              {% if section.settings.heading_line_2 %}
+                <span class="text-center">{{ section.settings.heading_line_2 }}</span>
+              {% endif %}
+            </h2>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="tiktok-carousel-wrapper">
+        <div class="slideshow-arrow-wrapper arrow-wrapper-left">
+          <div class="slider-arrow arrow-left">
+            {% render 'svg_bold_arrow_left' %}
+          </div>
+        </div>
+        <div class="tiktok-carousel">
+          {% for block in section.blocks %}
+            {% assign autoplay = 0 %}
+            {% if forloop.index == 1 %}
+              {% assign autoplay = 1 %}
+            {% endif %}
+            <div class="video-preview-tiktok" data-video="{{ block.settings.video }}">
+              <div class="video-preview-tiktok__container">
+                <div class="video-preview-tiktok__wrapper">
+                  <a
+                    data-fancybox
+                    href="{{ block.settings.video_url }}"
+                    title="play video">
+                    <img src="http://i.ytimg.com/vi/{{ block.settings.video }}/sddefault.jpg" />
+                    <video
+                      playsinline
+                      autoplay
+                      muted
+                      loop
+                      poster="http://i.ytimg.com/vi/{{ block.settings.video }}/sddefault.jpg"
+                      id="tiktok-bg-{{ block.settings.video }}">
+                      <source src="{{ block.settings.video_url }}" type="video/mp4">
+                    </video>
+                    <div class="play-btn">
+                      {% include 'svg_icon_play', fill: 'white', classes: 'tiktok-video-play' %}
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="slideshow-arrow-wrapper arrow-wrapper-right">
+          <div class="slider-arrow arrow-right">
+            {% render 'svg_bold_arrow_right' %}
+          </div>
+        </div>
+      </div>
+
+      {% if section.settings.tiktok_link %}
+        <div class="tiktok-footer">
+          <a
+            href="{{ section.settings.tiktok_link }}"
+            target="_blank"
+            class="follow-us"
+            style="{% if section.settings.tiktok_button_bg_color.alpha != 0.0 %}background-color: {{ section.settings.tiktok_button_bg_color }};{% endif %}{% if section.settings.tiktok_button_color.alpha != 0.0 %}color: {{ section.settings.tiktok_button_color }}{% endif %}"
+          >
+            {% include 'svg_social_tiktok' %}
+            {{ section.settings.tiktok_button_title }}
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+<script>
+    {% if section.settings.bg_color.alpha != 0.0 %}
+        const bgColor = '{{ section.settings.bg_color }}';
+
+        $('.tiktok-videos .slideshow-arrow-wrapper.arrow-wrapper-left').css('background', `linear-gradient(270deg, rgba(0,0,0,0) 0%, ${bgColor} 100%)`);
+        $('.tiktok-videos .slideshow-arrow-wrapper.arrow-wrapper-right').css('background', `linear-gradient(90deg, rgba(0,0,0,0) 0%, ${bgColor} 100%)`);
+    {% endif %}
+
+  const slickObj = {
+    arrows: true,
+    centerMode: true,
+    centerPadding: '12vw',
+    dots: false,
+    slidesToShow: 3,
+    slidesToScroll: 3,
+    adaptiveHeight: true,
+    prevArrow: $('.tiktok-videos .arrow-left'),
+    nextArrow: $('.tiktok-videos .arrow-right'),
+    responsive: [
+      {
+        breakpoint: 900,
+        settings: {
+          centerPadding: '30vw',
+          slidesToShow: 1
+        }
+      }, {
+        breakpoint: 600,
+        settings: {
+          centerPadding: '20vw',
+          slidesToShow: 1
+        }
+      }, {
+        breakpoint: 480,
+        settings: {
+          centerPadding: '12vw',
+          slidesToShow: 1
+        }
+      }
+    ]
+  };
+
+  $('.tiktok-carousel').slick(slickObj);
+</script>
+{% schema %}
+  {
+    "name": "TikTok Carousel",
+    "settings": [
+      {
+        "type": "text",
+        "id": "heading_line_1",
+        "label": "Heading Line 1"
+      }, {
+        "type": "text",
+        "id": "heading_line_2",
+        "label": "Heading Line 2"
+      }, {
+        "type": "color",
+        "id": "bg_color",
+        "label": "Background color"
+      }, {
+        "type": "color",
+        "id": "heading_color",
+        "label": "Heading text color"
+      }, {
+        "type": "text",
+        "id": "tiktok_button_title",
+        "label": "Tiktok button title",
+        "default": "Follow us!"
+      }, {
+        "type": "url",
+        "id": "tiktok_link",
+        "label": "TikTok URL"
+      }, {
+        "type": "color",
+        "id": "tiktok_button_bg_color",
+        "label": "Tiktok button background color"
+      }, {
+        "type": "color",
+        "id": "tiktok_button_color",
+        "label": "Tiktok button title color"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "video",
+        "name": "Video",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title for accessibility"
+          }, {
+            "type": "text",
+            "id": "video_url",
+            "label": "Video URL"
+          }, {
+            "type": "text",
+            "id": "video",
+            "label": "YouTube ID"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "category": "Shop Blind",
+        "name": "TikTok"
+      }
+    ]
+  }
+{% endschema %}

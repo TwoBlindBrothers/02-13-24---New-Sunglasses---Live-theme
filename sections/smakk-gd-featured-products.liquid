@@ -1,0 +1,64 @@
+{% unless template == 'product.smakk-gd' and product.metafields.guidedog.hide_complete_litter != blank %}
+    <div class="gd_product_info__litter-wrapper" id="Meet">
+        <div class="wrapper narrow">
+            <div class="text-center gd_product_info__litter--header">
+                {%- unless section.settings.title == blank -%}
+                <h2 class="section-title text-center">{{ section.settings.title }}</h2>
+                {%- endunless -%}
+                {%- unless section.settings.text == blank -%}
+                <p>{{ section.settings.text }}</p>
+                {%- endunless -%}
+            </div>
+            <div class="gd_product_list">
+                <ul class="gd_product_list__grid">
+                    {%- for block in section.blocks -%}
+                        {%- unless product.id != blank and block.settings.product == product.handle -%}
+                            <li>
+                                {% render 'gd-product-card', product_card_product: block.settings.product %}
+                            </li>
+                        {%- endunless -%}
+                    {%- endfor -%}
+                </ul>
+                <div class="slider-arrow products-grid-arrow-prev">{% render 'icon-arrow' %}</div>
+                <div class="slider-arrow products-grid-arrow-next">{% render 'icon-arrow' %}</div>
+            </div>
+        </div>
+    </div>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "Guide Dog Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Product",
+      "name":"Guide Dog Products"
+    }
+  ]
+}
+{% endschema %}

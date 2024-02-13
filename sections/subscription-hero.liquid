@@ -1,0 +1,36 @@
+<section class="grid text-center">
+  <div class="grid__item ten-twelfths  push--one-twelfth">
+    {% assign shop_blind_type = settings.shop_blind_type %}
+    {% case shop_blind_type %}
+      {% when 'basic' or 'alt' %}
+        {% include 'eye-closed.svg' %}
+      {% when 'valentines' %}
+        <div class="shop-blind-logo">
+          {% include 'hearts.svg' %}
+          {% include 'equals.svg' %}
+          {% include 'eye-closed.svg' %}
+        </div>
+      {% else %}
+    {% endcase %}
+    <h1 tabindex="0" class="shop-blind-title">{{ section.settings.title }}</h1>
+    <p tabindex="0" class="shop-blind-desc">{{ section.settings.desc }}</p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Subscription Hero",
+  "settings": [
+     {
+      "type": "text",
+      "id": "title",
+      "label": "Hero title"
+    },
+   {
+      "type": "textarea",
+      "id": "desc",
+      "label": "Hero text"
+   }
+  ]
+}
+{% endschema %}

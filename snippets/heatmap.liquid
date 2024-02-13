@@ -1,0 +1,90 @@
+<!-- <div class="options">
+    <label>Radius </label><input type="range" id="radius" value="25" min="10" max="50" /><br />
+    <label>Blur </label><input type="range" id="blur" value="15" min="10" max="50" />
+</div>
+
+<canvas id="canvas" width="1000" height="600"></canvas> -->
+
+<div id="canvas"></div>
+
+<script>
+
+window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                               window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+// function get(id) {
+//     return document.getElementById(id);
+// }
+
+// var heat = simpleheat('canvas').data(data).max(18),
+//     frame;
+//
+// function draw() {
+//     console.time('draw');
+//     heat.draw();
+//     console.timeEnd('draw');
+//     frame = null;
+// }
+//
+// draw();
+
+// get('canvas').onmousemove = function (e) {
+//     heat.add([e.layerX, e.layerY, 1]);
+//     frame = frame || window.requestAnimationFrame(draw);
+// };
+//
+// var radius = get('radius'),
+//     blur = get('blur'),
+//     changeType = 'oninput' in radius ? 'oninput' : 'onchange';
+//
+// radius[changeType] = blur[changeType] = function (e) {
+//     heat.radius(+radius.value, +blur.value);
+//     frame = frame || window.requestAnimationFrame(draw);
+// };
+
+function handler1() {
+    document.body.classList.add('active-eyeball-blind')
+    $('#eyeball svg title#eyeball-title').html('Remove');
+    $('#eyeball').attr('aria-label', 'Remove');
+
+    $('.blink').addClass('blinked');
+    // $('#stargardt').addClass('content-grow2');
+    $('#heatmap-banner').addClass('nav-down');
+    $(this).one("click", handler2);
+
+    $("#canvas").fadeIn();
+
+    $("#canvas").addClass("growing");
+
+    // setInterval(function(){
+    //
+    //     if (v > 1) {
+    //         v = parseInt(v) - 1;
+    //
+    //         $("#canvas").css("filter", "blur(" + v + "em)");
+    //     }
+    //
+    // }, 1000);
+}
+function handler2() {
+    document.body.classList.remove('active-eyeball-blind')
+    $('.blink').removeClass('blinked');
+    $('#eyeball svg title#eyeball-title').html('Select this button to see how the Two Blind Brothers see that Page');
+    $('#eyeball').attr('aria-label', 'Select this button to see how the Two Blind Brothers see that Page');
+    // $('#stargardt').removeClass('content-grow2');
+    $("#canvas").fadeOut();
+
+    $("#canvas").removeClass("growing");
+
+    $('#heatmap-banner').removeClass('nav-down');
+    $(this).one("click", handler1);
+
+
+}
+$("#eyeball").one("click", handler1);
+$( ".heatmap-close" ).click(function(e) {
+    e.preventDefault();
+    $('#heatmap-banner').removeClass('nav-down')
+});
+
+</script>

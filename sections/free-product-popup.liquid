@@ -1,0 +1,63 @@
+{% if section.blocks.size > 0 %}
+  {% capture 'products_string' %}
+    {%- for block in section.blocks -%}{% assign product = all_products[block.settings.product] %}{{ product.handle }}{% if forloop.index != section.blocks.size%},{% endif %}{%- endfor -%}
+  {% endcapture %}
+  <div class="free-product-2bb free-product-popup free-product-popup-wrapper" data-products="{{ products_string | strip }}" role="dialog" aria-modal="true" aria-labelledby="free-product-title">
+    <div class="free-product-popup-container" onclick="closeModal()">
+      <div class="free-product-popup" onclick="clickModal(event)">
+        <div class="free-product-header">
+          {% if section.settings.title %}
+          <h2 id="free-product-title" tabindex="0">{{ section.settings.title }}</h2>
+          {% endif %}
+          {% if section.settings.text %}
+          <p>{{ section.settings.text }}</p>
+          {% endif %}
+        </div>
+        <div class="free-product-content">
+          <div class="free-product-loader">
+            {% include 'loader' %}
+          </div>
+          <div class="free-product-inner">
+
+          </div>
+        </div>
+        <div tabIndex="0" class="close-popup" role="button" aria-pressed="false">
+          <img src="{{ 'close-x.svg' | asset_url }}" class=""/>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{ 'popup-free-product.scss.css' | asset_url | stylesheet_tag }}
+  {{ 'popup-free-product.js' | asset_url | script_tag }}
+{% endif %}
+
+{% schema %}
+  {
+    "name": "Free Product Popup",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Header"
+      },
+      {
+        "type": "text",
+        "id": "text",
+        "label": "Sub header"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "products",
+        "name": "Products",
+        "settings": [
+          {
+            "type": "product",
+            "id": "product",
+            "label": "Product"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

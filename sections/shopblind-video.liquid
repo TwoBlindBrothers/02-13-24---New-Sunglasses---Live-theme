@@ -1,0 +1,90 @@
+{% assign sb_video = section.settings.video %}
+{% if page.metafields.shop_blind.video %}
+  {% assign sb_video = page.metafields.shop_blind.video %}
+{% endif %}
+{% if sb_video %}
+  {% assign sb_video_image = section.settings.image | img_url: '1200x' %}
+  {% if page.metafields.shop_blind.video_image %}
+    {% assign sb_video_image = page.metafields.shop_blind.video_image[0].cloudinary_src | append: 'w_1200' %}
+  {% endif %}
+  {% assign sb_video_btn_color = section.settings.button_color %}
+
+  <div class="{% if section.settings.white_text %}text-white{% endif %}{% if section.settings.black_bg %} bg-black{% endif %}">
+    <div class="tiktok-videos sb-video">
+      <div class="grid-new">
+
+        <div class="grid-new__item video-block" style="background-position: center; background: url('{{ sb_video_image }}'); background-size: cover; ">
+          <div class="video-block__content">
+            <a
+              class="play-btn"
+              {% if sb_video_btn_color.alpha != 0.0 %}
+                style="background-color: {{ sb_video_btn_color }}"
+              {% endif %}
+              data-fancybox
+              href="https://www.youtube.com/watch?v={{ sb_video }}"
+              title="play video">
+              {% include 'svg_icon_play', fill: sb_video_btn_color %}
+              {% if section.settings.button_title %}
+                <div class="button-title">{{ section.settings.button_title }}</div>
+              {% endif %}
+            </a>
+          </div>
+        </div>
+
+        <div
+          class="remodal video"
+          data-remodal-id="{{ sb_video }}-grid-video"
+          aria-modal="true">
+          <button data-remodal-action="close" class="remodal-close"></button>
+          <div class="youtube-player" data-id="{{ sb_video }}"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+
+{% schema %}
+  {
+    "name": "Shop Blind Video",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Placeholder Image",
+        "info": "At least 600 x 600."
+      },
+      {
+        "type": "color",
+        "id": "button_color",
+        "label": "Button color"
+      },
+      {
+        "type": "text",
+        "id": "button_title",
+        "label": "Button title"
+      },
+      {
+        "type": "text",
+        "id": "video",
+        "label": "YouTube video ID",
+        "info": "Example Fkgb6aAHyCQ"
+      }, {
+        "type": "checkbox",
+        "id": "white_text",
+        "label": "White text?"
+      }, {
+        "type": "checkbox",
+        "id": "black_bg",
+        "label": "Black background?"
+      }
+    ],
+    "presets": [
+      {
+        "category": "Shop Blind",
+        "name": "Shop Blind Video"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,74 @@
+{% if section.blocks %}
+  <div id="rarity-popup" class="rarity-popup" role="dialog" tabindex="-1" aria-label="Guide Dog Rarity">
+    <div class="rarity-popup-wrapper">
+      <div class="rarity-popup-content">
+        <div class="rarity-blocks-wrapper">
+          <div class="rarity-blocks">
+            {% for block in section.blocks %}
+              <div class="rarity-block">
+                <div class="rarity-block-content">
+                  {% if block.settings.image %}
+                    <picture>
+                      <source data-srcset="{{ block.settings.image.src | img_url: '700x' }}" media="(min-width: 1200px)" />
+                      <source data-srcset="{{ block.settings.image.src | img_url: '500x' }}" media="(min-width: 769px)" />
+                      <source data-srcset="{{ block.settings.image.src | img_url: '300x' }}" media="(min-width: 500px)" />
+                      <source data-srcset="{{ block.settings.image.src | img_url: '200x' }}" media="(min-width: 320px)" />
+                      <img data-src="{{ block.settings.image.src | img_url: '700x' }}" alt="{{ block.settings.image.meta }}" class="lazyload"/>
+                    </picture>
+                  {% endif %}
+                  <div class="text-center">
+                    {% if block.settings.title %}
+                      <h3 tabindex="0">{{ block.settings.title }}</h3>
+                    {% endif %}
+                    {% if block.settings.content %}
+                      <div tabindex="0" class="rarity-block-content">
+                        {{ block.settings.content }}
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <button class="rarity-close"><img aria-hidden="true" src="{{ 'close-x.svg' | asset_url }}"/></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{ 'smakk-guidedog.js' | asset_url | script_tag }}
+{% endif %}
+
+{% schema %}
+{
+  "name": "Guide Dog - Rarity Popup",
+  "blocks": [
+    {
+      "type": "popup_block",
+      "name": "Popup Block",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "content",
+          "label": "Text Content"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "category": "Text",
+      "name": "Guide Dog - Rarity Popup"
+    }
+  ]
+}
+{% endschema %}

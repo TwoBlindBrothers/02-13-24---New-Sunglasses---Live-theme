@@ -1,0 +1,290 @@
+{% assign is_locked = section.settings.is_locked %}
+<script>
+    function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+          var date = new Date();
+          date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+          expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+      }
+    
+      function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+          var c = ca[i];
+          while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+          if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+      }
+    
+      function generateRandomCode() {
+        var arr = [];
+        while (arr.length < 3) {
+          var r = Math.floor(Math.random() * 10) + 1;
+          arr.push(r > 9 ? 9 : r);
+        }
+        return arr.join('');
+      }
+</script>
+<section data-section-id="shop-blind-locked" class="shop-blind-locked{% if is_locked == false %} shop-blind-key-section{% endif %}">
+  {% assign unlocked_code = section.settings.unlocked_code | toLowerCase %}
+  {% assign qr_code_image = section.settings.qr_code_image | img_url %}
+
+  {% if is_locked %}
+
+    <div
+      id="shop-blind-locked-{{ section.id }}"
+      role="dialog"
+      class="shop-blind-locked-modal"
+      labelledby="label-lock"
+      aria-modal="true"
+      aria-hidden="true">
+      <div class="modal-wrapper">
+        <div class="modal-content">
+          <div class="background-image-wrapper">
+            <div class="background-image-container">
+              <img
+                class="lazy-load"
+                src="{{'background_beams_black.png' | asset_url }}"
+                alt="background-beams-black" />
+            </div>
+          </div>
+
+          <div class="content-container">
+            {% if section.settings.title %}
+              <h2>{{ section.settings.title }}</h2>
+            {% endif %}
+            <div class="content-center">
+              <div class="locked-image">
+                <img
+                  class="lazy-load"
+                  src="{{'locked.png' | asset_url }}"
+                  alt="locked" />
+              </div>
+              <div class="qr-code-image">
+                <img
+                  class="lazy-load"
+                  src="{{ qr_code_image }}"
+                  alt="qr code" />
+              </div>
+            </div>
+            <div class="content-footer">
+              <div class="code-input-wrapper">
+                <label>Enter Code:</label>
+                <form id="unlock-code-form">
+                  <input id="unlock-code" />
+                  <input
+                    id="shop-blind-locked-submit"
+                    type="submit"
+                    value="submit"
+                    style="display: none;">
+                </form>
+              </div>
+              {% if section.settings.text %}
+                {{ section.settings.text }}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{ 'aria-modal.js' | asset_url | script_tag }}
+    {{ 'js.cookie.js' | asset_url | script_tag }}
+    <script>
+      var qrUnlocked = getCookie('qr-unlocked');
+      if (!qrUnlocked) {
+        console.log('hello opening')
+        openDialog('shop-blind-locked-{{ section.id }}', this, 'unlock-code')
+      }
+
+      $('#unlock-code-form').on('submit', function(e) {
+        e.preventDefault();
+        submitKeyCode();
+      })
+
+      const submitKeyCode = () => {
+        var code = $('#unlock-code').val();
+        if (code.toLowerCase().length === 6 && code.toLowerCase().startsWith('2bb')) {
+          setCookie('qr-unlocked', true, 7);
+          closeDialog(document.getElementById('shop-blind-locked-submit'))
+        } else {
+          alert(`That code isn't correct`);
+        }
+      }
+    </script>
+  {% else %}
+
+    <div class="shop-blind-key-wrapper">
+      <div class="background-image-container">
+        <img src="{{'background_beams_yellow.png' | asset_url }}" alt="background-beams-yellow" />
+      </div>
+
+      <div class="content-container">
+        {% if section.settings.title %}
+          <h2>{{ section.settings.title }}</h2>
+        {% endif %}
+        <div class="content-center">
+          <div class="key-image">
+            <img src="{{'key.png' | asset_url }}" alt="key" />
+          </div>
+        </div>
+        <div class="content-footer">
+          <p class="code-text">The code is:
+            <span id="code-value"></span>
+          </p>
+          {% if section.settings.text %}
+            {{ section.settings.text }}
+          {% endif %}
+          <p class="key-code-expires">This code expires in:</p>
+          <p class="key-time-remaining"></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+        function setUnlockCode () {
+            var newCode = '2BB' + generateRandomCode();
+            $('#code-value').text(newCode);
+            setCookie('2bb-unlock-code', newCode);
+            setCookie('2bb-refresh-code', new Date().getTime(), 7);
+
+            //var refreshCodeVal = getCookie('2bb-refresh-code');
+            //var unlockCode = getCookie('2bb-unlock-code');
+            //if (refreshCodeVal) {
+            //    var currentTime = new Date().getTime();
+            //    if ((currentTime - parseInt(refreshCodeVal)) > refreshTime) {
+            //        
+            //    } else {
+            //        $('#code-value').text(unlockCode);
+            //    }
+            //} else {
+            //    var newCode = '2BB' + generateRandomCode();
+            //    $('#code-value').text(newCode);
+            //    setCookie('2bb-unlock-code', newCode);
+            //    setCookie('2bb-refresh-code', new Date().getTime(), 7);
+            //}
+        }
+
+        var refreshTime = 5 * 60 * 1000
+        var lockSetTime = getCookie('2bb-refresh-code');
+        var currentCode = getCookie('2bb-unlock-code')
+        var currentTime = new Date().getTime();
+        if ( currentCode ) {
+            $('#code-value').text(currentCode);
+        }
+        let timeRemaining = lockSetTime 
+            ? (refreshTime - (currentTime - parseInt(lockSetTime))) / 1000
+            : refreshTime / 1000
+
+        if ( !lockSetTime ) {
+            setUnlockCode()
+        }
+        setInterval( function () {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            console.log(seconds, minutes)
+            $('.key-time-remaining').text(`${minutes}:${parseInt(seconds).toString().padStart(2, '0')}`)
+            timeRemaining = timeRemaining - 1
+            if ( timeRemaining <= 0 ) {
+                timeRemaining = (refreshTime / 1000)
+                setUnlockCode()
+            }
+        }, 1000)
+
+    </script>
+
+  {% endif %}
+
+</section>
+<script>
+
+  function initSparkling() {
+
+    // settings
+    const color = "#FFFFFF";
+    const svgPath = 'M26.5 25.5C19.0043 33.3697 0 34 0 34C0 34 19.1013 35.3684 26.5 43.5C33.234 50.901 34 68 34 68C34 68 36.9884 50.7065 44.5 43.5C51.6431 36.647 68 34 68 34C68 34 51.6947 32.0939 44.5 25.5C36.5605 18.2235 34 0 34 0C34 0 33.6591 17.9837 26.5 25.5Z';
+
+    // sparkling effect
+    let sparkling = function() {
+      $('.shop-blind-key-wrapper .key-image').each(function() {
+        let sparklingElement = $(this);
+        let stars = sparklingElement.find('.star');
+
+        // remove the first star when more than 6 stars existing
+        if (stars.length > 5) {
+          stars.each(function(index) {
+            if (index === 0) {
+              $(this).remove();
+            }
+          });
+        }
+
+        // add a new star
+        sparklingElement.append(addStar());
+      });
+
+      let rand = Math.round(Math.random() * 40) + 100;
+      setTimeout(sparkling, rand);
+    }
+
+    // star
+    let addStar = function() {
+      let size = Math.floor(Math.random() * 10) + 10;
+      let top = Math.floor(Math.random() * 100);
+      let left = Math.floor(Math.random() * 100) + 5;
+
+      return '<span class="star" style="top:' + top + '%; left:' + left + '%;">' + '<svg width="' + size + '" height="' + size + '" viewBox="0 0 68 68" fill="none">' + '<path d="' + svgPath + '" fill="' + color + '" /></svg></span>';
+    }
+
+    // execute
+    sparkling();
+  }
+
+  initSparkling();
+
+  
+
+</script>
+
+{% schema %}
+  {
+    "name": "Shop Blind Locked",
+    "class": "lock-2bb-section",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+      },
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text"
+      },
+      {
+        "type": "checkbox",
+        "id": "is_locked",
+        "label": "Locked popup?"
+      },
+      {
+        "type": "image_picker",
+        "id": "qr_code_image",
+        "label": "QR Code Image"
+      }, {
+        "type": "text",
+        "id": "unlocked_code",
+        "label": "Unlocked Code"
+      }
+    ],
+    "presets": [
+      {
+        "category": "Shop Blind",
+        "name": "Shop Blind Locked"
+      }
+    ]
+  }
+{% endschema %}

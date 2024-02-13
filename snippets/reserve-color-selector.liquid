@@ -1,0 +1,91 @@
+{% if option.name == 'Color' and option.values.size > 1 %}
+  {% assign swatch_colors = shop.metafields.swatch %}
+  <div class="{{ option.name | downcase }}-swatch-wrapper swatch-wrapper">
+    <h4 class="sr-only">{{ option.name }}</h4>
+    <div class="{{ option.name | downcase }}-swatches swatch" id="{{ option.name | downcase }}-swatches-{{ product.id }}">
+      {% assign counting = 0 %}
+      {% for value in option.values %}
+        {% assign value_lower = value | downcase %}
+        {% assign value_variants = product.variants | where: "option1", value %}
+        {% assign foundImageSrc = false %}
+        {% assign foundHoverImageSrc = false %}
+        {% assign valueDownCase = value | downcase %}
+
+        {% assign currentColor = valueDownCase %}
+        {% assign imageSrc = '' %}
+        {% assign hoverImageSrc = '' %}
+        {% for image in product.images %}
+          {% assign dataColor = image.alt | downcase | split: 'caption:' | first %}
+          {% assign dataColor = dataColor | split: ' - ' | first %}
+          {% if dataColor == valueDownCase and foundImageSrc == false %}
+            {% assign imageSrc = image | img_url: '500x' %}
+            {% assign foundImageSrc = true %}
+          {% endif %}
+          {% assign image_alt = image.alt | downcase %}
+          {% if image_alt contains currentColor and image_alt contains 'hover' and foundHoverImageSrc == false %}
+            {% assign hoverImageSrc = image | img_url: '500x' %}
+            {% assign foundHoverImageSrc = true %}
+          {% endif %}
+          {% if foundImageSrc == true and foundHoverImageSrc == true %}
+            {% break %}
+          {% endif %}
+        {% endfor %}
+        {% if foundHoverImageSrc == false %}
+          {% assign hoverImageSrc = imageSrc %}
+        {% endif %}
+        {% assign color_value = value | replace: '%20+%20', '-' | replace: ' + ', '-' | replace: '%20', '-' | replace: ' ', '-' %}
+        {% assign color_bg = color_value | prepend: 'color-' | handle | append: '.jpg' | file_url %}
+        {% assign has_swatch = false %}
+
+        {% comment %} {% assign color_bg = value | prepend: 'swatch-' | handle | append: '.' | append: file_extension | asset_url %}
+        {% assign has_swatch = false %}
+        {% for swatch_name in swatch_colors.name %}
+          {% if has_swatch %}
+            {% continue %}
+          {% endif %}
+          {% assign swatch_name_lower = swatch_name | downcase %}
+          {% if value_lower == swatch_name_lower %}
+            {% assign has_swatch = true %}
+            {% assign color_bg = swatch_colors.image[forloop.index0][0].cloudinary_src %}
+          {% endif %}
+        {% endfor %} {% endcomment %}
+
+        {% if counting < 6 %}
+          {% assign counting = counting | plus: 1 %}
+          <div data-value="{{ value }}" data-type="" class="swatch-element {{ option.name | downcase }} black available">
+            <input 
+              id="swatch-{{ forloop.index0 }}-{{ option.name | downcase }}-{{ value | handle }}-{{ product.id }}" 
+              type="radio" 
+              onChange="handleColorSwatchChange(this)"
+              class="swatch-element-single{% if forloop.index0 == 0 %} selected{% endif %}"
+              name="option-color-{{ product.id }}" 
+              value="{{ value }}"
+              {% if imageSrc %}
+                data-img-src="{{ imageSrc }}"
+              {% endif %}
+              {% if hoverImageSrc %}
+                data-img-src-hover="{{ hoverImageSrc }}"
+              {% endif %}
+              data-variant-id="{{ value_variants[0].id }}"
+              data-product-id="{{ product.id }}"
+              {% if forloop.index0 == 0 and default_checked %}checked{% endif %}
+              data-reserve-color-select
+            />
+            <label 
+              for="swatch-{{ forloop.index0 }}-{{ option.name | downcase }}-{{ value | handle }}-{{ product.id }}" 
+              style="background-color: {{ value | split: ' ' | last | handle }}; background-image: url({{ color_bg }})"
+            >
+              <span class="{% if option.name == 'Color' %}visually-hidden{% endif %}">{{ value }}</span>
+            </label>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% if values.size > 6 %}
+      {% assign leftSize = values.size | minus: 6 %}
+      <a href="{{ product.url | within: collection }}" class="more-item"> +{{ leftSize }} More</a>
+    {% endif %}
+  </div>
+{% else %}
+  <div class="color-swatch-empty"></div>
+{% endif %}

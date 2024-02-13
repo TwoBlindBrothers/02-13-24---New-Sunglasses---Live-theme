@@ -1,0 +1,66 @@
+{%- liquid
+  assign active_link_parent = blank 
+
+  for link in linklists.reserve-breadcrumbs.links 
+    if active_link_parent != blank 
+      continue
+    endif 
+    if link.type == 'collection_link' 
+      if link.child_active or link.active 
+        assign active_link_parent = link 
+      endif 
+    endif 
+    if active_link_parent != blank 
+      continue
+    endif 
+    if link.links 
+      for link in link.links 
+        if link.type == 'collection_link' 
+          if link.child_active or link.active 
+            assign active_link_parent = link 
+          endif 
+        endif 
+      endfor 
+    endif 
+  endfor 
+
+ assign nav_class = 'flex flex-nowrap gap-2 items-center max-w-[1440px] whitespace-nowrap px-[16px] pt-[11px] pb-6 overflow-auto mx-auto sm:px-8 sm:pt-4 md:px-10 md:pt-5 md:gap-4 xl:px-[56px] xl:pt-4 xl:pb-8' -%}
+ 
+{%- if active_link_parent -%}
+  <ul class="{{ nav_class }}">
+    <li class="flex">
+      <a role="tab" aria-selected="{% if active_link_parent.active %}true{% else %}false{% endif %}" class="reserve-btn {% unless active_link_parent.active %}reserve-btn--outline-black{% endunless %}" href="{{ active_link_parent.url }}">
+        All {{ active_link_parent.title }}
+      </a>
+    </li>
+    {%- for link in active_link_parent.links -%}
+      <li class="flex">
+        <a role="tab" aria-selected="{% if link.active %}true{% else %}false{% endif %}" class="reserve-btn {% unless link.active %}reserve-btn--outline-black{% endunless %}" href="{{ link.url }}">
+          {{ link.title }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{%- endif -%}
+
+{% comment %} {%- if collection.handle contains 'womens' -%}
+  <ul class="{{ nav_class }}">
+    {%- for link in linklists.collection-womens.links -%}
+      <li class="flex">
+        <a role="tab" aria-selected="{% if link.active %}true{% else %}false{% endif %}" class="reserve-btn {% unless link.active %}reserve-btn--outline-black{% endunless %}" href="{{ link.url }}">
+          {{ link.title }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{%- elsif collection.handle contains 'mens' -%}
+  <ul class="{{ nav_class }}">
+    {%- for link in linklists.collection-mens.links -%}
+      <li class="flex">
+        <a role="tab" aria-selected="{% if link.active %}true{% else %}false{% endif %}" class="reserve-btn {% unless link.active %}reserve-btn--outline-black{% endunless %}" href="{{ link.url }}">
+          {{ link.title }}
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+{%- endif -%} {% endcomment %}

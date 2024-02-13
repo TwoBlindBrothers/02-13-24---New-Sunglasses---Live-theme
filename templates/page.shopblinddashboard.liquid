@@ -1,0 +1,109 @@
+<!-- /templates/page.liquid -->
+<div class="wrapper">
+<div class="grid">
+
+  <div id="ambassador-dashboard" class="grid__item">
+
+    <h1>{{ page.title }}</h1>
+    {% assign product = all_products['shop-blind-tier-2-july-2020'] %}
+    <form action="/cart/add" method="post" enctype="multipart/form-data" id="AddToCartForm" class="form-vertical">
+
+      {% comment %}
+        Add product variants as a dropdown.
+          - By default, each variant (or combination of variants) will display as its own <option>
+          - To separate these into multiple steps, which we suggest, use option_selection.js (see below)
+
+        You can leverage jQuery to add a callback on page load and each time the select element changes:
+          - Include option_selection.js (as seen at the bottom of this file)
+          - This allows you to use JavaScript anytime the variant dropdown changes
+          - This also separates out your variant options (ie. size, color, etc.) to separate select elements
+
+        For more information on products with multiple options, visit:
+          - http://docs.shopify.com/support/your-website/themes/can-i-make-my-theme-use-products-with-multiple-options#update-product-liquid
+      {% endcomment %}
+      <select name="id" id="productSelect" class="product-single__variants">
+        {% for variant in product.variants %}
+          {% if variant.available %}
+            {% comment %}
+              Note: if you use option_selection.js, your <select> tag will be overwritten, meaning what you have inside <option> will not reflect what you coded below.
+            {% endcomment %}
+            <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} data-sku="{{ variant.sku }}" value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+          {% else %}
+            <option disabled="disabled">
+              {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+            </option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      {% if product.available %}
+
+        {% for option in product.options %}
+          {% include 'swatch' with option %}
+        {% endfor %}
+
+      {% endif %}
+
+      {% comment %}
+      <label for="Quantity" class="quantity-selector">{{ 'products.product.quantity' | t }}</label>
+      <input type="number" id="Quantity" name="quantity" value="1" min="1" class="quantity-selector">
+      {% endcomment %}
+      <button onclick="obApi('track', 'Add To Cart');"
+
+type="submit" name="add" id="AddToCart" class="btn">
+        <span id="AddToCartText">{{ 'products.product.add_to_cart' | t }}</span>
+      </button>
+    </form>
+  </div>
+
+</div>
+</div>
+
+{{ 'option_selection.js' | shopify_asset_url | script_tag }}
+
+<script>
+    var selectCallback = function(variant, selector) {
+
+      // BEGIN SWATCHES
+      if (variant) {
+          var form = jQuery('#' + selector.domIdPrefix).closest('form');
+          for (var i=0,length=variant.options.length; i<length; i++) {
+            var radioButton = form.find('.swatch[data-option-index="' + i + '"] :radio[value="' + variant.options[i] +'"]');
+            if (radioButton.size()) {
+              radioButton.get(0).checked = true;
+            }
+          }
+        }
+       // END SWATCHES
+        timber.productPage({
+          money_format: "{{ shop.money_format }}",
+          variant: variant,
+          selector: selector
+        });
+  };
+
+  jQuery(function($) {
+
+    "undefined"==typeof freegifts_product_json&&(window.freegifts_product_json=function(e){if(e){for(var i=0;i<e.options.length;i++)if(option=e.options[i],option.values)for(var r=0;r<option.values.length;r++)(option.values[r].endsWith("(Freegifts)")||option.values[r].endsWith("% off)"))&&(option.values.splice(r,1),r--);for(var a=function(e){for(var i in e)if(e.hasOwnProperty(i))return!1;return!0},p=e.price,t=e.price_max,o=e.price_min,n=e.compare_at_price,_=e.compare_at_price_max,c=e.compare_at_price_min,i=0;i<e.variants.length;i++){var r=e.variants[i],s=r.option3?r.option3:r.option2?r.option2:r.option1;"undefined"!=typeof SECOMAPP&&"undefined"!=typeof SECOMAPP.gifts_list_avai&&!a(SECOMAPP.gifts_list_avai)&&"undefined"!=typeof SECOMAPP.gifts_list_avai[r.id]||s.endsWith("(Freegifts)")||s.endsWith("% off)")?(e.variants.splice(i,1),i-=1):(t>=r.price&&(t=r.price,p=r.price),o<=r.price&&(o=r.price),r.compare_at_price&&(_>=r.compare_at_price&&(_=r.compare_at_price,n=r.compare_at_price),c<=r.compare_at_price&&(c=r.compare_at_price)),1==r.available&&(e.available=!0))}e.price=p,e.price_max=o,e.price_min=t,e.compare_at_price=n,e.compare_at_price_max=c,e.compare_at_price_min=_,e.price_varies=o>t?!0:!1,e.compare_at_price_varies=c>_?!0:!1}return e});
+    var sca_product_info = freegifts_product_json({{ product | json }});
+
+    new Shopify.OptionSelectors('productSelect', {
+      product:sca_product_info,
+      onVariantSelected: selectCallback,
+      enableHistoryState: true
+    });
+
+    // Add label if only one product option and it isn't 'Title'. Could be 'Size'.
+    {% if product.options.size == 1 and product.options.first != 'Title' %}
+      $('.selector-wrapper:eq(0)').prepend('<label for="productSelect-option-0">{{ product.options.first | escape }}</label>');
+    {% endif %}
+
+    // Hide selectors if we only have 1 variant and its title contains 'Default'.
+    {% if product.variants.size == 1 and product.variants.first.title contains 'Default' %}
+      $('.selector-wrapper').hide();
+    {% endif %}
+  });
+</script>
+
+{{ '//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js' | script_tag }}
+{{ 'api.jquery.js' | shopify_asset_url | script_tag }}
+<!-- {{ 'scripts.js' | asset_url | script_tag }} -->

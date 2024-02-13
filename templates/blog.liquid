@@ -1,0 +1,62 @@
+<!-- /templates/blog.liquid -->
+
+{% paginate blog.articles by 9 %}
+ <h1 class="visually-hidden">{{ blog.title }}</h1>
+
+    {% comment %}
+    {% for article in blog.articles limit:1 %}
+    <div class="page-hero">
+     <picture class="page-hero-img">
+      <source data-srcset="{{article.image | img_url: '1400x900', crop:'center' }}" media="(min-width: 1200px)" />
+      <source data-srcset="{{article.image | img_url: '1199x700', crop:'center' }}" media="(min-width: 769px)" />
+      <source data-srcset="{{article.image | img_url: '768x650', crop:'center' }}" media="(min-width: 500px)" />
+      <source data-srcset="{{article.image | img_url: '499x600', crop:'center' }}" media="(min-width: 320px)" />
+      <img data-src="{{article.image | img_url: '1000x600', crop:'center' }}"
+      alt="{{ article.image.alt | escape }}" class="lazyload"/>
+    </picture>
+
+     <div class="blog-article__title">
+         <h2 class="h1 text-center" style="margin-bottom:0"><a href="{{ article.url }}">{{ article.title }}</a></h2>
+     </div>
+     </div>
+    {% endfor %}
+    {% endcomment %}
+
+    <div class="wrapper thinner m-full ">
+    {% include 'breadcrumb' %}
+
+        <div class="grid">
+            {% for article in blog.articles limit: 4 %}
+              <div class="grid__item large--one-half">
+                <div class="blog-article sq">
+                {% include 'blog-article-item' %}
+                </div>
+              </div>
+            {% endfor %}
+        </div> <!-- end first grid -->
+
+        {% section 'home_instagram' %}
+
+        <div class="grid">
+            {% for article in blog.articles offset:4 %}
+              <div class="grid__item large--one-half">
+                <div class="blog-article sq">
+                {% include 'blog-article-item' %}
+                </div>
+              </div>
+            {% endfor %}
+        </div> <!-- end second grid -->
+
+
+
+
+    </div>
+
+    {% if paginate.pages > 1 %}
+      <hr>
+      <div class="pagination">
+        {{ paginate | default_pagination }}
+      </div>
+    {% endif %}
+
+{% endpaginate %}

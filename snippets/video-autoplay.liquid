@@ -1,0 +1,17 @@
+{%- if sources != blank -%}
+    <video class="h-full w-full object-cover {{ extra }}" {% if image != blank %} poster="{{ image | img_url: 'grande' }}" {% endif %} {% if controls %}controls{% endif %} muted playsinline loop autoplay preload="none" data-lazy-video="{{ video_id }}">
+        {% for source in sources %}
+            <source src="{{ source.url }}" type="video/{{ source.format }}">
+        {% endfor %}
+    </video>
+{%- else -%}
+    <video class="h-full w-full object-cover {{ extra }}" {% if image != blank %} poster="{{ image | img_url: 'grande' }}" {% endif %} {% if controls %}controls{% endif %} muted playsinline loop autoplay preload="none" data-lazy-video="{{ video_id }}">
+        <source src="{{ video }}#t=0.1" type="video/mp4">
+    </video>
+{%- endif -%}
+
+<script type="module">
+    import { videoAutoplay } from "{{ 'video-autoplay.js' | asset_url }}";
+    const element = document.querySelector(`#shopify-section-{{ section_id }} [data-lazy-video="{{ video_id }}"]`);
+    videoAutoplay(element)
+</script>

@@ -1,0 +1,69 @@
+{% for block in section.blocks %}
+  {% case block.type %}
+       {% when 'faq' %}
+       <div class="contact__sections__block">
+         <button class="contact_toggle" tabindex="0" aria-expanded="false">
+           <svg version="1.1" viewBox="0 0 14.329 14.329" aria-labelledby="title" class="role=&quot;img&quot;" width="15px" height="15px">
+             <title id="play-btn-title">Plus sign</title>
+             <polygon points="14.329,5.665 8.665,5.665 8.665,0 5.665,0 5.665,5.665 0,5.665 0,8.665 5.665,8.665 5.665,14.329 8.665,14.329 8.665,8.665 14.329,8.665 "></polygon>
+           </svg>
+         </button>
+         <div class="desc-title">{{ block.settings.title }}</div>
+         <div class="desc-body">
+           {{ block.settings.answer }}
+         </div>
+       </div>
+   {% endcase %}
+{% endfor %}
+{% if section.settings.content_bottom %}
+  <div style="margin-top: 3rem;">
+    {{ section.settings.content_bottom }}
+  </div>
+{% endif %}
+
+<script>
+  $( ".contact__menu__item" ).click(function(e) {
+    e.preventDefault();
+    $( ".contact__menu__item" ).removeClass("is-active")
+    $( this ).addClass( "is-active" );
+  });
+  $( ".contact_toggle, .desc-title" ).click(function() {
+    $(this).siblings( ".desc-body" ).slideToggle( "fast" );
+    $( this ).toggleClass( "is-active" );
+    if ($(this).hasClass("is-active")) {
+      $(this).siblings( ".contact_toggle" ).attr("aria-expanded", true)
+    } else {
+      $(this).siblings( ".contact_toggle" ).attr("aria-expanded", false)
+    }
+  });
+</script>
+
+{% schema %}
+  {
+    "settings": [
+      {
+        "type": "richtext",
+        "id": "content_bottom",
+        "label": "Additional Content"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "faq",
+        "name": "Shop Blind FAQ",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Question"
+          },
+          {
+            "type": "richtext",
+            "id": "answer",
+            "label": "Answer"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

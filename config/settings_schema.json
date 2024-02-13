@@ -1,0 +1,870 @@
+[
+  {
+    "name": "theme_info",
+    "logo": "https:\/\/cdn.shopify.com\/s\/files\/1\/0070\/7032\/files\/2010_6_23_Shopify-Green_256x256.jpg",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Timber Framework"
+      },
+      {
+        "type": "paragraph",
+        "content": "v2.1.0"
+      },
+      {
+        "type": "paragraph",
+        "content": "Theme settings allow designers to provide an easy way for any user to customize the look and feel of their shop without having to delve into HTML or CSS code. Please see our [help page on theme settings](http:\/\/docs.shopify.com\/themes\/theme-templates\/settings) to learn more about how you can make the theme customizable."
+      },
+      {
+        "type": "paragraph",
+        "content": "Review [Timber's documentation](http:\/\/shopify.github.io\/Timber\/) for any development help."
+      }
+    ]
+  },
+  {
+    "name": "Product",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Product Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "product_zoom_enabled",
+        "label": "Enable Product Zoom?"
+      }
+    ]
+  },
+  {
+    "name": "Easter Egg Hunt",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Easter Egg Hunt Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "easter_enabled",
+        "label": "Enable Easter Egg Hunt"
+      },
+      {
+        "type": "radio",
+        "id": "hunt_type",
+        "label": "Hunt Type",
+        "options": [
+          {
+            "value": "2bb",
+            "label": "2BB Face Hunt"
+          },
+          {
+            "value": "easter",
+            "label": "Easter Egg Hunt"
+          },
+          {
+            "value": "v-day",
+            "label": "V-Day Hearts"
+          }
+        ],
+        "default": "2bb",
+        "info": "Easter or 2bb"
+      },
+      {
+        "type": "text",
+        "id": "easter_url",
+        "label": "URL To Link From Egg"
+      }
+    ]
+  },
+  {
+    "name": "Shipping",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Free Shipping"
+      },
+      {
+        "type": "text",
+        "id": "minimumshipping",
+        "label": "Minimum for free shipping",
+        "default": "75"
+      }
+    ]
+  },
+  {
+    "name": "Gate",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Gate popup"
+      },
+      {
+        "type": "text",
+        "id": "gate_header",
+        "label": "Heading",
+        "info": "ie. Welcome to the 2bb Experience"
+      },
+      {
+        "type": "richtext",
+        "id": "gate_sub_header",
+        "label": "Subheading",
+        "info": "ie. Our catalog is reserved for..."
+      },
+      {
+        "type": "richtext",
+        "id": "gate_login_text",
+        "label": "Login Text",
+        "info": "Customer has an account and needs to login"
+      },
+      {
+        "type": "richtext",
+        "id": "gate_register_text",
+        "label": "Register Text",
+        "info": "Customer has placed an order but needs to register"
+      },
+      {
+        "type": "richtext",
+        "id": "gate_error_text",
+        "label": "Register Error Text",
+        "info": "The customer registered but has not placed an order"
+      },
+      {
+        "type": "richtext",
+        "id": "gate_register_confirm",
+        "label": "Register Confirmation",
+        "info": "ie. Please check your email to confirm your account"
+      },
+      {
+        "type": "richtext",
+        "id": "gate_login_error",
+        "label": "Login no orders error",
+        "info": "Customer is logged in but has not placed an order"
+      }
+    ]
+  },
+  {
+    "name": "Announcement",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Announcement"
+      },
+      {
+        "type": "richtext",
+        "id": "primary_announcement_text",
+        "label": "Primary Announcment Text"
+      },
+      {
+        "type": "color",
+        "id": "primary_announcement_bg_color",
+        "label": "Primary Announcement Background Color",
+        "default": "#000"
+      },
+      {
+        "type": "color",
+        "id": "primary_announcement_text_color",
+        "label": "Primary Announcement Text Color",
+        "default": "#fff"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_primary_announcement_home",
+        "label": "Only show on homepage",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_primary_announcement",
+        "label": "Show Primary Announcement?",
+        "default": false
+      },
+      {
+        "type": "richtext",
+        "id": "announcement_text",
+        "label": "Announcment Text"
+      },
+      {
+        "type": "image_picker",
+        "id": "announcement_image",
+        "label": "Announcment Image"
+      }
+    ]
+  },
+  {
+    "name": "Post Purchase Popup",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "post_purchase_popup_enabled",
+        "label": "Enable Post Purchase Popup",
+        "default": false
+      }
+    ]
+  },
+  {
+    "name": "Reserve",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Mini Cart"
+      },
+      {
+        "type": "text",
+        "id": "reserve_cart_checkout",
+        "label": "Checkout button",
+        "default": "Checkout"
+      },
+      {
+        "type": "text",
+        "id": "reserve_cart_title",
+        "label": "Cart title",
+        "default": "Your Bag"
+      },
+      {
+        "type": "header",
+        "content": "Collapsible cart footer"
+      },
+      {
+        "type": "text",
+        "id": "reserve_collapsible_title",
+        "label": "Collapsible Title",
+        "default": "Thanks to you, we’ve donated +$2.5m to fight blindness."
+      },
+      {
+        "type": "textarea",
+        "id": "reserve_collapsible_content",
+        "label": "Collapsible Content",
+        "default": "We started Two Blind Brothers to make the softest clothing and gifts in the world and to help the blind community by donating 100% of our profits back to research for eye disease through Foundation Fighting Blindness."
+      }
+    ]
+  },
+  {
+    "name": "Shop Blind",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "shopblind",
+        "label": "Turn on Shop Blind?",
+        "default": false,
+        "info": "Checking here will turn on the Shop Blind landing page and hide the rest of the site's nav and pages."
+      },
+      {
+        "type": "radio",
+        "id": "shop_blind_type",
+        "label": "Shop Blind Type",
+        "options": [
+          {
+            "value": "basic",
+            "label": "Basic Experience"
+          },
+          {
+            "value": "valentines",
+            "label": "Valentine's Day"
+          },
+          {
+            "value": "alt",
+            "label": "Alternate"
+          }
+        ],
+        "default": "basic",
+        "info": "Choose which type of shop blind you want to display"
+      },
+      {
+        "type": "color",
+        "id": "shopblind_bg_color",
+        "label": "Shop Blind Background Color",
+        "default": "#eae54e",
+        "info": "Background of the shop blind ALT version"
+      },
+      {
+        "type": "checkbox",
+        "id": "guidedogchallenge",
+        "label": "Guide Dog Challenge Active?",
+        "default": false,
+        "info": "Checking this will add the Guide Dog Challenge link to the menu overlay"
+      },
+      {
+        "type": "header",
+        "content": "Hero"
+      },
+      {
+        "type": "text",
+        "id": "shop_blind_announcement",
+        "label": "Shop Blind Announcement"
+      },
+      {
+        "type": "text",
+        "id": "shop_blind_title",
+        "label": "Hero title"
+      },
+      {
+        "type": "text",
+        "id": "shop_blind_sub_title",
+        "label": "Hero sub title"
+      },
+      {
+        "type": "textarea",
+        "id": "shop_blind_desc",
+        "label": "Hero text"
+      },
+      {
+        "type": "text",
+        "id": "shopblind_cart_title",
+        "label": "Cart title",
+        "default": "Your shop blind items"
+      },
+      {
+        "type": "text",
+        "id": "shopblind_cart",
+        "label": "Cart message",
+        "default": "Don't forget"
+      },
+      {
+        "type": "text",
+        "id": "shopblind_cart_checkout",
+        "label": "Checkout button",
+        "default": "Go for it"
+      },
+      {
+        "type": "header",
+        "content": "Main products"
+      },
+      {
+        "type": "collection",
+        "id": "shopblind_col",
+        "label": "Shop Blind Collection",
+        "info": "Set the main products on the backend in Shopify Collections"
+      },
+      {
+        "type": "text",
+        "id": "shopblind_col_button",
+        "label": "Button text"
+      },
+      {
+        "type": "header",
+        "content": "Special product"
+      },
+      {
+        "type": "product",
+        "id": "shopblind_prod_special",
+        "label": "Shop Blind Special Product"
+      },
+      {
+        "type": "text",
+        "id": "shopblind_prod_special_button",
+        "label": "Shop Blind Special Product button text"
+      },
+      {
+        "type": "header",
+        "content": "Video"
+      },
+      {
+        "type": "text",
+        "id": "shopblind_video_header",
+        "label": "Video header"
+      },
+      {
+        "type": "text",
+        "id": "shopblind_video_subheader",
+        "label": "Video subtext"
+      },
+      {
+        "type": "image_picker",
+        "id": "shop_blind_video_image",
+        "label": "Placeholder Image",
+        "info": "At least 600 x 600."
+      },
+      {
+        "type": "select",
+        "id": "shop_blind_color",
+        "label": "Button color",
+        "options": [
+          {
+            "value": "#fff",
+            "label": "White"
+          },
+          {
+            "value": "#231F20",
+            "label": "Black"
+          },
+          {
+            "value": "#F0D83D",
+            "label": "Yellow"
+          },
+          {
+            "value": "#ebebeb",
+            "label": "Grey"
+          }
+        ],
+        "default": "#231F20"
+      },
+      {
+        "type": "text",
+        "id": "shop_blind_video",
+        "label": "YouTube video ID",
+        "info": "Example Fkgb6aAHyCQ"
+      },
+      {
+        "type": "image_picker",
+        "id": "shop_blind_video_image_1",
+        "label": "Video 1 Placeholder Image",
+        "info": "At least 600 x 600."
+      },
+      {
+        "type": "text",
+        "id": "shop_blind_video_1",
+        "label": "YouTube video ID",
+        "info": "Example Fkgb6aAHyCQ"
+      },
+      {
+        "type": "image_picker",
+        "id": "shop_blind_video_image_2",
+        "label": "Video 2 Placeholder Image",
+        "info": "At least 600 x 600."
+      },
+      {
+        "type": "text",
+        "id": "shop_blind_video_2",
+        "label": "YouTube video ID",
+        "info": "Example Fkgb6aAHyCQ"
+      },
+      {
+        "type": "image_picker",
+        "id": "shop_blind_video_image_3",
+        "label": "Video 3 Placeholder Image",
+        "info": "At least 600 x 600."
+      },
+      {
+        "type": "text",
+        "id": "shop_blind_video_3",
+        "label": "YouTube video ID",
+        "info": "Example Fkgb6aAHyCQ"
+      },
+      {
+        "type": "image_picker",
+        "id": "sb_footer_image_1",
+        "label": "Footer Image 1"
+      },
+      {
+        "type": "image_picker",
+        "id": "sb_footer_image_2",
+        "label": "Footer Image 2"
+      },
+      {
+        "type": "image_picker",
+        "id": "sb_footer_image_3",
+        "label": "Footer Image 3"
+      }
+    ]
+  },
+  {
+    "name": "Guide Dog Challenge",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Guide Dog Challenge Video"
+      },
+      {
+        "type": "text",
+        "id": "gdc_video",
+        "label": "YouTube video ID",
+        "info": "Example Fkgb6aAHyCQ"
+      },
+      {
+        "type": "image_picker",
+        "id": "gdc_video_image",
+        "label": "Placeholder Image",
+        "info": "At least 600 x 600."
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "General colors"
+      },
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary",
+        "default": "#204a80",
+        "info": "Used for text links, and primary buttons"
+      },
+      {
+        "type": "color",
+        "id": "color_secondary",
+        "label": "Secondary",
+        "default": "#dcdcdc",
+        "info": "Used for secondary buttons"
+      },
+      {
+        "type": "color",
+        "id": "color_tertiary",
+        "label": "Tertiary",
+        "default": "#f0D83D",
+        "info": "Used for contrast"
+      },
+      {
+        "type": "color",
+        "id": "color_borders",
+        "label": "Borders",
+        "default": "#e5e5e5"
+      },
+      {
+        "type": "header",
+        "content": "Body"
+      },
+      {
+        "type": "color",
+        "id": "color_body_bg",
+        "label": "Background",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "color_body_text",
+        "label": "Text",
+        "default": "#333333"
+      },
+      {
+        "type": "header",
+        "content": "Footer"
+      },
+      {
+        "type": "color",
+        "id": "color_footer_bg",
+        "label": "Background",
+        "default": "#f2f2f2"
+      },
+      {
+        "type": "color",
+        "id": "color_footer_text",
+        "label": "Text",
+        "default": "#636363"
+      },
+      {
+        "type": "color",
+        "id": "color_footer_social_link",
+        "label": "Social media icons",
+        "default": "#bbbbbb"
+      }
+    ]
+  },
+  {
+    "name": "Favicon",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Favicon"
+      },
+      {
+        "type": "checkbox",
+        "id": "favicon_enable",
+        "label": "Use custom icon"
+      },
+      {
+        "type": "image",
+        "id": "favicon.png",
+        "label": "Icon",
+        "max-width": 32,
+        "max-height": 32,
+        "info": "32 x 32px .png required"
+      }
+    ]
+  },
+  {
+    "name": "Footer",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "footer_social_enable",
+        "label": "Show social media icons"
+      },
+      {
+        "type": "checkbox",
+        "id": "footer_newsletter_enable",
+        "label": "Show newsletter field"
+      },
+      {
+        "type": "text",
+        "id": "newsletter_form_action",
+        "label": "MailChimp form action URL",
+        "info": "[Where do I find my MailChimp form action URL?](http:\/\/docs.shopify.com\/support\/configuration\/store-customization\/where-do-i-get-my-mailchimp-form-action)"
+      },
+      {
+        "type": "richtext",
+        "id": "accessibility_discliamer",
+        "label": "Accessibility Disclaimer"
+      },
+      {
+        "type": "color",
+        "id": "footer_background_color",
+        "label": "Footer background color",
+        "default": "#000"
+      }
+    ]
+  },
+  {
+    "name": "Cart page",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "cart_notes_enable",
+        "label": "Enable cart notes"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_vendor_enable",
+        "label": "Show product vendor"
+      },
+      {
+        "type": "select",
+        "id": "ajax_cart_method",
+        "label": "Cart type",
+        "options": [
+          {
+            "value": "drawer",
+            "label": "Drawer"
+          },
+          {
+            "value": "page",
+            "label": "Page"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "text",
+        "id": "social_facebook_link",
+        "label": "Facebook URL",
+        "info": "https:\/\/www.facebook.com\/shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram_link",
+        "label": "Instagram URL",
+        "info": "https:\/\/www.instagram.com\/shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_twitter_link",
+        "label": "Twitter URL",
+        "info": "https:\/\/twitter.com\/shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok_link",
+        "label": "Tiktok URL",
+        "info": "https:\/\/tiktok.com\/shopify"
+      }
+    ]
+  },
+  {
+    "name": "Reserve - Welcome Popup",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "popup_logo",
+        "label": "Logo"
+      },
+      {
+        "type": "text",
+        "id": "popup_heading",
+        "label": "Heading"
+      },
+      {
+        "type": "text",
+        "id": "popup_text",
+        "label": "Subheading"
+      },
+      {
+        "type": "image_picker",
+        "id": "popup_media_video_poster",
+        "label": "Poster Image"
+      },
+      {
+        "type": "video",
+        "id": "popup_media_video",
+        "label": "Media Video"
+      },
+      {
+        "type": "video_url",
+        "id": "popup_video_url",
+        "label": "Video Url",
+        "accept": [
+          "youtube",
+          "vimeo"
+        ],
+        "info": "Link Youtube & Vimeo"
+      },
+      {
+        "type": "textarea",
+        "id": "popup_reason_text_1",
+        "label": "Reason Text 1"
+      },
+      {
+        "type": "textarea",
+        "id": "popup_reason_text_2",
+        "label": "Reason Text 2"
+      },
+      {
+        "type": "textarea",
+        "id": "popup_reason_text_3",
+        "label": "Reason Text 3"
+      },
+      {
+        "type": "text",
+        "id": "popup_button_text",
+        "label": "Button Text",
+        "default": "Start Shopping"
+      },
+      {
+        "type": "url",
+        "id": "popup_button_link",
+        "label": "Button Link"
+      }
+    ]
+  },
+  {
+    "name": "Breakpoints",
+    "settings": [
+      {
+        "type": "text",
+        "id": "break_sm",
+        "label": "Small"
+      },
+      {
+        "type": "text",
+        "id": "break_md",
+        "label": "Medium"
+      },
+      {
+        "type": "text",
+        "id": "break_lg",
+        "label": "Large"
+      },
+      {
+        "type": "text",
+        "id": "break_max",
+        "label": "Max large"
+      },
+      {
+        "type": "text",
+        "id": "break_xl",
+        "label": "Extra large"
+      },
+      {
+        "type": "text",
+        "id": "break_desktop",
+        "label": "Desktop"
+      },
+      {
+        "type": "text",
+        "id": "break_xxl",
+        "label": "Extra extra large"
+      }
+    ]
+  },
+  {
+    "name": "Product Reserve",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Bundle & Save"
+      },
+      {
+        "type": "text",
+        "id": "bundle_save_widget_id",
+        "label": "Bundle & Save Widget ID",
+        "default": "112888"
+      },
+      {
+        "type": "header",
+        "content": "Fit + Fabric + Story"
+      },
+      {
+        "type": "text",
+        "id": "tolstoy_id",
+        "label": "Tolstoy ID",
+        "default": "lkf88yl2hqijj"
+      }
+    ]
+  },
+  {
+    "name": "Collection Reserve",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Tolstoy"
+      },
+      {
+        "type": "html",
+        "id": "video_embed_1",
+        "label": "Video Embed 1"
+      },
+      {
+        "type": "html",
+        "id": "video_embed_2",
+        "label": "Video Embed 2"
+      },
+      {
+        "type": "html",
+        "id": "video_embed_3",
+        "label": "Video Embed 3"
+      },
+      {
+        "type": "header",
+        "content": "Swatches"
+      },
+      {
+        "type": "text",
+        "id": "swatch_options",
+        "label": "Swatch option",
+        "info": "Variant option name to use for displaying swatches. Use a comma separated list to support multiple options: \"Color, Style, Finish\"",
+        "default": "Color"
+      },
+      {
+        "type": "select",
+        "id": "swatch_shape",
+        "label": "Swatch shape",
+        "default": "round",
+        "options": [
+          {
+            "value": "rectangle",
+            "label": "Rectangle"
+          },
+          {
+            "value": "round",
+            "label": "Round"
+          },
+          {
+            "value": "square",
+            "label": "Square"
+          }
+        ]
+      },
+      {
+        "type": "textarea",
+        "id": "custom_swatch_colors",
+        "label": "Custom swatch colors",
+        "info": "Add one color per line. Enter the exact variant option name followed by a colon and hex code. Ex: \"Sky Blue: #87CEEB\". [Learn more](http:\/\/fluorescent.co\/help\/stiletto\/swatches)"
+      },
+      {
+        "type": "header",
+        "content": "Chips selector"
+      },
+      {
+        "type": "text",
+        "id": "chip_options",
+        "label": "Variant option for chips",
+        "info": "Variant option name to use for displaying chips. Use a comma separated list to support multiple options: \"Size, Material, Fabric\".",
+        "default": "Size"
+      }
+    ]
+  }
+]

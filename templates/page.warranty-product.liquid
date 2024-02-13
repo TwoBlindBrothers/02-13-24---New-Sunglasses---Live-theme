@@ -1,0 +1,61 @@
+{% liquid
+layout none
+assign page_url = content_for_header | split:'"pageurl":"' | last | split:'"' | first | split: request.host | last | replace:'\/','/' | replace:'%20',' ' | replace:'\u0026','&'
+assign replacement_handle = blank
+assign replacement_variant = blank
+assign replacement_order_number = blank
+assign replacement_item_id = blank
+assign replacement_in_cart = false
+assign cannot_replace = false
+assign last_order_date = false
+
+for i in (1..1)
+
+    unless page_url contains "?"
+        break
+    endunless
+    assign query_string = page_url | split: '?' | last
+    assign qry_parts= query_string | split: '&'
+
+    for part in qry_parts
+        assign key_and_value = part | split: '='
+        if key_and_value.size > 1
+            if key_and_value[0] == 'handle'
+                assign replacement_handle = key_and_value[1]
+            endif
+            if key_and_value[0] == 'variant'
+                assign replacement_variant = key_and_value[1]
+            endif
+            if key_and_value[0] == 'order'
+                assign replacement_order_number = key_and_value[1]
+            endif
+            if key_and_value[0] == 'replacement_id'
+                assign replacement_item_id = key_and_value[1]
+            endif
+            if key_and_value[0] == 'cannot_replace'
+                assign cannot_replace = key_and_value[1]
+            endif
+            if key_and_value[0] == 'last_order' and key_and_value[1] != 'null'
+                assign last_order_date = key_and_value[1]
+            endif
+            if key_and_value[0] == 'in_cart'
+                if key_and_value[1] == 'true'
+                    assign replacement_in_cart = true
+                endif
+            endif
+        endif
+    endfor
+endfor
+
+assign current_variant = blank
+if replacement_handle
+    assign replacement_product = all_products[replacement_handle]
+    for variant in replacement_product.variants
+        if replacement_variant contains variant.id
+            assign current_variant = variant
+            break
+        endif
+    endfor
+    render 'warranty-product-card', product: replacement_product, selected_variant: current_variant, order_number: replacement_order_number, product_id: replacement_item_id, in_cart: replacement_in_cart, last_order: last_order_date, cannot_replace: cannot_replace
+endif
+%}

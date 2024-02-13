@@ -1,0 +1,81 @@
+<div class="wrapper">
+  <div class="grid">
+    <div class="grid__item ten-twelfths  push--one-twelfth">
+      <h1 style="margin-top: 2rem;" class="text-center">Site Map</h1>
+      <ul style="columns: 2; break-inside: avoid-column; column-break-inside:avoid; list-style-type: none;">
+        <a style="font-size: 1.5rem; margin-top: 1rem; display: block; text-decoration: underline;" href="{{ shop.url }}/pages/reveal"><strong>Reveal</strong></a>
+        {% for link in linklists['main-menu'].links %}
+          <li>
+            {% if link.url contains 'collection' %}
+              <h2 style="margin-top: 2rem;"><a href="{{ link.url }}">{{ link.title }} Collection</a></h2>
+              <ul style="list-style-type: none; break-inside: avoid-column; column-break-inside:avoid; ">
+                {% assign collection_handle = link.url | split: '/collections/' | last %}
+                {% for product in collections[collection_handle].products %}
+                  <li>
+                    <a style="display: block; text-decoration: underline;" href="{{ product.url }}">{{ product.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% elsif link.url contains 'page' %}
+              <a style="margin-top: 1rem; display: block; text-decoration: underline;" href="{{ link.url }}"><strong>{{ link.title }}</strong></a>
+            {% elsif link.url contains 'products' %}
+              <a style="margin-top: 1rem; display: block; text-decoration: underline;" href="{{ link.url }}"><strong>{{ link.title }}</strong></a>
+            {% else %}
+              <a style="margin-top: 1rem; display: block; text-decoration: underline;" href="{{ link.url }}"><strong>{{ link.title }}</strong></a>
+              {% if link.url == '/' %}
+                {% comment %} This is the shop blind page {% endcomment %}
+                <ul style="list-style-type: none; break-inside: avoid-column; column-break-inside:avoid; ">
+                  {% for product in collections['shop-blind-standard'].products %}
+                    <li>
+                      <a style="display: block; text-decoration: underline;" href="/">{{ product.title }}</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            {% endif %}
+
+            {% if link.links %}
+              <ul style="list-style-type: none;">
+                {% for link in link.links %}
+                  <li>
+                    <a style="margin-top: 1rem; display: block; text-decoration: underline; font-weight: 400;" href="{{ link.url }}"><strong>{{ link.title }}</strong></a>
+                    {% if link.url contains 'collection' %}
+                      <ul style="list-style-type: none; break-inside: avoid-column; column-break-inside:avoid; margin-left: 0;">
+                        {% assign collection_handle = link.url | split: '/collections/' | last %}
+                        {% for product in collections[collection_handle].products %}
+                          {% if product.available %}
+                            <li>
+                              <a style=" display: block; text-decoration: underline;" href="{{ product.url }}">{{ product.title }}</a>
+                            </li>
+                          {% endif %}
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+        {% endfor %}
+        <li>
+          <ul style="list-style-type: none; margin-left: 0;">
+            {% for link in linklists['about-us'].links %}
+              <li>
+                <a style="margin-top: 1rem; display: block; text-decoration: underline;" href="{{ link.url }}"><strong>{{ link.title }}</strong></a>
+              </li>
+            {% endfor %}
+          </ul>
+        </li>
+        <li>
+          <ul style="list-style-type: none; margin-left: 0;">
+            {% for link in linklists['contact'].links %}
+              <li>
+                <a style="margin-top: 1rem; display: block; text-decoration: underline;" href="{{ link.url }}"><strong>{{ link.title }}</strong></a>
+              </li>
+            {% endfor %}
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

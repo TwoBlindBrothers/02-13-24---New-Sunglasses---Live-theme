@@ -1,0 +1,55 @@
+{% assign collection_handle = section.settings.collection %}
+
+<div class="grid-uniform products-grid-block">
+    <div>
+        <div class="wrapper">
+            <div class="grid-flex products-grid">
+                {% if section.blocks.size > 0 %}
+                    {% for block in section.blocks %}
+                        {% render 'product-grid-item', product: block.settings.product, grid_item_width: 'one-half medium--one-third large--one-quarter' %}
+                    {% endfor %}
+                {% endif %}
+                {% if collection_handle != blank %}
+                    {% for product in collections[collection_handle].products %}
+                        {% render 'product-grid-item', product: product, grid_item_width: 'one-half medium--one-third large--one-quarter' %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="slider-arrow products-grid-arrow-prev"><span></span></div>
+            <div class="slider-arrow products-grid-arrow-next"><span></span></div>
+        </div>
+    </div>
+</div>
+
+{% schema %}
+{
+    "name": "Products Grid",
+    "settings": [
+        {
+            "type": "collection",
+            "id": "collection",
+            "label": "Collection",
+            "info": "If individual products are selected, the collection products will show after these products"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "product",
+            "name": "Product",
+            "settings": [
+                {
+                    "type": "product",
+                    "id": "product",
+                    "label": "Product"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Products Grid",
+            "category": "Products"
+        }
+    ]
+}
+{% endschema %}

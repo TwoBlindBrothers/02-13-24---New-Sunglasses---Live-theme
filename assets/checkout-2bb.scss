@@ -1,0 +1,21 @@
+.av_button, #myModal-container, #addressValidatorBox {
+  border-radius: 0!important;
+}
+#addressValidatorBox {
+  border: none!important;
+}
+
+#myModal-container {  
+  #suggestedAddress:hover, #originalAddress:hover {
+    background-color: rgba(0,0,0,.1)!important;
+  }
+
+  .btn-row button.av_button:hover {
+    background-color: white!important;
+    color: black!important;
+  }
+}
+
+#myModal {
+  font-family: "canada-type-gibson", 'HelveticaNeue', 'Helvetica Neue', Helvetica, Arial, sans-serif!important;
+}

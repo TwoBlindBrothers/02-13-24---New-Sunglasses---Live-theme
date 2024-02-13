@@ -1,0 +1,31 @@
+{%- assign li_class = 'flex max-w-[26px]' -%}
+<ul class="flex flex-row items-center justify-center gap-6 {{ class }}">
+  {%- if settings.social_instagram_link != blank -%}
+    <li class="{{ li_class }}">
+      <a href="{{- settings.social_instagram_link -}}" target="_blank" rel="noopener" title="{{ shop.name }} on Instagram">
+        {%- render 'icons', icon: 'instagram' -%}
+      </a>
+    </li>
+  {%- endif -%}
+  {%- if settings.social_twitter_link != blank -%}
+    <li class="{{ li_class }}">
+      <a href="{{- settings.social_twitter_link -}}" target="_blank" rel="noopener" title="{{ shop.name }} on Twitter">
+        {%- render 'icon-twitter' -%}
+      </a>
+    </li>
+  {%- endif -%}
+  {%- if settings.social_facebook_link != blank -%}
+    <li class="{{ li_class }}">
+      <a href="{{- settings.social_facebook_link -}}" target="_blank" rel="noopener" title="{{ shop.name }} on Facebook">
+        {%- render 'icons', icon: 'facebook' -%}
+      </a>
+    </li>
+  {%- endif -%}
+  {%- if settings.social_tiktok_link != blank -%}
+    <li class="{{ li_class }}">
+      <a href="{{- settings.social_tiktok_link -}}" target="_blank" rel="noopener" title="{{ shop.name }} on Tiktok">
+        {%- render 'icons', icon: 'tiktok' -%}
+      </a>
+    </li>
+  {%- endif -%}
+</ul>

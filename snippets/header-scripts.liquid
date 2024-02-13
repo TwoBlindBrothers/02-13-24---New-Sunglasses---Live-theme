@@ -1,0 +1,67 @@
+{%- comment -%}
+  Parameters
+  * content
+  * unload_apps
+  * remove_apps
+{%- endcomment -%}
+
+{%- assign script_tag_start = '<script>' -%}
+{%- assign script_tag_end = '</script>' -%}
+{%- assign content_split = content | split: script_tag_start -%}
+{%- assign old_assignment_statement_start = 'var urls' -%}
+{%- assign old_assignment_statement_end = '];' -%}
+{%- assign old_assignment_statement_delimiter = ',' -%}
+{%- assign new_assignment_statement_start = 'window.shopifyAppUrls' -%}
+{%- assign async_load_function = 'asyncLoad' -%}
+{%- assign remove_apps_split = remove_apps | split: '|' -%}
+
+{%- if unload_apps -%}
+  {%- for script in content_split -%}
+    {%- if script contains async_load_function -%}
+      {%- assign script_content = script | split: old_assignment_statement_end | first | split: old_assignment_statement_start | last -%}
+      {%- assign script_content_split = script_content | split: old_assignment_statement_delimiter -%}
+
+      {%- capture new_script_content -%}
+        {%- if remove_apps -%}
+          {%- for content_item in script_content_split -%}
+            {%- assign include_content_item = true -%}
+
+            {%- for app_item in remove_apps_split -%}
+              {%- if content_item contains app_item -%}
+                {%- assign include_content_item = false -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- unless include_content_item -%}
+            {%- continue -%}
+            {%- endunless -%}
+
+            {{- content_item | append: old_assignment_statement_delimiter -}}
+          {%- endfor -%}
+        {%- else -%}
+          {{- script_content -}}
+        {%- endif -%}
+      {%- endcapture -%}
+
+      {{- new_script_content | prepend: new_assignment_statement_start | prepend: script_tag_start | append: old_assignment_statement_end | append: script_tag_end -}}
+
+      {% comment %}Get the global Javascript variable __st{% endcomment %}
+      {%- if script contains script_tag_end -%}
+        {%- assign arr = script | split: script_tag_end -%}
+        {%- for i in arr -%}
+          {%- if i contains '<script' -%}
+            {{ i | append: script_tag_end }}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+    {%- else -%}
+      {%- if script contains script_tag_end -%}
+        {{- script_tag_start -}}
+      {%- endif -%}
+      {{- script -}}
+    {%- endif -%}
+  {%- endfor -%}
+{%- else -%}
+  {{- content -}}
+{%- endif -%}

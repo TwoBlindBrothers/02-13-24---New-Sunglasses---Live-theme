@@ -1,0 +1,185 @@
+{{ 'subscription.scss.css' | asset_url | stylesheet_tag }}
+<div id="subscription-app-wrapper">
+  {%- comment %}
+  	<p><a href="/tools/recurring/login/">Manage Subscriptions</a></p>
+  {% endcomment -%}
+  {% if section.settings.title != empty or section.settings.subtext != empty %}
+    <div class="section-header text-center">
+      {% if section.settings.title != empty %}
+        <h2 class="text-center">
+          {{ section.settings.title }}
+        </h2>
+      {% endif %}
+      {% if section.settings.subtext != empty %}
+        <div class="container narrow">
+          <p>{{ section.settings.subtext }}</p>
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+  <div id="subscription-app">
+  </div>
+  {% if section.settings.disclaimer %}
+    <p class="text-center text-black" style="color: black; font-size: 1rem;"><span>{{ section.settings.disclaimer }}</span></p>
+  {% endif %}
+</div>
+
+{%- if section.blocks.size > 0 -%}
+
+  {% assign default_selected = 0 %}
+
+  {% comment %}
+  {% for block in section.blocks %}
+    {% if block.settings.default_selected %}
+      {% assign default_selected = forloop.index0 %}
+    {% endif %}
+    {% assign product = all_products[block.settings.product] %}
+    {{ product.selling_plan_groups | json }}
+  {% endfor %}
+  {% endcomment %}
+  {% capture 'shop_blind_products' %}
+    [
+      {% for block in section.blocks %}
+        {% if block.settings.default_selected %}
+          {% assign default_selected = forloop.index0 %}
+        {% endif %}
+        {% assign product = all_products[block.settings.product] %}
+        {
+          handle: "{{ block.settings.product }}",
+          id: {{ product.id }},
+          available: {{ product.available }},
+          title: "{{ product.title }}",
+          product_type: "{{ product.product_type }}",
+          html: '{{ product.content | strip_newlines | escape }}',
+          images: {{ product.images | json }},
+          vendor: "{{ product.vendor }}",
+          variants: {{ product.variants | json }},
+          options: {{ product.options | json }},
+          price: "{{ product.price | money_without_trailing_zeros }}",
+          price_subscription: "{{ product.variants[0].metafields.subscriptions.discount_variant_price | times: 100 | money_without_trailing_zeros }}",
+          footer: "{{ section.settings.popup_footer | strip_newlines | escape }}",
+          submeta: {{ product.metafields.subscriptions | json }},
+          buttonTitle: "{{ block.settings.title }}",
+          buttonBenefit: "{{ block.settings.benefit }}",
+          chargeFrequency: "{{ block.settings.charge_frequency}}",
+          chargeUnit: "{{ block.settings.charge_unit }}",
+          priceText: "{{ block.settings.price_text }}",
+        }
+        {% if forloop.index != section.blocks.size %}
+          ,
+        {% endif %}
+      {% endfor %}
+    ]
+  {% endcapture %}
+  <script>
+    var shopBlindProducts = {{ shop_blind_products }}
+    var defaultSelected = {{ default_selected }}
+  </script>
+{%- endif -%}
+
+<script>
+  var myshopify_domain = '{{ shop.permanent_domain }}'
+  var customer_id = '{{ customer.id }}'
+  var customer_email = '{{ customer.email }}'
+</script>
+<script defer type="module" src="{{ 'subscription-app.js' | asset_url }}"></script>
+
+{% schema %}
+{
+  "name": "Subscription module",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext"
+    },
+    {
+      "type": "product",
+      "id": "subscription_product",
+      "label": "Subscription product"
+    },
+    {
+      "type": "richtext",
+      "id": "prepay_text",
+      "label": "Pre-pay text"
+    },
+    {
+      "type": "product",
+      "id": "prepay_product",
+      "label": "Pre-pay product"
+    },
+    {
+      "type": "richtext",
+      "id": "popup_footer",
+      "label": "Popup footer text"
+    },
+    {
+      "type": "text",
+      "id": "disclaimer",
+      "label": "Disclaimer",
+      "default": "*Additional discounts cannot be applied to subscription orders."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "subscription_types",
+      "name": "Subscription Types",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Label"
+        },
+        {
+          "type": "text",
+          "id": "benefit",
+          "label": "Benefit description",
+          "default": "One free box and free shipping"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "text",
+          "id": "price_text",
+          "label": "Price Text",
+          "info": "Overrides automatic price"
+        },
+        {
+          "type": "range",
+          "id": "charge_frequency",
+          "label": "Charge frequency",
+          "default": 1,
+          "min": 1,
+          "max": 18,
+          "step": 1,
+          "info": "Use this for prepaid ie. to bill every 3 months, choose 3"
+        },
+        {
+          "type": "select",
+          "label": "Charge interval",
+          "id": "charge_unit",
+          "options": [
+             { "value": "Months", "label": "Months"},
+             { "value": "Weeks", "label": "Weeks"},
+             { "value": "Days", "label": "Days"}
+          ],
+          "default":   "Months"
+        },
+        {
+          "type": "checkbox",
+          "id": "default_selected",
+          "label": "Set as default selected"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

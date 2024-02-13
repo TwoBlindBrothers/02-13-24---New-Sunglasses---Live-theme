@@ -1,0 +1,89 @@
+{{ 'subscription.scss.css' | asset_url | stylesheet_tag }}
+<section class="hero page-hero subscription_hero" style="background-image:url('{{ section.settings.hero_img | img_url: '1600x' }}'); background-position:top center">
+  <div class="wrapper">
+    <div class="subscription-hero-content">
+      <div class="subscription__graphic small--hide">
+          {% include 'svg_subscription_graphic' %}
+      </div>
+      <div class="subscription-hero-title">
+        <h1>Shop blind <span>Monthly Subscription</span></h1>
+    </div>
+  </div>
+</section>
+
+<div class="wrapper">
+  <div class="subscription-how-to subscription-section">
+    <h2>How it works</h2>
+    <div class="subscription-graphics">
+      <div class="sub-graphic">
+        {% include 'svg_sub_1' %}
+        <h3>Tell us about yourself</h3>
+      </div>
+      <div class="sub-graphic">
+        {% include 'svg_sub_2' %}
+        <h3>Get cool stuff every month</h3>
+      </div>
+      <div class="sub-graphic">
+        {% include 'svg_sub_3' %}
+        <h3>Pause or cancel anytime</h3>
+      </div>
+    </div>
+  </div>
+  {% if section.settings.sub_desc %}
+    <div class="sub-desc text_container subscription-section">
+      {{ section.settings.sub_desc }}
+    </div>
+  {% endif %}
+  <div id="subscription-app">
+  </div>
+</div>
+
+{% capture 'subscription-product' %}
+  {% assign subscription = all_products['shop-blind-subscription'] %}
+  {
+    id: {{ subscription.id }}
+    {% for variant in subscription.variants %}
+    {% endfor %}
+  }
+{% endcapture %}
+
+<script>
+  var myshopify_domain = '{{ shop.permanent_domain }}'
+  var customer_id = '{{ customer.id }}'
+  var customer_email = '{{ customer.email }}'
+  var selectorImages = {
+    'Mens' : '{{ section.settings.image_mens | img_url: "600x" }}',
+    'Womens' : '{{ section.settings.image_womens | img_url: "600x" }}'
+  }
+</script>
+
+<script defer type="module" src="{{ "subscription-app.js" | asset_url }}"></script>
+
+{% schema %}
+  {
+    "name": "Subscription Page",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "hero_img",
+        "label": "Hero bg image (16:9)"
+      },
+      {
+        "type": "richtext",
+        "id": "sub_desc",
+        "label": "Description of Subscription",
+        "default": "<p>Start your subscription...</p>"
+      },
+      {
+        "type": "image_picker",
+        "id": "image_womens",
+        "label": "Choose an image for the women's selector"
+      },
+      {
+        "type": "image_picker",
+        "id": "image_mens",
+        "label": "Choose an image for the men's selector"
+      }
+    ]
+  }
+{% endschema %}

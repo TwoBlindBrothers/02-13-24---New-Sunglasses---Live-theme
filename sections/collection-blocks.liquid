@@ -1,0 +1,120 @@
+{% if section.blocks.size > 0 %}
+    <div class="collection-blocks">
+        <div class="wrapper">
+            <div class="flex-grid">
+                {% for block in section.blocks %}
+                    <div class="flex-grid__item one-quarter">
+                        <div class="collection-block">
+                            <div class="collection-block__content">
+                                {% if block.settings.image %}
+                                    <picture class="collection-block__image">
+                                        <source data-srcset="{{ block.settings.image | img_url: '600x' }}" media="(min-width: 1200px)" />
+                                        <source data-srcset="{{ block.settings.image | img_url: '400x' }}}" media="(min-width: 769px)" />
+                                        <source data-srcset="{{ block.settings.image | img_url: '300x' }}}" media="(max-width: 768px)" />
+                                        <img data-src="{{ block.settings.image | img_url: '400x' }}" class="lazyload" alt="{{  block.settings.image.alt | escape }}"/>
+                                    </picture>
+                                {% endif %}
+                                <h3 class="uppercase" id="{{ section.id }}-{{ forloop.index0 }}">{{ block.settings.title }}</h3>
+                                {% if block.settings.link_additional == blank %}
+                                    <a class="collection-block__link" href="{{ block.settings.link }}">
+                                    </a>
+                                {% else %}
+                                    <div class="collection-block__overlay" data-section-id="{{ section.id }}" data-index="{{ forloop.index0 }}">
+                                        <div 
+                                            id="overlay-wrapper-{{ section.id }}-{{ forloop.index0 }}"
+                                            role="dialog" 
+                                            labelledby="label-{{ section.id }}-{{ forloop.index0 }}" 
+                                            aria-modal="true" 
+                                            aria-hidden="true"
+                                            class="overlay-wrapper">
+                                            <div class="collection-block__overlay-content">
+                                                <h4 id="label-{{ section.id }}-{{ forloop.index0 }}" class="sr-only">{{ block.settings.title }}</h4>
+                                                <div class="collection-block__overlay-buttons">
+                                                    {% assign collection_title = block.settings.label %}
+                                                    {% assign collection_additional_title = block.settings.label_additional %}
+                                                    <a class="btn" href="{{ block.settings.link }}">{{ collection_title }}</a>
+                                                    <a class="btn" href="{{ block.settings.link_additional }}">{{ collection_additional_title }}</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script>
+        let activeModalClose = null
+        $('.collection-block__overlay').on('click', function (e) {
+            if ( e.target !== this ) return
+            const overlay_index = $(this).data('index')
+            activeModalClose = document.getElementById(`label-{{ section.id }}-${overlay_index}`)
+            openDialog(`overlay-wrapper-{{ section.id }}-${overlay_index}`, this, $('a:first-of-type', this))
+        })
+        document.addEventListener('click', function (e) {
+            if ( !e.target.closest('.collection-block__overlay') ) {
+                closeDialog(activeModalClose)
+            }
+        }, false)
+    </script>
+{% endif %}
+  
+{% schema %}
+    {
+        "name": "Collection Blocks",
+        "blocks": [
+            {
+                "type": "collection",
+                "name": "Collection",
+                "settings": [
+                    {
+                        "type": "text",
+                        "id": "title",
+                        "label": "Title"
+                    },
+                    {
+                        "type": "url",
+                        "id": "link",
+                        "label": "Link"
+                    },
+                    {
+                        "type": "text",
+                        "id": "label",
+                        "label": "Button Label",
+                        "info": "Only needed if additional collection is set."
+                    },
+                    {
+                        "type": "image_picker",
+                        "id": "image",
+                        "label": "Image"
+                    },
+                    {
+                        "type": "header",
+                        "content": "Additional Collection"
+                    },
+                    {
+                        "type": "url",
+                        "id": "link_additional",
+                        "label": "Link"
+                    },
+                    {
+                        "type": "text",
+                        "id": "label_additional",
+                        "label": "Label",
+                        "info": "Only needed if additional collection is set."
+                    }
+                ]
+            }
+        ],
+        "presets": [
+            {
+                "category": "Collections",
+                "name": "Collection Blocks"
+            }
+        ]
+    }
+{% endschema %}
+  

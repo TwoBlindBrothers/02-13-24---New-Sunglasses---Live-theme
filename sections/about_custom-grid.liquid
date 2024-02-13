@@ -1,0 +1,102 @@
+{% assign feature_count = section.blocks.size %}
+{% assign featureIndex = 0 %}
+
+{% if feature_count == 0 %}
+  {% assign feature_count = 6 %}
+{% endif %}
+ {% if feature_count > 0 %}
+ <section
+  class="grid-masonry grid-masonry-feature-count-{{ feature_count }}"
+  data-section-id="{{ section.id }}"
+  data-section-type="grid-masonry">
+    {% for block in section.blocks %}
+        {% case block.type %}
+            {% when 'feature' %}
+                {% include 'grid-feature-pages' %}
+        {% endcase %}
+    {% endfor %}
+</section>
+{% endif %}
+
+{% schema %}
+{
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Grid item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "At least 600 x 600. GIFs must be uploaded in Settings > Files first!"
+        },
+        {
+          "type": "text",
+          "id": "videobg",
+          "label": "Or small video",
+          "info": "Upload .mp4 file to Files and enter file name without extension"
+        },
+        {
+           "type":      "select",
+           "id":        "bgcolor",
+           "label":     "Or select background color",
+           "options": [
+              { "value": "#fff", "label": "White"},
+              { "value": "#231F20", "label": "Black"},
+              { "value": "#F0D83D", "label": "Yellow"},
+              { "value": "#ebebeb", "label": "Grey"}
+           ],
+           "default":   "#ebebeb"
+        },
+         {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "Subheading"
+        },
+        {
+           "type":      "select",
+           "id":        "color",
+           "label":     "Text color",
+           "options": [
+              { "value": "#fff", "label": "White"},
+              { "value": "#231F20", "label": "Black"},
+              { "value": "#F0D83D", "label": "Yellow"},
+              { "value": "#ebebeb", "label": "Grey"}
+           ],
+           "default": "#231F20"
+        },
+        {
+          "type": "text",
+          "id": "button",
+          "label": "Button text"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "video",
+          "label": "YouTube video ID",
+          "info": "Example Fkgb6aAHyCQ"
+        },
+        {
+          "type": "checkbox",
+          "id": "mobile",
+          "label": "Hide on mobile",
+          "default": false
+        }
+      ]
+    }
+  ]
+}
+
+
+{% endschema %}

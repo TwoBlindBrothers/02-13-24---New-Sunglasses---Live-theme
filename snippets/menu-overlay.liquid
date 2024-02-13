@@ -1,0 +1,169 @@
+<style>
+  body.menu-active {
+    overflow: hidden;
+  }
+  #menu-overlay {
+    width: 100vw;
+    position: fixed;
+    top: 97px;
+    left: 0;
+    right: 0;
+    background-color: #231f20;
+    z-index: 101;
+    opacity: 0;
+    pointer-events: none;
+    height: calc(100vh - 97px);
+    transform: translateX(100vw);
+    background-color: transparent;
+    transition: transform .2s ease-in-out;
+  }
+  body.template-index #menu-overlay {
+    height: calc(100vh - 100px);
+    top: 100px;
+  }
+  body.template-index .hamburger-wrapper {
+    display: block!important;
+  }
+
+  @media (min-width: 769px) {
+    body.template-index #menu-overlay {
+      height: calc(100vh - 100px);
+      top: 130px;
+    }
+  }
+  body.menu-active #menu-overlay {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+
+  #menu-overlay-content {
+    position: absolute;
+    justify-content: flex-end;
+    align-items: flex-start;
+    background-color: #231f20;
+    width: auto;
+    height: 100%;
+    top: 0;
+    right: 0;
+  }
+  #menu-overlay-content ul {
+    list-style-type: none;
+  }
+  #menu-overlay-content ul li {
+    margin: 0;
+  }
+  #menu-overlay-content ul li > ul {
+    padding-top: 0;
+    padding-bottom: .75rem;
+  }
+  #menu-overlay-content ul li a {
+    color: white;
+    text-transform: uppercase;
+    font-weight: 800;
+    font-size: 1em;
+    letter-spacing: .2em;
+    line-height: 1;
+    display: none;
+    padding: .75rem 0;
+  }
+  body.menu-active #menu-overlay-content ul li a {
+    display: flex;
+  }
+  #menu-overlay-content ul li a.long-text {
+    font-size: .8em;
+  }
+  @media (min-width: 769px) {
+    #menu-overlay-content ul li a {
+      font-size: 1.2rem;
+      letter-spacing: .3em;
+    }
+    #menu-overlay-content ul li a.long-text {
+      font-size: 1.75em;
+    }
+  }
+  @media (max-width: 768px) {
+    #menu-overlay-content ul {
+      margin: 30px 20px;
+    }
+    #menu-overlay-content ul li {
+      text-align: left;
+    }
+    #menu-overlay-content .sub-nav li:not(:first-of-type) {
+      padding-left: 1.75rem;
+    }
+  }
+</style>
+{{ 'hamburger.scss.css' | asset_url | stylesheet_tag }}
+<div id="menu-overlay" aria-hidden="true">
+  <nav id="menu-overlay-content" aria-hidden aria-modal="true" aria-labelledby="menu-overlay-title" role="dialog">
+    <div id="menu-overlay-content-inner">
+      <span id="menu-overlay-title" style="display: none">Menu</span>
+      <ul class="main-menu">
+        {% for link in linklists['main-menu'].links %}
+          <li>
+            <div class="menu-item-link">
+              <a href="{{ link.url }}">{{ link.title }}</a>
+              {% assign sub_size = link.links | size %}
+            </div>
+            {% assign sub_size = link.links | size %}
+            {% if sub_size > 0 %}
+              <ul>
+                {% for sublink in link.links %}
+                  {% assign sub_size = sublink.links | size %}
+                  <li>
+                    {% assign link_url = sublink.url %}
+                    {% if sub_size > 0 %}
+                      {% assign link_url = "javascript:openSubMenu('" | append: forloop.index0 | append: "')" %}
+                    {% endif %}
+                    <a href="{{ link_url }}" class="site-nav--sub-item menu-item-link">
+                      {{ sublink.title }}
+                      {% if sub_size > 0 %}
+                        <div class="slider-arrow arrow-right">
+                          {% render 'icon-chevron-right' %}
+                        </div>
+                      {% endif %}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+        {% endfor %}
+        <li id="menu-account-link">
+          <a href="/account">
+            {% render 'svg-icon-profile' %}
+            <span>My Account</span>
+          </a>
+        </li>
+      </ul>
+      
+      {% for link in linklists['main-menu'].links %}
+        {% if link.levels > 1 %}
+          {% for sublink in link.links %}
+            <ul class="sub-nav" id="sub-nav-{{ forloop.index0 }}">
+              <li>
+                <a href="javascript:hideSubMenu('{{ forloop.index0 }}')" class="sub-menu-title">
+                  <span class="slider-arrow arrow-left">
+                    {% render 'icon-chevron-left' %}
+                  </span>
+                  <span>
+                    {{ link.title }}
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="{{ sublink.url }}" class="site-nav--sub-item">All {{ sublink.title }}</a>
+              </li>
+              {% for childLink in sublink.links %}
+                <li>
+                  <a href="{{ childLink.url }}" class="site-nav--sub-item">{{ childLink.title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </nav>
+</div>

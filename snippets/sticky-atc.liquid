@@ -1,0 +1,30 @@
+{%- if product.available -%}
+  {%- assign tag = product.tags | where: 'badge_' | first -%}
+  <sticky-atc class="fixed bottom-0 left-0 block w-full transition-all duration-300 ease-in-out invisible sticky-atc z-[99] translate-y-full md:translate-y-0 md:opacity-0 md:bg-white md:bottom-auto md:top-0 md:py-[11px] md:border-b md:border-b-solid md:border-b-grey-200 [&.active]:visible [&.active]:translate-y-0 [&.active]:md:opacity-100">
+    <div class="flex flex-row items-center gap-4 mx-auto max-w-[1440px] md:px-10 lg:px-[56px]">
+      <div class="hidden md:block relative aspect-[70/83] w-[70px]">
+        {{- product.featured_image | image_url: width: 140 | image_tag: class: 'absolute inset-0 w-full h-full object-cover', loading: 'lazy', alt: product.title -}}
+      </div>
+      <div class="flex-col hidden gap-2 md:flex grow">
+        {%- if tag != blank -%}
+          <span class="w-fit p3 py-[2px] px-2 text-black bg-grey-200 rounded-[24px]">{{- tag | remove: 'badge_' -}}</span>
+        {%- endif -%}
+        <h2 class="text-black h3-reserve">{{- product.title -}}</h2>
+      </div>
+      <button
+        type="button"
+        class="
+          flex justify-center items-center w-full min-h-[60px] p-2 font-medium text-black text-p2 font-base bg-yellow border border-yellow border-solid transition-colors tracking-normal
+          md:border-black md:w-fit md:bg-black md:text-white md:px-8 md:py-[10px] md:min-h-[38px] md:rounded-[24px]
+          [&.disabled]:opacity-50
+          hover:bg-yellow-30 hover:md:bg-white hover:md:text-black
+        "
+        data-btn-atc data-add-to-cart
+        data-variant-id="{{- product.first_available_variant.id -}}"
+      >
+        <span data-add-to-cart-text>{{ 'products.product.add_to_cart' | t }}</span>
+      </button>
+    </div>
+  </sticky-atc>
+  {%- render 'vite-tag' with 'reserve-sticky-atc.js' -%}
+{%- endif -%}

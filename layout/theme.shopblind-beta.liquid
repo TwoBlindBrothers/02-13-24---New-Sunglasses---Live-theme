@@ -1,0 +1,418 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 9 ]><html class="ie9 no-js"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+  <head>
+<!-- Start of Shoplift scripts -->
+{% render 'shoplift' %}
+<!-- End of Shoplift scripts -->
+    <meta name="google-site-verification" content="ttZca2KoetOEPToVJiLZw0nT_jA3cZ4ixQY5RiTjmKY" />
+
+    <!-- Basic page needs ================================================== -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="{{ 'favicon.png' | asset_url }}" type="image/png" />
+
+    <!-- Title and description ================================================== -->
+    <title>
+      {{ page_title }}{% if current_tags %}{% assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags }}{% endif %}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+    </title>
+
+    {% if page_description %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+
+    <!-- Helpers ================================================== -->
+    {% include 'social-meta-tags' %}
+    <link rel="canonical" href="{{ canonical_url }}">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <meta name="theme-color" content="{{ settings.color_primary }}">
+    {% style %}
+      {%- assign sb_bg = settings.shopblind_bg_color -%}
+      {% if page.metafields.shop_blind.background_color %}
+        {%- assign sb_bg = page.metafields.shop_blind.background_color -%}
+      {% endif %}
+      {% if template != 'index' and template != 'product.shop-blind' %}
+        .blob {
+          background-color: white!important;
+        }
+        .utility-links-container #utility-links a:hover {
+          color: white!important;
+        }
+        .utility-links-container #utility-links a:hover svg path {
+          fill: white!important;
+        }
+        #utility-links .hamburger-wrapper.large--hide, #utility-links .hamburger-wrapper.large--hide .large--hide {
+          display: block!important;
+        }
+        #utility-links .hamburger .hamburger-inner, #utility-links .hamburger .hamburger-inner:before, #utility-links .hamburger .hamburger-inner:after {
+          background-color: white!important;
+        }
+        #utility-links .hamburger:hover .hamburger-inner, #utility-links .hamburger:hover .hamburger-inner:before, #utility-links .hamburger:hover .hamburger-inner:after {
+          background-color: white!important;
+        }
+      {% endif %}
+
+        {%- assign sb_bg_rgb = sb_bg | color_to_rgb | replace: 'rgb(', '' | replace: ')', '' -%}
+        {%- assign sb_bg_rgb = sb_bg_rgb | split: ',' -%}
+        {%- assign sb_red = sb_bg_rgb[0] | plus: 0 | times: 0.955 -%}
+        {%- assign sb_green = sb_bg_rgb[1] | plus: 0 | times: 0.915 -%}
+        {%- assign sb_blue = sb_bg_rgb[2] | plus: 0 | times: 1.01 -%}
+
+        {%- assign sb_red_dark = sb_bg_rgb[0] | plus: 0 | times: 1.01 -%}
+        {%- assign sb_green_dark = sb_bg_rgb[1] | plus: 0 | times: 0.82 -%}
+        {%- assign sb_blue_dark = sb_bg_rgb[2] | plus: 0 | times: 0.5 -%}
+      
+      :root {
+        --sb-color-bg: {{ sb_bg }};
+        --sb-color-dark: rgb({{ sb_red }}, {{ sb_green }}, {{ sb_blue }});
+        --sb-color-darker: rgb({{ sb_red_dark }}, {{ sb_green_dark }}, {{ sb_blue_dark }});
+      }
+    {% endstyle %}
+
+    {%- render 'fonts' -%}
+
+    <!-- CSS ================================================== -->
+    {{ 'timber.scss.css' | asset_url | stylesheet_tag }}
+    {{ 'shopblindalt.scss.css' | asset_url | stylesheet_tag }}
+    {{ 'custom-style.css' | asset_url | stylesheet_tag }}
+    {{ 'shopblindlocked.scss.css' | asset_url | stylesheet_tag }}
+
+    {% if settings.easter_enabled %}
+      {{ '2bb-easter.css' | asset_url | stylesheet_tag }}
+    {% endif %}
+
+    <!-- Header hook for plugins ================================================== -->
+    {%- capture header_scripts -%}
+      {{ content_for_header }}
+    {%- endcapture -%}
+
+    {%- render 'header-scripts',
+      content: header_scripts,
+      unload_apps: true,
+      remove_apps: ''
+    -%}
+
+    {%- render 'delay-load',
+      urls: '',
+      snippets: '',
+      on_delay_load: '',
+      load_apps: true,
+      delay: 0,
+      enable: true
+    -%}
+
+    {% include 'oldIE-js' %}
+  
+    {{ '//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js' | script_tag }}
+    
+    {{ 'modernizr.min.js' | asset_url | script_tag  }}
+    <!--[if lte IE 9]><script src="{{ 'polyfill.min.js' | asset_url }}"></script><![endif]-->
+    {{ 'ls.unveilhooks.min.js' | asset_url | script_tag   }}
+
+    <script src="https://use.typekit.net/ugw7ksw.js"></script>
+    <script> try{Typekit.load({  async: true }); }catch(e){} </script>
+
+    {{ 'jquery.fancybox.min.css' | asset_url | stylesheet_tag }}
+    {{ 'jquery.fancybox.min.js' | asset_url | script_tag }}
+
+    {{ '//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css' | stylesheet_tag }}
+    {{ '//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js' | script_tag }}
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-881678315"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'AW-881678315');
+    </script>
+    
+    <!-- Start WKND tag. Deploy at the beginning of document head. -->
+    <script>
+      (function(d) {
+        var e = d.createElement('script');
+        e.src = d.location.protocol + '//tag.wknd.ai/5456/i.js';
+        e.async = true;
+        d.getElementsByTagName("head")[0].appendChild(e);
+      }(document));
+    </script>
+    <!-- End WKND tag -->
+
+    {{ 'jquery.infinitescroll.2.1.0.min.js' | asset_url | script_tag }}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.11.0/lottie.min.js"></script>
+    {%- render 'vite-tag' with 'custom.css' -%}
+    {%- render 'vite-tag' with 'reserve.js' -%}
+  </head>
+
+  <body id="{{ page_title | handle }}" class="{% if customer %}customer-logged-in {% endif %}template-{{ template | replace: '.', ' ' | handle }} shop-blind-layout {{ template }}">
+    <div class="sr-only">
+      {{ skip_to_content_link }}
+    </div>
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NJTDWKD" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <div id="NavDrawer" class="drawer drawer--left">
+    </div>
+    {% if settings.ajax_cart_method == "drawer" %}
+      <div id="cartDrawerBackground"></div>
+      <div id="CartDrawer" class="drawer drawer--right">
+        <div class="drawer__header">
+          <div class="drawer__title h3">{{ settings.shopblind_cart_title }}</div>
+          <div class="drawer__close js-drawer-close">
+            <button type="button" class="icon-fallback-text">
+              <span class="close-x" aria-hidden="true">
+                <img src="{{ 'close-x.svg' | asset_url }}" class=""/>
+              </span>
+              <span class="fallback-text">{{ 'cart.general.close_cart' | t | json }}</span>
+            </button>
+          </div>
+        </div>
+        <div id="CartContainer">
+        </div>
+      </div>
+    {% endif %}
+
+    <div id="PageContainer">
+      <div id="custom-reserve-announcement-bar">
+        {% section 'reserve-announcement-bar' %}
+      </div>
+      {% section 'header' %}
+
+      <main class="main-content" role="main" id="main-content">
+        {% include 'loader' %}
+        {{ content_for_layout }}
+
+        <div id="left-side-buttons">
+          <button id="eyeball" class="content-slideInRight left-side-button" name="blindexperience" aria-label="Select this button to see how the Two Blind Brothers see that Page">
+            {% include 'svg-eye-closed' %}
+          </button>
+    
+          <button id="get-support-button" class="left-side-button hidden" aria-label="Get help">
+            {% include 'svg-icon-support' %}
+          </button>
+        </div>
+      </main>
+
+      <!-- begin site-footer -->
+      <footer class="site-footer" role="contentinfo" style="background-color: {{ settings.footer_background_color }}">
+        <div class="container">
+          <div class="grid">
+            {% if settings.footer_social_enable %}
+              <div class="grid__item one-whole text-center">
+                <h5>Share our Story</h5>
+                {% section 'footer-social' %}
+              </div>
+            {% endif %}
+            {%comment%}
+              <div class="grid__item large--one-half">
+                <div id="footer-newsletter">
+                  {% if settings.footer_newsletter_enable %}
+                  {% include 'svg_copy_be-a-part-of-the-community',
+                      classes: 'medium-down--hide' %}
+                  {% include 'svg_copy_be-a-part-of-the-community_m',
+                      classes: 'large--hide' %}
+                  {% include 'active-campaign' %}
+
+                  {% endif %}
+                </div>
+              </div>
+            {%endcomment%}
+
+            <div class="grid__item one-whole text-center footer-links">
+                {% for link in linklists['shop-blind-footer'].links %}
+                    {% if forloop.index != 1 %}<span> | </span>{% endif %}<a class="h4" href="{{ link.url }}">{{ link.title }}</a>
+                {% endfor %}
+            </div>
+          </div>
+
+          {% include 'accessibility-disclaimer' %}
+
+        </div>
+      </footer>
+      <!-- //site-footer -->
+      <div id="heatmap-banner" class="">
+        <p>There are lots of types of blindness. We have Stargardt's, a type of macular degeneration that means we lose vision in the center of the retina. This simulator gives you peek at what its like to peep with our peepers.</p><a class="heatmap-close" href="#" title="close banner">X</a>
+      </div>
+  
+      <svg xmlns="http://www.w3.org/2000/svg" width="80%" height="80%" viewBox="10 0 50 75" id="heatmap-display">
+        <filter id="blurMe">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="1"></feGaussianBlur>
+        </filter>
+        <path d="M10,59l9,6,10,3a18,18,0,0,0,10-3h1l9-5,10-4,5-5a15,15,0,0,0,2-7h0a20,20,0,0,0-1-6l-4-6-6-5-9-5L37,14l-3-2L27,9a14,14,0,0,0-9,1,20,20,0,0,0-7,6L6,24a49,49,0,0,0-3,9,45,45,0,0,0-1,9H2a20,20,0,0,0,2,9Z" fill="rgba(0,0,0,.7)" filter="url(#blurMe)"></path>
+        <path d="M9,48l5,7,7,5h9l8-2,9-2h5a5,5,0,0,0,3-3h0l2-6a42,42,0,0,0,0-9c0-3-1-6-2-7s-4-3-7-3l-8-2-2-2-5-4-7-2-7,2-5,4-4,6L7,34H7a14,14,0,0,0,0,7A22,22,0,0,0,9,48Z" fill="#666" filter="url(#blurMe)"></path>
+        <path d="M14,52l7,4,8,2,8-2h1l7-3,7-3,3-3a10,10,0,0,0,2-5h0a13,13,0,0,0-1-4l-3-4-4-3-7-4-8-4H32l-5-2H20l-5,4-3,6L9,34a29,29,0,0,0-1,6H9a14,14,0,0,0,2,6Z" filter="url(#blurMe)"></path>
+      </svg>
+
+    </div>
+
+    {%- render 'reserve-collapsible-cart' -%}
+
+    {{ 'timber.js' | asset_url | script_tag }}
+    {{ 'scripts.js' | asset_url | script_tag }}
+    {{ 'aria-modal.js' | asset_url | script_tag  }}
+    {{ 'nav.js' | asset_url | script_tag }}
+    {{ 'js.cookie.js' | asset_url | script_tag }}
+
+    
+    {% include "heatmap" %}
+    
+    <script>
+      if ( $('.alert-content').length ) {
+        $('.alert-content a').click( function(e) {
+          e.preventDefault()
+          $('.alert-description').slideToggle()
+        })
+      }
+    </script>
+
+    <script>
+      // Video modals
+      jQuery(function() {
+        $('iframe[src*="https://www.youtube.com/embed/"]').addClass("remodal-video");
+        $(document).on('closing', '.remodal', function (e) {
+          $('.remodal-video').each(function(index) {
+            $(this).attr('src', $(this).attr('src'));
+            return false;
+          });
+        });
+        jQuery('.swatch :radio').change(function() {
+          var optionIndex = jQuery(this).closest('.swatch').attr('data-option-index');
+          var optionValue = jQuery(this).val();
+          jQuery(this)
+          .closest('form')
+          .find('.single-option-selector')
+          .eq(optionIndex)
+          .val(optionValue)
+          .trigger('change');
+        });
+      });
+
+      jQuery.post('/cart/update.js', {
+        "attributes": {
+          "origin": 'Shop Blind'
+        }
+      })
+    </script>
+
+    <script>
+      // Smooth Scroll
+      $('a[href*="#"]')
+      .not('[href="#"]')
+      .not('[href="#0"]')
+      .click(function(event) {
+        if (
+          location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '')
+          &&
+          location.hostname == this.hostname
+        ) {
+          var target = $(this.hash);
+          target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+          if (target.length) {
+            event.preventDefault();
+            $('html, body').animate({
+              scrollTop: target.offset().top - 120
+            }, 1000, function() {
+              var $target = $(target);
+              $target.focus();
+              if ($target.is(":focus")) {
+                return false;
+              } else {
+                $target.attr('tabindex','-1');
+                $target.focus();
+              };
+            });
+          }
+        }
+      });
+    </script>
+
+    <script>
+      {% if resetPassword %}
+      $(function() {
+        timber.resetPasswordSuccess();
+      });
+      {% endif %}
+    </script>
+
+    {% if settings.ajax_cart_method == "drawer" %}
+      {{ 'handlebars.min.js' | asset_url | script_tag  }}
+      {% include 'ajax-cart-template' %}
+      {{ 'ajax-cart.js' | asset_url | script_tag }}
+      {{ 'api.jquery.js' | shopify_asset_url | script_tag }}
+
+      <script>
+        jQuery(function($) {
+          ajaxCart.init({
+            formSelector: '#AddToCartForm',
+            cartContainer: '#CartContainer',
+            addToCartSelector: '#AddToCart',
+            cartCountSelector: '.cart__item-count',
+            cartCostSelector: '#CartCost',
+            moneyFormat: {{ shop.money_format | json }}
+          });
+        });
+
+        jQuery(document.body).on('afterCartLoad.ajaxCart', function(evt, cart) {
+          // Bind to 'afterCartLoad.ajaxCart' to run any javascript after the cart has loaded in the DOM
+          timber.RightDrawer.open();
+        });
+      </script>
+    {% endif %}
+
+    <script type="text/javascript">
+      var _learnq = _learnq || [];
+      _learnq.push(['account', 'HMZ6Wk']);
+
+      (function () {
+        var b = document.createElement('script'); b.type = 'text/javascript'; b.async = true;
+        b.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'a.klaviyo.com/media/js/analytics/analytics.js';
+        var a = document.getElementsByTagName('script')[0]; a.parentNode.insertBefore(b, a);
+      })();
+    </script>
+
+    <script async type="text/javascript" src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=HMZ6Wk"></script>
+
+    <!-- This line added automatically by JSON-LD for SEO. -->
+    <!-- {% include 'jsonld-for-seo' %} -->
+    {% comment %} {% section 'upsell-popup' %} {% endcomment %}
+    {% assign show_free_product_popup = false %}
+    {% if show_free_product_popup == true %}
+      {% include 'popup-free-sock' %}
+      {{ 'option_selection.js' | shopify_asset_url | script_tag }}
+    {% endif %}
+    {% comment %}{% include 'subscription-theme-footer' %}{% endcomment %}
+    <!-- Conversion Pixel for [lead]- DO NOT MODIFY -->
+    <img style="display:none;" src="https://data.adxcel-ec2.com/pixel/?ad_log=referer&action=lead&pixid=e503aefe-73f2-46f2-8010-e12740208050" width="1" height="1" border="0">
+    <!-- End of Conversion Pixel -->
+
+    <div id="snow" style="display: none;">
+      
+    </div>
+
+    {% comment %}
+    SNOWY LOGO JS FOR CHRISTMAS
+    {% endcomment %}
+    {% comment %}
+    {{ 'snow.js' | asset_url | script_tag }}
+    {% endcomment %}
+    {% if settings.easter_enabled and settings.hunt_type == 'v-day' %}
+        {{ 'hearts.js' | asset_url | script_tag }}
+    {% endif %}
+
+    <!--Gorgias Chat Widget Start-->
+    <script id="gorgias-chat-widget-install-v3" 
+        src="https://config.gorgias.chat/bundle-loader/01H2DX32D7RHVBGVWR3EG2HXDS">
+    </script>
+    <!--Gorgias Chat Widget End-->
+    
+<div data-rebuy-id="120361"></div>
+<script async src="https://cdn.rebuyengine.com/onsite/js/rebuy.js?shop={{ shop.permanent_domain }}"></script>
+    <script> (function(){ var s = document.createElement('script'); var h = document.querySelector('head') || document.body; s.src = 'https://acsbapp.com/apps/app/dist/js/app.js'; s.async = true; s.onload = function(){ acsbJS.init({ statementLink : '', footerHtml : '', hideMobile : false, hideTrigger : false, disableBgProcess : false, language : 'en', position : 'left', leadColor : '#000205', triggerColor : '#000205', triggerRadius : '50%', triggerPositionX : 'right', triggerPositionY : 'bottom', triggerIcon : 'people', triggerSize : 'small', triggerOffsetX : 20, triggerOffsetY : 20, mobile : { triggerSize : 'small', triggerPositionX : 'right', triggerPositionY : 'bottom', triggerOffsetX : 10, triggerOffsetY : 10, triggerRadius : '50%' } }); }; h.appendChild(s); })(); </script>
+  </body>
+</html>

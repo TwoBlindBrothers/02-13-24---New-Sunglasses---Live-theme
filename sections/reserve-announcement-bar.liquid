@@ -1,0 +1,99 @@
+{% assign is_freeze = section.settings.is_freeze %}
+
+{% if section.blocks.size > 0 %}
+  {% capture content %}
+    <div class="reserve-announcement-bar__marquee">
+      {% for block in section.blocks %}
+        {% if block.settings.title %}
+          <div class="reserve-announcement-bar__marquee-item label inline-flex">{{ block.settings.title }}</div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endcapture %}
+  <reserve-announcement-bar class="reserve-announcement-bar {% if is_freeze %}freeze{% endif %}">
+    {% if is_freeze %}
+      {{ content }}
+    {% else %}
+      {% assign n = 2 %}
+      {% if section.blocks.size < 3 %}
+        {% assign n = 4 %}
+      {% endif %}
+      {% for i in (1..n) %}
+        {{ content }}
+      {% endfor %}
+    {% endif %}
+
+    <button class="js-btn reserve-announcement-bar__btn">
+      {% include 'svg_icon_play_2', fill: 'black', classes: 'icon-play'%}
+      {% include 'svg_icon_pause', fill: 'black', classes: 'icon-pause'%}
+    </button>
+  </reserve-announcement-bar>
+
+  <style type="text/css">
+    .reserve-announcement-bar__marquee {
+      animation: ticker-kf {{ section.settings.scroll_speed }}s linear infinite;
+    }
+
+    .reserve-announcement-bar.freeze {
+      justify-content: center;
+    }
+    
+    .reserve-announcement-bar.freeze .reserve-announcement-bar__marquee {
+      animation: none !important;
+    }
+
+    .reserve-announcement-bar.freeze .reserve-announcement-bar__marquee-item:first-child:before {
+      content: none !important;
+    }
+
+    .reserve-announcement-bar.freeze .reserve-announcement-bar__btn {
+      display: none;
+    }
+
+    @keyframes ticker-kf {
+      0% {
+        transform: translate3d(0, 0, 0);
+      }
+      100% {
+        transform: translate3d(-100%, 0, 0);
+      }
+    }
+  </style>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Reserve Announcement Bar",
+  "settings": [
+    {
+      "type": "number",
+      "id": "scroll_speed",
+      "label": "Scroll Speed",
+      "default": 50
+    },
+    {
+      "type": "checkbox",
+      "id": "is_freeze",
+      "label": "Freeze"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "content",
+      "name": "Content",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "title",
+          "label": "Content"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Reserve Announcement Bar"
+    }
+  ]
+}
+{% endschema %}
